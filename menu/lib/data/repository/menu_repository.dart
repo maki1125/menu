@@ -6,7 +6,7 @@ import 'package:menu/data/model/user.dart';
 class MenuRepository {
   
   MenuRepository(this.user);
-  final User user;
+  final UserModel user;
 
   //データ取得
   //Stream<QuerySnapshot> getMenuList(){

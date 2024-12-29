@@ -6,19 +6,21 @@ import 'package:menu/kudo_test.dart';
 import 'data/model/menu.dart';
 import 'data/model/user.dart';
 import 'data/repository/menu_repository.dart';
+import 'data/repository/user_repository.dart';
 
 class KudoTest extends ConsumerWidget{
 
   List<Menu>? menuList;
 
   Widget build(BuildContext context, WidgetRef ref){
-    User user = User(
-            createAt: DateTime.now(), 
+    UserModel user = UserModel(
+            //createAt: DateTime.now(), 
             uid: "AC3iWb7RnqM4gCmeLOD9"
             );
     // providerからメニューリストを取得
     final menuListAsyncValue= ref.watch(menuListProvider);
-    
+    final currentUser= ref.watch(userProvider);
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Scaffold Example'),
@@ -67,18 +69,41 @@ class KudoTest extends ConsumerWidget{
                   );
 
                   // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
-                  MenuRepository(user).addMenu(menu);
+                  MenuRepository(currentUser!).addMenu(menu);
                 },
               child: const Text('Add Menu'),
             ),
             ElevatedButton(
               onPressed: () {
-
+                UserRepository().createUser("test@test.com", "testtest");
                 //MenuRepositoryインスタンスを作成し、addMenuを呼び出す
                  //MenuRepository(user).deleteMenu(menuList![0]);
                  
                 },
-              child: const Text('Delete Menu'),
+              child: const Text('User新規登録'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                //loginの返り値が非同期のため、結果が確定してからuserに代入する処理とする。
+                UserRepository().loginWithEmail("test@test.com", "testtest").then((userModel){
+                  final user = UserRepository().getCurrentUser();
+                  print(user!.uid);
+
+                });
+                
+                },
+              child: const Text('Userログイン'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                //loginの返り値が非同期のため、結果が確定してからuserに代入する処理とする。
+                UserRepository().logout().then((userModel){
+                  final user = UserRepository().getCurrentUser();
+                  print(user);
+                });
+                
+                },
+              child: const Text('Userログアウト'),
             ),
 
           ],
