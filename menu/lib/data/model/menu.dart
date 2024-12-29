@@ -3,6 +3,7 @@ class Menu {
     this.createAt,
     this.name,
     this.imageURL,
+    this.imagePath,
     this.quantity,
     this.tag,
     this.material,
@@ -15,6 +16,7 @@ class Menu {
   DateTime? createAt;
   String? name;
   String? imageURL;
+  String? imagePath;
   int? quantity;
   String? tag;
   List<Map<String, dynamic>>? material;
