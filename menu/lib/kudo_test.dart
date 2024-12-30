@@ -3,10 +3,16 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/providers.dart';
 import 'package:menu/kudo_test.dart';
+//import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/data/providers.dart';
+import 'package:menu/data/repository/image_repository.dart';
+//import 'package:menu/kudo_test.dart';
 import 'data/model/menu.dart';
 import 'data/model/user.dart';
 import 'data/repository/menu_repository.dart';
 import 'data/repository/user_repository.dart';
+//import 'package:file_picker/file_picker.dart';
 
 class KudoTest extends ConsumerWidget{
 
@@ -17,6 +23,13 @@ class KudoTest extends ConsumerWidget{
             //createAt: DateTime.now(), 
             uid: "AC3iWb7RnqM4gCmeLOD9"
             );
+            uid: "AC3iWb7RnqM4gCmeLOD9",
+            
+            );
+    Menu menu2 = Menu(
+      id: "AdAZuXaF7hcW7CW3CIbb",
+      imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
+      );
     // providerからメニューリストを取得
     final menuListAsyncValue= ref.watch(menuListProvider);
     final currentUser= ref.watch(userProvider);
@@ -30,6 +43,7 @@ class KudoTest extends ConsumerWidget{
           children: [
             menuListAsyncValue.when(
               data: (menuList) {
+                //menu2 = menuList[0];
                 // メニューリストをリアルタイムで表示
                 return Expanded(
                   child: ListView.builder(
@@ -105,6 +119,31 @@ class KudoTest extends ConsumerWidget{
                 },
               child: const Text('Userログアウト'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                ImageRepository(user, menu2).addImage().then(
+                  (value) => print(menu2.imageURL));   
+                },
+              child: const Text('画像追加'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                print(menu2.id);
+                ImageRepository(user, menu2).deleteImage().then(
+                  (value) => print(menu2.imageURL));   
+                },
+              child: const Text('画像削除'),
+            ),
+
+/*
+            Image.network(
+              menu.imageURL.toString()!=""
+               ? menu.imageURL.toString()
+               : 'https://firebasestorage.googleapis.com/v0/b/menu-82775.firebasestorage.app/o/users%2FAC3iWb7RnqM4gCmeLOD9%2Fimages%2F1735476387866395_IMG_0111.jpeg?alt=media&token=3f0baac7-1a32-4142-b92f-7b3504748a72'
+              
+            )
+            */
+            
 
           ],
         ),

@@ -11,6 +11,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 //final userProvider = StateProvider<UserModel?>((ref) =>UserRepository().getCurrentUser());
 UserModel? currentUser = UserRepository().getCurrentUser();
 final userProvider = StateProvider<UserModel?>((ref) => currentUser);
+//import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
+
+//final userProvider = StateProvider<UserModel?>((ref) =>UserRepository().getCurrentUser());
+UserModel? currentUser = UserRepository().getCurrentUser();
+final userProvider = StateProvider<UserModel?>((ref) =>currentUser);
 /*
             UserModel(
             //createAt: DateTime.now(), 
@@ -48,3 +54,4 @@ final errorMessageProvider = StateProvider<String>((ref) => '');
 
 // 匿名ログインが完了状態を監視
 final anonymousProvider = StateProvider<bool>((ref) => false);
+
