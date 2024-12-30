@@ -10,9 +10,12 @@ import 'package:menu/data/repository/image_repository.dart';
 //import 'package:menu/kudo_test.dart';
 import 'data/model/menu.dart';
 import 'data/model/user.dart';
+import 'data/model/dinner.dart';
 import 'data/repository/menu_repository.dart';
 import 'data/repository/user_repository.dart';
+import 'data/repository/dinner_repository.dart';
 //import 'package:file_picker/file_picker.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class KudoTest extends ConsumerWidget{
 
@@ -30,8 +33,20 @@ class KudoTest extends ConsumerWidget{
       id: "AdAZuXaF7hcW7CW3CIbb",
       imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
       );
+      Menu menu = Menu(
+                    name: "唐揚げ",
+                    createAt: DateTime.now(),
+                  );
+    Dinner dinner = Dinner(
+      createAt: DateTime.now(),
+      select: ["ハンバーグ", "ご飯", "コーンスープ"],
+      price: 300,
+      id: "XF7TLo7nZdXVYdOrlmc3"
+
+    );
     // providerからメニューリストを取得
     final menuListAsyncValue= ref.watch(menuListProvider);
+    final dinnerListAsyncValue= ref.watch(dinnerListProvider);
     final currentUser= ref.watch(userProvider);
 
     return Scaffold(
@@ -54,11 +69,11 @@ class KudoTest extends ConsumerWidget{
                       child: InkWell(
                         onTap: () {
                           print(menu.id);
-                          menu.name = "test";
-                          MenuRepository(user).editMenu(menu);
+                          //menu.name = "test";
+                          //MenuRepository(user).editMenu(menu);
                         },
                         child: ListTile(
-                      title: Text(menu.name ?? "No Name"),
+                      title: Text(menu.name!),
                       subtitle: Text(menu.id.toString()+","+menu.createAt.toString()),
                       
                     )
@@ -74,29 +89,34 @@ class KudoTest extends ConsumerWidget{
               error: (error, stackTrace) =>
                   Center(child: Text('Error: ${error.toString()}')),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // メニューの追加処理
-                  Menu menu = Menu(
-                    name: "唐揚げ",
-                    createAt: DateTime.now(),
-                  );
+            Row(
+              children: [
 
-                  // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
-                  MenuRepository(currentUser!).addMenu(menu);
-                },
-              child: const Text('Add Menu'),
+                // メニューの追加処理
+                ElevatedButton(
+                  onPressed: () {
+                    // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
+                    MenuRepository(currentUser!).addMenu(menu);
+                  },
+                child: const Text('Add Menu'),
+                ),
+                
+              ],
             ),
-            ElevatedButton(
-              onPressed: () {
-                UserRepository().createUser("test@test.com", "testtest");
-                //MenuRepositoryインスタンスを作成し、addMenuを呼び出す
-                 //MenuRepository(user).deleteMenu(menuList![0]);
-                 
-                },
-              child: const Text('User新規登録'),
-            ),
-            ElevatedButton(
+
+            //ログイン系
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    UserRepository().createUser("test@test.com", "testtest");
+                    //MenuRepositoryインスタンスを作成し、addMenuを呼び出す
+                    //MenuRepository(user).deleteMenu(menuList![0]);
+                    
+                    },
+                  child: const Text('User新規登録'),
+                ),
+                ElevatedButton(
               onPressed: () {
                 //loginの返り値が非同期のため、結果が確定してからuserに代入する処理とする。
                 UserRepository().loginWithEmail("test@test.com", "testtest").then((userModel){
@@ -106,7 +126,7 @@ class KudoTest extends ConsumerWidget{
                 });
                 
                 },
-              child: const Text('Userログイン'),
+              child: const Text('ログイン'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -117,9 +137,14 @@ class KudoTest extends ConsumerWidget{
                 });
                 
                 },
-              child: const Text('Userログアウト'),
+              child: const Text('ログアウト'),
             ),
-            ElevatedButton(
+              ],
+            ),
+
+            Row(
+              children: [
+                ElevatedButton(
               onPressed: () {
                 ImageRepository(user, menu2).addImage().then(
                   (value) => print(menu2.imageURL));   
@@ -135,15 +160,36 @@ class KudoTest extends ConsumerWidget{
               child: const Text('画像削除'),
             ),
 
-/*
-            Image.network(
-              menu.imageURL.toString()!=""
-               ? menu.imageURL.toString()
-               : 'https://firebasestorage.googleapis.com/v0/b/menu-82775.firebasestorage.app/o/users%2FAC3iWb7RnqM4gCmeLOD9%2Fimages%2F1735476387866395_IMG_0111.jpeg?alt=media&token=3f0baac7-1a32-4142-b92f-7b3504748a72'
+              ],
+            ),
+            Row(
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    DinnerRepository(currentUser!).addDinner(dinner);
+                  },
+                  child: const Text('夕食新規'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    DinnerRepository(currentUser!).deleteDinner(dinner);
+                  },
+                  child: const Text('夕食削除'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    //print(dinner.id);
+                    DinnerRepository(currentUser!).editDinner(dinner);
+                  },
+                  child: const Text('夕食編集'),
+                ),
+                
+              ],
               
-            )
-            */
+
+            ),
             
+        
 
           ],
         ),

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Menu {
   Menu({
     this.createAt,
@@ -24,4 +26,21 @@ class Menu {
   String? memo;
   bool? isFavorite;
   String? id;
+
+    //FirestoreからのデータからDinnerインスタンスを生成する
+  factory Menu.fromFirestore(Map<String, dynamic> data) {
+    return Menu(
+      createAt: (data['createAt'] as Timestamp)?.toDate() ?? DateTime.now(),
+      name: data['name'] as String? ?? "noData",
+      imageURL: data['imageURL'] as String? ?? "noData",
+      imagePath: data['imagePath'] as String? ?? "noData",
+      quantity: data['quantity'] as int? ?? 0,
+      tag: data['tag'] as String? ?? "noData",
+      material: (data['material'] as List<Map<String,dynamic>>?) ?? [], // nullの場合は空のリストを設定
+      howToMake: data['howToMake'] as String? ?? "noData",
+      memo: data['memo'] as String? ?? "noData",
+      isFavorite: data['isFavorite'] as bool? ?? false,
+      id: data['id'] as String? ?? "noData",
+    );
+  }
 }

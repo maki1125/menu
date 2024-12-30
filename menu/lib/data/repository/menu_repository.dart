@@ -18,14 +18,19 @@ class MenuRepository {
     .orderBy('createAt', descending: true)
     .snapshots()
     //.map((snapshot) => snapshot.docChanges)
-    .map(_queryToMenuList);
+    //.map(_queryToMenuList);
+    .map((snapshot) => snapshot.docs
+          .map((doc) => Menu.fromFirestore(doc.data() as Map<String, dynamic>))
+          .toList());
   }
 
   //データ追加
   Future<void> addMenu(Menu menu) async{
-    FirebaseFirestore.instance
+    DocumentReference docRef = await FirebaseFirestore.instance
     .collection('users/${user.uid}/menus')
     .add(_menuToMap(menu));
+    // ドキュメントIDを追加したい場合
+    await docRef.update({'id': docRef.id});
   }
 
   //データ削除
