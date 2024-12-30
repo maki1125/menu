@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "652180432500",
+    "project_id": "menu-82775",
+    "storage_bucket": "menu-82775.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:652180432500:android:fb0dedfa03e27714f39321",
+        "android_client_info": {
+          "package_name": "com.yocom.menu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "652180432500-u55ro5haemen0kl5cf9aqf5aa5a5jo03.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFwN_as_Z6hnrg_zfRWGNXQ2CNVYIIjlc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "652180432500-u55ro5haemen0kl5cf9aqf5aa5a5jo03.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "652180432500-2nukgg5alpu503eoi1r4fi10kjob6jf0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kudomaki.menu"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

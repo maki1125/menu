@@ -1,4 +1,4 @@
-package com.example.menu
+package com.yocom.menu
 
 import io.flutter.embedding.android.FlutterActivity
 
