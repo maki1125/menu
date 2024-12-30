@@ -1,9 +1,11 @@
 import 'package:menu/data/repository/user_repository.dart';
 
 import 'repository/menu_repository.dart';
+import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
 import 'model/menu.dart';
+import 'model/dinner.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -25,4 +27,7 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository(currentUser!).getMenuList();
 });
 
+final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
+  return DinnerRepository(currentUser!).getDinnerList();
+});
 
