@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/data/providers.dart';
+import 'package:menu/kudo_test.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/providers.dart';
@@ -17,6 +21,8 @@ class KudoTest extends ConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref){
     UserModel user = UserModel(
             //createAt: DateTime.now(), 
+            uid: "AC3iWb7RnqM4gCmeLOD9"
+            );
             uid: "AC3iWb7RnqM4gCmeLOD9",
             
             );
@@ -137,7 +143,6 @@ class KudoTest extends ConsumerWidget{
               
             )
             */
-            
             
 
           ],
