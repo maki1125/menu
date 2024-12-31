@@ -7,6 +7,7 @@ import 'package:menu/kudo_test.dart';
 //import 'data/model/user.dart';
 //import 'data/repository/menu_repository.dart';
 import 'data/repository/o_user_repository.dart';
+import 'view/main_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,7 +25,8 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(home: KudoTest()
+    return MaterialApp(
+      home: MainPage()//KudoTest()
     //return MaterialApp(home: SignInAnony()
         //Scaffold(
         //body:

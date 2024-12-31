@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../login_screen.dart';
+import '../../view/login_screen.dart';
 import '../providers.dart';
 import '../../firebase_auth_error.dart';
 
