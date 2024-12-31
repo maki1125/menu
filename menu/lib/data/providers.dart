@@ -4,25 +4,43 @@ import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
 import 'model/menu.dart';
+
 import 'model/dinner.dart';
-//import 'package:firebase_storage/firebase_storage.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'repository/o_user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'model/material.dart';
+import 'repository/material_repository.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-//ログインユーザ
+//final userProvider = StateProvider<UserModel?>((ref) =>UserRepository().getCurrentUser());
 UserModel? currentUser = UserRepository().getCurrentUser();
 final userProvider = StateProvider<UserModel?>((ref) => currentUser);
+/*
+            UserModel(
+            //createAt: DateTime.now(), 
+            uid: "AC3iWb7RnqM4gCmeLOD9"
+            );
+*/
 
-//メニューリスト
-//final menuListProvider = StreamProvider<List<Menu>>((ref) {
-  //return MenuRepository(currentUser!).getMenuList();
+//final menuListProvider = StreamProvider<QuerySnapshot>((ref) {
+//  return MenuRepository(user).getMenuList();
 //});
 
-//夕食リスト
+final menuListProvider = StreamProvider<List<Menu>>((ref) {
+  return MenuRepository(currentUser!).getMenuList();
+});
+
 final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
   return DinnerRepository(currentUser!).getDinnerList();
+});
+
+// 材料データ取得
+final materialListProvider = StreamProvider<List<MaterialModel>>((ref) {
+  return MaterialRepository(currentUser!).getMaterialList();
 });
 
 // FirebaseAuthインスタンスのプロバイダ
@@ -47,8 +65,3 @@ final errorMessageProvider = StateProvider<String>((ref) => '');
 
 // 匿名ログインが完了状態を監視
 final anonymousProvider = StateProvider<bool>((ref) => false);
-
-//ボトムバーのインデックス
-//final bottomBarIndex = StateProvider<int>((ref) => 0);
-
-
