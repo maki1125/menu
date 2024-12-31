@@ -49,6 +49,7 @@ class MenuRepository {
     .update(_menuToMap(menu));
   }
 
+/*
   List<Menu> _queryToMenuList(QuerySnapshot query){
     return query.docs.map((doc){
       return Menu(
@@ -58,6 +59,7 @@ class MenuRepository {
       );
     }).toList();
   }
+*/
 
   Map<String, dynamic> _menuToMap(Menu menu){
     return{

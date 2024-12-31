@@ -12,6 +12,7 @@ class Menu {
     this.howToMake,
     this.memo,
     this.isFavorite,
+    this.isDinner,
     this.id
   });
 
@@ -25,6 +26,7 @@ class Menu {
   String? howToMake;
   String? memo;
   bool? isFavorite;
+  bool? isDinner;
   String? id;
 
     //FirestoreからのデータからDinnerインスタンスを生成する
@@ -40,6 +42,7 @@ class Menu {
       howToMake: data['howToMake'] as String? ?? "noData",
       memo: data['memo'] as String? ?? "noData",
       isFavorite: data['isFavorite'] as bool? ?? false,
+      isDinner: data['isDinner'] as bool? ?? false,
       id: data['id'] as String? ?? "noData",
     );
   }
