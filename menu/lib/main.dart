@@ -7,15 +7,12 @@ import 'package:menu/kudo_test.dart';
 //import 'data/model/user.dart';
 //import 'data/repository/menu_repository.dart';
 import 'data/repository/o_user_repository.dart';
+import 'package:menu/material_create_screen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(
-    ProviderScope(
-      child:  MyApp()
-      )
-   );
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
@@ -24,8 +21,9 @@ class MyApp extends ConsumerWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(home: KudoTest()
-    //return MaterialApp(home: SignInAnony()
+    //return MaterialApp(home: KudoTest()
+    return MaterialApp(home: SignInAnony()
+        //return MaterialApp(home: MaterialCreateScreen()
         //Scaffold(
         //body:
         //CardListExample(),

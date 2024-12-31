@@ -3,9 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../login_screen.dart';
-import '../providers.dart';
-import '../../firebase_auth_error.dart';
+import 'package:menu/login_screen.dart';
+import 'package:menu/data/providers.dart';
+import 'package:menu/firebase_auth_error.dart';
+import 'package:menu/data/model/user.dart';
+import 'package:menu/material_create_screen.dart';
+import 'package:menu/material_list_screen.dart';
 
 // 認証サービス
 class AuthService {
@@ -14,8 +17,17 @@ class AuthService {
 
   AuthService(this._auth);
 
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
-
+  //Stream<User?> get authStateChanges => _auth.authStateChanges();
+  Stream<UserModel?> get authStateChanges {
+    return _auth.authStateChanges().map((User? firebaseUser) {
+      // userModelに変換
+      if (firebaseUser != null) {
+        return UserModel.fromFirebaseUser(firebaseUser);
+      } else {
+        return null; // ログアウト時はnullを返す
+      }
+    });
+  }
   //User? get currentUser => _auth.currentUser;
 
   // サインイン
@@ -186,10 +198,12 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
               child: CircularProgressIndicator()); // ローディング中のウィジェット
         }
         if (snapshot.hasData) {
-          return UserAuthentication();
+          //return UserAuthentication();
         }
         _signInAnonymously();
-        return UserAuthentication();
+        //return UserAuthentication();
+        //return MaterialCreateScreen();
+        return MaterialListScreen();
       },
     );
   }
