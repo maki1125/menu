@@ -26,9 +26,7 @@ class KudoTest extends ConsumerWidget{
             //createAt: DateTime.now(), 
             uid: "AC3iWb7RnqM4gCmeLOD9"
             );
-            uid: "AC3iWb7RnqM4gCmeLOD9",
-            
-            );
+
     Menu menu2 = Menu(
       id: "AdAZuXaF7hcW7CW3CIbb",
       imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
