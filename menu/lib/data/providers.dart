@@ -16,9 +16,9 @@ UserModel? currentUser = UserRepository().getCurrentUser();
 final userProvider = StateProvider<UserModel?>((ref) => currentUser);
 
 //メニューリスト
-final menuListProvider = StreamProvider<List<Menu>>((ref) {
-  return MenuRepository(currentUser!).getMenuList();
-});
+//final menuListProvider = StreamProvider<List<Menu>>((ref) {
+  //return MenuRepository(currentUser!).getMenuList();
+//});
 
 //夕食リスト
 final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {

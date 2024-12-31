@@ -19,7 +19,7 @@ class _MainPageState extends State<MainPage> {
   final List<Widget> _pages = [
     MenuList(),
     MaterialList(),
-    DinnerList(),
+    KudoTest(),
   ];
 
   //タッチしたアイコンの番号を現在のインデックスにセット
@@ -32,6 +32,9 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("test")
+      ),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,//indexのページを表示

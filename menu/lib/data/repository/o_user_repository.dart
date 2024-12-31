@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/data/model/user.dart';
 import '../../view/login_screen.dart';
 import '../providers.dart';
 import '../../firebase_auth_error.dart';
@@ -143,6 +144,12 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+    // 現在のユーザーを取得
+  UserModel? getCurrentUser() {
+    final firebaseuser = _auth.currentUser;
+    return firebaseuser != null ? UserModel.fromFirebaseUser(firebaseuser) : null;
+  }
 }
 
 class SignInAnony extends ConsumerStatefulWidget {
@@ -175,6 +182,8 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
       // 必要に応じてリトライ処理などを追加
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
