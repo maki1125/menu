@@ -56,12 +56,13 @@ class KudoTest extends ConsumerWidget {
     final dinnerListAsyncValue = ref.watch(dinnerListProvider);
     final currentUser = ref.watch(userProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Scaffold Example'),
-      ),
+    return //Scaffold(
+      //appBar: AppBar(
+        //title: const Text('Scaffold Example'),
+      //),
 
-      body: Column(
+      //body: 
+      Column(
         children: [
           menuListAsyncValue.when(
             data: (menuList) {
@@ -192,7 +193,7 @@ class KudoTest extends ConsumerWidget {
             ],
           ),
         ],
-      ),
+      );
 
       //Text("test"),
       /*
@@ -227,7 +228,7 @@ class KudoTest extends ConsumerWidget {
           print('FloatingActionButton pressed!');
         },
         child: const Icon(Icons.add),
-      ),
-    );
+      );
+    
   }
 }
