@@ -203,8 +203,7 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
         }
         _signInAnonymously();
         //return UserAuthentication();
-        //return MaterialCreateScreen();
-        return MaterialListScreen();
+        return MaterialCreateScreen(user: UserModel());
       },
     );
   }
