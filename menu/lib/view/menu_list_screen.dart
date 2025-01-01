@@ -5,28 +5,44 @@ import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class MenuList extends ConsumerWidget {
-  
+
+  //main_screen.dartからカテゴリーを受け取る
+  final String category;
+  MenuList({required this.category}); // コンストラクタ
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //テストのためのテキスト
-    String longText = 'あいうえおかきくけこさしすせそたちつてと';
+    //String longText = 'あいうえおかきくけこさしすせそたちつてと';
+    
     int nameMaxLength = 10;
     final menuListAsyncValue= ref.watch(menuListProvider);
     final totalPrice = ref.watch(totalPriceProvider);
 
+    print(category);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('メニュー一覧'),
-      ),
-      body: menuListAsyncValue.when(
+    return //Scaffold(
+      //appBar: AppBar(
+        //title: const Text('メニュー一覧'),
+      //),
+     menuListAsyncValue.when(
       data: (menus){
+        
+        //タグのフィルター
+        final filteredMenus = category == '全て'
+            ? menus
+            :category == '今日の夕食'
+             ? menus.where((menu) => menu.isDinner == true).toList()
+             : category == 'お気に入り'
+              ? menus.where((menu) => menu.isFavorite == true).toList()
+              : menus.where((menu) => menu.tag == category).toList();
+
         return ListView.builder(
-        itemCount: menus.length,
-        itemBuilder: (context, index){
+          padding: EdgeInsets.zero, // 隙間を無くす
+          itemCount: filteredMenus.length,
+          itemBuilder: (context, index){
         return Card(
-          color: menus[index].isDinner! ? const Color.fromARGB(255, 251, 237, 237) : Colors.white,
+          color: filteredMenus[index].isDinner! ? const Color.fromARGB(255, 251, 237, 237) : Colors.white,
           elevation: 1, //影の深さ
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -50,7 +66,7 @@ class MenuList extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(menus[index].name!.length > nameMaxLength ? '${menus[index].name!.substring(0, nameMaxLength)}...' : menus[index].name!,
+                            Text(filteredMenus[index].name!.length > nameMaxLength ? '${filteredMenus[index].name!.substring(0, nameMaxLength)}...' : filteredMenus[index].name!,
                               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
                             //Icon(Icons.favorite),
                             
@@ -58,8 +74,8 @@ class MenuList extends ConsumerWidget {
                         ),
 
                         //2列目(最近食べた日）
-                        Text("最近食べた日:${menus[index].dinnerDate != null ? 
-                        DateFormat('yyyy/MM/dd(E)','ja').format(menus[index].dinnerDate!) : 
+                        Text("最近食べた日:${filteredMenus[index].dinnerDate != null ? 
+                        DateFormat('yyyy/MM/dd(E)','ja').format(filteredMenus[index].dinnerDate!) : 
                         "ー"}",
                         style: TextStyle(
                           fontSize: 10,
@@ -67,7 +83,7 @@ class MenuList extends ConsumerWidget {
                           ),),
 
                         //3列目(メモ）
-                        Text(menus[index].memo!.length > 37 ? '${menus[index].memo!.substring(0, 37)}...' : menus[index].memo!,
+                        Text(filteredMenus[index].memo!.length > 37 ? '${filteredMenus[index].memo!.substring(0, 37)}...' : filteredMenus[index].memo!,
                         style: TextStyle(fontSize: 13),), // 余白を挿入
 
                         //4列目(ボタンと値段）
@@ -76,15 +92,15 @@ class MenuList extends ConsumerWidget {
                           children: [
                             
                             OutlinedButton(//枠線ありボタン
-                              onPressed: () { dinnerButton(menus[index]); },
+                              onPressed: () { dinnerButton(filteredMenus[index]); },
                               style: OutlinedButton.styleFrom(
                                 //padding: EdgeInsets.zero, // 完全にパディングを削除
                                 padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
                                 minimumSize: Size(50, 20), // 最小サイズを指定
-                                backgroundColor: menus[index].isDinner! ? Colors.blue : Colors.orange
+                                backgroundColor: filteredMenus[index].isDinner! ? Colors.blue : Colors.orange
                               ),
                               child: Text(
-                                menus[index].isDinner! ? 'やめる':'今日の夕飯にする',
+                                filteredMenus[index].isDinner! ? 'やめる':'今日の夕飯にする',
                                 style: TextStyle(
                                   fontSize: 13,
                                   color: Colors.white),
@@ -111,10 +127,10 @@ class MenuList extends ConsumerWidget {
                         child:Container(
                           width: 130,  // 必要に応じてサイズを設定
                           height: 130, 
-                          child:menus[index].imageURL.toString() != 'noData'
+                          child:filteredMenus[index].imageURL.toString() != 'noData'
                  
                           ? Image.network(//画像ある場合
-                          menus[index].imageURL.toString(), // 画像のURLを指定
+                          filteredMenus[index].imageURL.toString(), // 画像のURLを指定
                           fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
                           //fit: BoxFit.fitHeight, 
                          )
@@ -136,12 +152,12 @@ class MenuList extends ConsumerWidget {
                         right: 0,
                         child: IconButton(
                           onPressed: () {
-                            favoriteButton(menus[index]);
+                            favoriteButton(filteredMenus[index]);
                           },
                           // 表示アイコン
                           icon: Icon(Icons.favorite),
                           // アイコン色
-                          color: menus[index].isFavorite!
+                          color: filteredMenus[index].isFavorite!
                           ? Colors.pink
                           : Colors.grey,
                           // サイズ
@@ -160,8 +176,8 @@ class MenuList extends ConsumerWidget {
       }, 
       error: (e, stackTrace) => Center(child: Text('Error: $e')), 
       loading: () => Center(child: CircularProgressIndicator()),
-      )
-    );
+      );
+    
      
   }
 }
