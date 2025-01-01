@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'data/repository/o_user_repository.dart';
-import '../data/providers.dart';
+import 'package:menu/data/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 
@@ -122,7 +122,7 @@ class UserAuthentication extends ConsumerWidget {
       width: 300,
       child: TextField(
         controller: controller,
-        obscureText: obscureText,
+        obscureText: obscureText, // パスワードの表示切り替え
         keyboardType: keyboardType,
         decoration: InputDecoration(
           labelText: labelText,
