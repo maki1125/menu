@@ -24,4 +24,4 @@ class MaterialNotifier extends Notifier<MaterialModel> {
 }
 
 // appBarタイトル
-final appBarTitleProvider = StateProvider<String>((ref) => '材料の登録');
+final selectButtonProvider = StateProvider<String>((ref) => 'Resist');

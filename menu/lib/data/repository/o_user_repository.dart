@@ -10,6 +10,7 @@ import 'package:menu/data/model/user.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/view/dinner_list_screen.dart';
 
 // 認証サービス
 class AuthService {
@@ -204,7 +205,7 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
         _signInAnonymously();
         //return UserAuthentication();
         //return MaterialCreateScreen();
-        return MaterialListScreen();
+        return DinnerList();
       },
     );
   }
