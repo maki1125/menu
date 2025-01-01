@@ -11,15 +11,8 @@ class MaterialListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final materialList = ref.watch(materialListProvider);
-    final appBarTitle = ref.watch(appBarTitleProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('材料一覧'),
-        centerTitle: true,
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-        backgroundColor: Colors.blueAccent,
-      ),
       body: Column(
         children: <Widget>[
           materialList.when(
@@ -47,8 +40,8 @@ class MaterialListScreen extends ConsumerWidget {
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
                                     ref
-                                        .read(appBarTitleProvider.notifier)
-                                        .state = '材料の編集';
+                                        .read(selectButtonProvider.notifier)
+                                        .state = 'edit';
                                     ref
                                         .read(materialProvider.notifier)
                                         .updateMaterial(material);
@@ -84,7 +77,7 @@ class MaterialListScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          ref.read(appBarTitleProvider.notifier).state = '材料の登録';
+          ref.read(selectButtonProvider.notifier).state = 'Resist';
           Navigator.push(
             context,
             MaterialPageRoute(

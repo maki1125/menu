@@ -36,7 +36,7 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
       builder: (context, ref, child) {
         // 材料データ取得
         final material = ref.watch(materialProvider);
-        final appBarTitle = ref.watch(appBarTitleProvider);
+        final selectButton = ref.watch(selectButtonProvider);
 
         materialController.text = material.name ?? '';
         quantityController.text = material.quantity?.toString() ?? '';
@@ -44,12 +44,6 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
         priceController.text = material.price?.toString() ?? '';
 
         return Scaffold(
-          appBar: AppBar(
-            title: Text(appBarTitle),
-            centerTitle: true,
-            titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-            backgroundColor: Colors.blueAccent,
-          ),
           body: Center(
             child: Column(children: <Widget>[
               SizedBox(height: 20),
@@ -77,7 +71,7 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
               SizedBox(height: 20),
               SizedBox(
                 width: 100,
-                child: appBarTitle == '材料の登録'
+                child: selectButton == 'Resist'
                     ? _resisterButton()
                     : _updateButton(ref),
               ),
