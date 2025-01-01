@@ -4,15 +4,9 @@ import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
 import 'model/menu.dart';
-
 import 'model/dinner.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'repository/o_user_repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'model/material.dart';
-import 'repository/material_repository.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -36,11 +30,6 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
 
 final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
   return DinnerRepository(currentUser!).getDinnerList();
-});
-
-// 材料データ取得
-final materialListProvider = StreamProvider<List<MaterialModel>>((ref) {
-  return MaterialRepository(currentUser!).getMaterialList();
 });
 
 // FirebaseAuthインスタンスのプロバイダ
