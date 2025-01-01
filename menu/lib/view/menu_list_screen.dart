@@ -6,9 +6,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class MenuList extends ConsumerWidget {
 
+
   //main_screen.dartからカテゴリーを受け取る
   final String category;
   MenuList({required this.category}); // コンストラクタ
+
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -16,10 +18,8 @@ class MenuList extends ConsumerWidget {
     //String longText = 'あいうえおかきくけこさしすせそたちつてと';
     
     int nameMaxLength = 10;
-    final menuListAsyncValue= ref.watch(menuListProvider);
+    final menuListAsyncValue = ref.watch(menuListProvider);
     final totalPrice = ref.watch(totalPriceProvider);
-
-    print(category);
 
     return //Scaffold(
       //appBar: AppBar(
@@ -177,7 +177,5 @@ class MenuList extends ConsumerWidget {
       error: (e, stackTrace) => Center(child: Text('Error: $e')), 
       loading: () => Center(child: CircularProgressIndicator()),
       );
-    
-     
   }
 }

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/data/model/user.dart';
 
@@ -34,13 +35,21 @@ class MaterialRepository {
         .delete();
   }
 
+  // データ更新
+  Future<void> updateMaterial(MaterialModel material) async {
+    await FirebaseFirestore.instance
+        .collection('users/${user.uid}/materials')
+        .doc(material.id)
+        .update(_materialToMap(material));
+  }
+
   Map<String, dynamic> _materialToMap(MaterialModel material) {
     return {
       'name': material.name,
       'quantity': material.quantity,
       'unit': material.unit,
       'price': material.price,
-      'id': user.uid,
+      //'id': user.uid,
       'createAt': DateTime.now(),
     };
   }

@@ -4,15 +4,9 @@ import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
 import 'model/menu.dart';
-
 import 'model/dinner.dart';
-
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'repository/o_user_repository.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'model/material.dart';
-import 'repository/material_repository.dart';
+//import 'repository/o_user_repository.dart';
+//import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -38,30 +32,25 @@ final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
   return DinnerRepository(currentUser!).getDinnerList();
 });
 
-// 材料データ取得
-final materialListProvider = StreamProvider<List<MaterialModel>>((ref) {
-  return MaterialRepository(currentUser!).getMaterialList();
-});
-
 // FirebaseAuthインスタンスのプロバイダ
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
-});
+// final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
+//   return FirebaseAuth.instance;
+// });
 
-final authServiceProvider = Provider<AuthService>((ref) {
-  //AuthServiceを継承
-  return AuthService(ref.watch(firebaseAuthProvider));
-});
+//final authServiceProvider = Provider<AuthService>((ref) {
+//  //AuthServiceを継承
+//  return AuthService(ref.watch(firebaseAuthProvider));
+//});
 
 // 認証状態のプロバイダ
 // 継続的な変化を監視
 // ログイン状態を取得
-final authStateChangesProvider = StreamProvider<User?>((ref) {
-  return ref.watch(firebaseAuthProvider).authStateChanges();
-});
+//final authStateChangesProvider = StreamProvider<User?>((ref) {
+//  return ref.watch(firebaseAuthProvider).authStateChanges();
+//});
 
 // エラーメッセージプロバイダー
-final errorMessageProvider = StateProvider<String>((ref) => '');
+//final errorMessageProvider = StateProvider<String>((ref) => '');
 
 // 匿名ログインが完了状態を監視
-final anonymousProvider = StateProvider<bool>((ref) => false);
+//final anonymousProvider = StateProvider<bool>((ref) => false);
