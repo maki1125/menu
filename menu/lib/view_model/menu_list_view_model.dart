@@ -31,3 +31,23 @@ final totalPriceProvider = Provider<List<int>>((ref) {
     error: (e, stack) => [], // エラー時も空のリストを返す
   );
 });
+
+//お気に入りボタン
+void favoriteButton(menu){
+  if(menu.isFavorite){
+    menu.isFavorite = false;
+  }else{
+    menu.isFavorite = true;  
+  }
+  MenuRepository(_currentUser!).editMenu(menu);
+}
+
+//お気に入りボタン
+void dinnerButton(menu){
+  if(menu.isDinner){
+    menu.isDinner = false;
+  }else{
+    menu.isDinner = true;  
+  }
+  MenuRepository(_currentUser!).editMenu(menu);
+}

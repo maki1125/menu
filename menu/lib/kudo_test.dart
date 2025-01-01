@@ -23,11 +23,11 @@ class KudoTest extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     UserModel user = UserModel(
         //createAt: DateTime.now(),
-        uid: "AC3iWb7RnqM4gCmeLOD9");
+        uid: "OFvJx1IkQ0ZhMtEpaJVr9NoRD7x2");
 
 
     Menu menu3 = Menu(
-      id: "AdAZuXaF7hcW7CW3CIbb",
+      id: "OFvJx1IkQ0ZhMtEpaJVr9NoRD7x2",
       imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
       );
       Menu menu2 = Menu(
@@ -39,12 +39,13 @@ class KudoTest extends ConsumerWidget {
                     {"name": "にんじん", "quantity": 1, "unit": "本", "price": 100},
                     {"name": "ピーマン", "quantity": 2, "unit": "個", "price": 200},
                     {"name": "キャベツ", "quantity": 3, "unit": "個", "price": 50}
-                    ]
+                    ],
+                    id: "IzLlkWNi8TLq63NMTJ5z",
                   );
-    Dinner dinner = Dinner(
+    //Dinner dinner = Dinner(
 
-      createAt: DateTime.now(),
-    );
+      //createAt: DateTime.now(),
+    //);
     Dinner dinner = Dinner(
         createAt: DateTime.now(),
         select: ["ハンバーグ", "ご飯", "コーンスープ"],

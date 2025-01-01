@@ -40,23 +40,26 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           SizedBox(height: 20),
           _buildTextField(
               labelText: '材料',
-              hintText: '例：牛肉',
+              hintText: '牛肉',
               controller: materialController,
               keyboardType: TextInputType.text),
+              
           SizedBox(height: 20),
           _buildTextField(
               labelText: '数量',
+              hintText: '100',
               controller: quantityController,
               keyboardType: TextInputType.number),
           SizedBox(height: 20),
           _buildTextField(
               labelText: '単位',
-              hintText: '例：本、袋',
+              hintText: 'g',
               controller: unitController,
               keyboardType: TextInputType.text),
           SizedBox(height: 20),
           _buildTextField(
               labelText: '価格',
+              hintText: '250',
               controller: priceController,
               keyboardType: TextInputType.number),
           SizedBox(height: 20),
@@ -144,6 +147,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           border: const OutlineInputBorder(),
+          hintStyle: TextStyle(color: const Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
         ),
       ),
     );
