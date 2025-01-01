@@ -5,7 +5,6 @@ import 'package:menu/kudo_test2.dart';
 import 'package:menu/view/login_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
-import 'package:menu/view/dinner_list_screen.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -31,11 +30,10 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    Scaffold(
+    return Scaffold(
       body: IndexedStack(
         index: _currentIndex,
-        children: _pages,//indexのページを表示
+        children: _pages, //indexのページを表示
       ),
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _currentIndex,
