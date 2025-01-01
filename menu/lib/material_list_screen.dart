@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:menu/data/providers.dart';
+import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/material_create_screen.dart';
+import 'package:menu/data/providers.dart';
 
 class MaterialListScreen extends ConsumerWidget {
   MaterialListScreen({super.key});
@@ -10,6 +11,7 @@ class MaterialListScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final materialList = ref.watch(materialListProvider);
+    final appBarTitle = ref.watch(appBarTitleProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -38,12 +40,35 @@ class MaterialListScreen extends ConsumerWidget {
                         child: ListTile(
                           title: Text(
                               '   ${material.name ?? ''}      ${material.quantity?.toString()}${material.unit}     ${material.price?.toString()}円'),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              MaterialRepository(currentUser!)
-                                  .deleteMaterial(material);
-                            },
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    ref
+                                        .read(appBarTitleProvider.notifier)
+                                        .state = '材料の編集';
+                                    ref
+                                        .read(materialProvider.notifier)
+                                        .updateMaterial(material);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            MaterialCreateScreen(
+                                                user: currentUser!),
+                                      ),
+                                    );
+                                  }),
+                              IconButton(
+                                icon: const Icon(Icons.delete),
+                                onPressed: () {
+                                  MaterialRepository(currentUser!)
+                                      .deleteMaterial(material);
+                                },
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -52,25 +77,22 @@ class MaterialListScreen extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => CircularProgressIndicator(),
-            error: (error, stackTrace) => Text('エラーが発生しました'),
+            loading: () => const CircularProgressIndicator(),
+            error: (error, stackTrace) => const Text('エラーが発生しました'),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MaterialCreateScreen(),
-                  ),
-                );
-              },
-              child: const Text('追加'),
-            ),
-          ),
-          const Divider(),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          ref.read(appBarTitleProvider.notifier).state = '材料の登録';
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MaterialCreateScreen(user: currentUser!),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }

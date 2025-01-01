@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:menu/data/providers.dart';
+import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/model/material.dart';
+import 'package:menu/data/model/user.dart';
+import 'package:menu/data/providers.dart';
 
-class MaterialCreateScreen extends ConsumerStatefulWidget {
-  MaterialCreateScreen({super.key});
+class MaterialCreateScreen extends StatefulWidget {
+  MaterialCreateScreen({super.key, required this.user});
+
+  final UserModel user;
 
   @override
   _MaterialCreateScreenstate createState() => _MaterialCreateScreenstate();
 }
 
-class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
+class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
   final materialController = TextEditingController();
   final quantityController = TextEditingController();
   final unitController = TextEditingController();
@@ -28,81 +32,68 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('材料の登録'),
-        centerTitle: true,
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Center(
-        child: Column(children: <Widget>[
-          SizedBox(height: 20),
-          _buildTextField(
-              labelText: '材料',
-              hintText: '例：牛肉',
-              controller: materialController,
-              keyboardType: TextInputType.text),
-          SizedBox(height: 20),
-          _buildTextField(
-              labelText: '数量',
-              controller: quantityController,
-              keyboardType: TextInputType.number),
-          SizedBox(height: 20),
-          _buildTextField(
-              labelText: '単位',
-              hintText: '例：本、袋',
-              controller: unitController,
-              keyboardType: TextInputType.text),
-          SizedBox(height: 20),
-          _buildTextField(
-              labelText: '価格',
-              controller: priceController,
-              keyboardType: TextInputType.number),
-          SizedBox(height: 20),
-          SizedBox(
-            width: 100,
-            child: FilledButton(
-              onPressed: () async {
-                final material = MaterialModel(
-                  name: materialController.text,
-                  quantity: int.tryParse(quantityController.text),
-                  unit: unitController.text,
-                  price: int.tryParse(priceController.text),
-                  //createAt: DateTime.now(),
-                );
-                try {
-                  // 追加
-                  await MaterialRepository(currentUser!).addMaterial(material);
+    return Consumer(
+      builder: (context, ref, child) {
+        // 材料データ取得
+        final material = ref.watch(materialProvider);
+        final appBarTitle = ref.watch(appBarTitleProvider);
 
-                  // フォームのクリア
-                  materialController.clear();
-                  quantityController.clear();
-                  unitController.clear();
-                  priceController.clear();
-                } catch (e) {
-                  _showErrorDialog('登録に失敗しました。再度お試しください。');
-                }
-              },
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-              child: const Text('登録'),
-            ),
+        materialController.text = material.name ?? '';
+        quantityController.text = material.quantity?.toString() ?? '';
+        unitController.text = material.unit ?? '';
+        priceController.text = material.price?.toString() ?? '';
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(appBarTitle),
+            centerTitle: true,
+            titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
+            backgroundColor: Colors.blueAccent,
           ),
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.blueAccent,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('戻る'),
-          )
-        ]),
-      ),
+          body: Center(
+            child: Column(children: <Widget>[
+              SizedBox(height: 20),
+              _buildTextField(
+                  labelText: '材料',
+                  hintText: '例：牛肉',
+                  controller: materialController,
+                  keyboardType: TextInputType.text),
+              SizedBox(height: 20),
+              _buildTextField(
+                  labelText: '数量',
+                  controller: quantityController,
+                  keyboardType: TextInputType.number),
+              SizedBox(height: 20),
+              _buildTextField(
+                  labelText: '単位',
+                  hintText: '例：本、袋',
+                  controller: unitController,
+                  keyboardType: TextInputType.text),
+              SizedBox(height: 20),
+              _buildTextField(
+                  labelText: '価格',
+                  controller: priceController,
+                  keyboardType: TextInputType.number),
+              SizedBox(height: 20),
+              SizedBox(
+                width: 100,
+                child: appBarTitle == '材料の登録'
+                    ? _resisterButton()
+                    : _updateButton(ref),
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blueAccent,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('戻る'),
+              )
+            ]),
+          ),
+        );
+      },
     );
   }
 
@@ -147,5 +138,72 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         ),
       ),
     );
+  }
+
+  // 登録ボタン
+  Widget _resisterButton() {
+    return FilledButton(
+      onPressed: () async {
+        final material = MaterialModel(
+          name: materialController.text,
+          quantity: int.tryParse(quantityController.text),
+          unit: unitController.text,
+          price: int.tryParse(priceController.text),
+          //createAt: DateTime.now(),
+        );
+        try {
+          // 追加
+          await MaterialRepository(currentUser!).addMaterial(material);
+
+          clearform();
+        } catch (e) {
+          _showErrorDialog('登録に失敗しました。再度お試しください。');
+        }
+      },
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      child: const Text('登録'),
+    );
+  }
+
+  Widget _updateButton(WidgetRef ref) {
+    return FilledButton(
+      onPressed: () async {
+        final material = ref.watch(materialProvider);
+        final materials = MaterialModel(
+          id: material.id,
+          name: materialController.text,
+          quantity: int.tryParse(quantityController.text),
+          unit: unitController.text,
+          price: int.tryParse(priceController.text),
+          //createAt: DateTime.now(),
+        );
+        try {
+          // 更新
+          await MaterialRepository(currentUser!).updateMaterial(materials);
+
+          clearform();
+        } catch (e) {
+          _showErrorDialog('更新に失敗しました。再度お試しください。$e');
+        }
+      },
+      style: OutlinedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+      child: const Text('更新'),
+    );
+  }
+
+  // フォームのクリア
+  void clearform() {
+    materialController.clear();
+    quantityController.clear();
+    unitController.clear();
+    priceController.clear();
   }
 }
