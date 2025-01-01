@@ -33,13 +33,20 @@ class KudoTest extends ConsumerWidget{
             uid: "AC3iWb7RnqM4gCmeLOD9"
             );
 
-    Menu menu2 = Menu(
+    Menu menu3 = Menu(
       id: "AdAZuXaF7hcW7CW3CIbb",
       imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
       );
-      Menu menu = Menu(
+      Menu menu2 = Menu(
                     name: "唐揚げ",
                     createAt: DateTime.now(),
+                    dinnerDate: DateTime.now(),
+                    memo: "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよ",
+                    material: [
+                    {"name": "にんじん", "quantity": 1, "unit": "本", "price": 100},
+                    {"name": "ピーマン", "quantity": 2, "unit": "個", "price": 200},
+                    {"name": "キャベツ", "quantity": 3, "unit": "個", "price": 50}
+                    ]
                   );
     Dinner dinner = Dinner(
       createAt: DateTime.now(),
@@ -100,7 +107,7 @@ class KudoTest extends ConsumerWidget{
                 ElevatedButton(
                   onPressed: () {
                     // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
-                    MenuRepository(currentUser!).addMenu(menu);
+                    MenuRepository(currentUser!).addMenu(menu2);
                   },
                 child: const Text('Add Menu'),
                 ),

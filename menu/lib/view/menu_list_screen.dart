@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:intl/intl.dart';
 
 class MenuList extends ConsumerWidget {
+  
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
+    
+
     //テストのためのテキスト
     String longText = 'あいうえおかきくけこさしすせそたちつてと';
     int nameMaxLength = 10;
+    final menuListAsyncValue= ref.watch(menuListProvider);
+    final totalPrice = ref.watch(totalPriceProvider);
 
-    return ListView.builder(
-        itemCount: 6,
+
+    return menuListAsyncValue.when(
+      data: (menus){
+        return ListView.builder(
+        itemCount: menus.length,
         itemBuilder: (context, index){
         return Card(
           elevation: 1, //影の深さ
@@ -37,7 +47,7 @@ class MenuList extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(longText.length > nameMaxLength ? '${longText.substring(0, nameMaxLength)}...' : longText,
+                            Text(menus[index].name!.length > nameMaxLength ? '${menus[index].name!.substring(0, nameMaxLength)}...' : menus[index].name!,
                               style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),),
                             //Icon(Icons.favorite),
                             
@@ -45,11 +55,13 @@ class MenuList extends ConsumerWidget {
                         ),
 
                         //2列目(最近食べた日）
-                        Text("最近食べた日:2024/12/31(火)",
+                        Text("最近食べた日:${menus[index].dinnerDate != null ? 
+                        DateFormat('yyyy/MM/dd(E)','ja').format(menus[index].dinnerDate!) : 
+                        "ー"}",
                         style: TextStyle(fontSize: 13),),
 
                         //3列目(メモ）
-                        Text("メモ：美味しかった。もう一回作りたい。",
+                        Text(menus[index].memo!.length > 37 ? '${menus[index].memo!.substring(0, 37)}...' : menus[index].memo!,
                         style: TextStyle(fontSize: 13),), // 余白を挿入
 
                         //4列目(ボタンと値段）
@@ -68,7 +80,7 @@ class MenuList extends ConsumerWidget {
                               style: TextStyle(fontSize: 13),
                               ),  
                             ),
-                            Text("1人前:1000円",
+                            Text("1人前:${totalPrice[index]}円",
                             //style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ],
@@ -98,11 +110,15 @@ class MenuList extends ConsumerWidget {
                       Positioned(
                         top: 0,
                         right: 0,
-                        child: Icon(
-                          Icons.favorite,
+                        child: IconButton(
+                          onPressed: () {},
+                          // 表示アイコン
+                          icon: Icon(Icons.favorite),
+                          // アイコン色
                           color: Colors.pink,
-                          size: 25,
-                        ),
+                          // サイズ
+                          iconSize: 25,
+                        )
                       ),
                     ],
                   )
@@ -113,5 +129,10 @@ class MenuList extends ConsumerWidget {
         );
       }
     );
+      }, 
+      error: (e, stackTrace) => Center(child: Text('Error: $e')), 
+      loading: () => Center(child: CircularProgressIndicator()),
+      );
+    
   }
 }
