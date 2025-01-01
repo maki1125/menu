@@ -65,7 +65,17 @@ class MenuRepository {
     return{
       'createAt': menu.createAt,
       'name': menu.name,
+      'imageURL': menu.imageURL,
+      'imagePath': menu.imagePath,
+      'quantity': menu.quantity,
+      'tag': menu.tag,
+      'material': menu.material,
+      'howToMake': menu.howToMake,
+      'memo': menu.memo,
+      'isFavorite': menu.isFavorite,
+      'isDinner': menu.isDinner,
       'id': menu.id,
+      'dinnerDate': menu.dinnerDate,
     };
   }
 

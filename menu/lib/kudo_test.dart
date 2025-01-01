@@ -25,12 +25,24 @@ class KudoTest extends ConsumerWidget {
         //createAt: DateTime.now(),
         uid: "AC3iWb7RnqM4gCmeLOD9");
 
-    Menu menu2 = Menu(
-        id: "AdAZuXaF7hcW7CW3CIbb",
-        imagePath:
-            "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg");
-    Menu menu = Menu(
-      name: "唐揚げ",
+
+    Menu menu3 = Menu(
+      id: "AdAZuXaF7hcW7CW3CIbb",
+      imagePath: "users/AC3iWb7RnqM4gCmeLOD9/images/1735476387866395_IMG_0111.jpeg"
+      );
+      Menu menu2 = Menu(
+                    name: "唐揚げ",
+                    createAt: DateTime.now(),
+                    dinnerDate: DateTime.now(),
+                    memo: "あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよ",
+                    material: [
+                    {"name": "にんじん", "quantity": 1, "unit": "本", "price": 100},
+                    {"name": "ピーマン", "quantity": 2, "unit": "個", "price": 200},
+                    {"name": "キャベツ", "quantity": 3, "unit": "個", "price": 50}
+                    ]
+                  );
+    Dinner dinner = Dinner(
+
       createAt: DateTime.now(),
     );
     Dinner dinner = Dinner(
@@ -61,32 +73,38 @@ class KudoTest extends ConsumerWidget {
                   final menu = menuList[index];
                   return Card(
                       child: InkWell(
-                          onTap: () {
-                            print(menu.id);
-                            //menu.name = "test";
-                            //MenuRepository(user).editMenu(menu);
-                          },
-                          child: ListTile(
-                            title: Text(menu.name!),
-                            subtitle: Text(menu.id.toString() +
-                                "," +
-                                menu.createAt.toString()),
-                          )));
-                },
-              ));
-            },
-            loading: () => Center(child: CircularProgressIndicator()),
-            error: (error, stackTrace) =>
-                Center(child: Text('Error: ${error.toString()}')),
-          ),
-          Row(
-            children: [
-              // メニューの追加処理
-              ElevatedButton(
-                onPressed: () {
-                  // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
-                  MenuRepository(currentUser!).addMenu(menu);
-                },
+                        onTap: () {
+                          print(menu.id);
+                          //menu.name = "test";
+                          //MenuRepository(user).editMenu(menu);
+                        },
+                        child: ListTile(
+                      title: Text(menu.name!),
+                      subtitle: Text(menu.id.toString()+","+menu.createAt.toString()),
+                      
+                    )
+                      )
+                    );
+                    
+                  },
+                )
+              );
+                
+              },
+              loading: () => Center(child: CircularProgressIndicator()),
+              error: (error, stackTrace) =>
+                  Center(child: Text('Error: ${error.toString()}')),
+            ),
+            Row(
+              children: [
+
+                // メニューの追加処理
+                ElevatedButton(
+                  onPressed: () {
+                    // MenuRepositoryインスタンスを作成し、addMenuを呼び出す
+                    MenuRepository(currentUser!).addMenu(menu2);
+                  },
+
                 child: const Text('Add Menu'),
               ),
             ],
