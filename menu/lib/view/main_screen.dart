@@ -18,7 +18,7 @@ class _MainPageState extends State<MainPage> {
   //ページの設定
   final List<Widget> _pages = [
     MenuList(),
-    MaterialList(),
+    MaterialListScreen(),
     KudoTest(),
   ];
 
@@ -31,10 +31,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("test")
-      ),
+    return 
+    Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,//indexのページを表示
