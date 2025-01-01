@@ -7,8 +7,8 @@ import 'package:menu/view/login_screen.dart';
 import 'package:menu/data/providers.dart';
 import 'package:menu/firebase_auth_error.dart';
 import 'package:menu/data/model/user.dart';
-import 'package:menu/material_create_screen.dart';
-import 'package:menu/material_list_screen.dart';
+import 'package:menu/view/material_create_screen.dart';
+import 'package:menu/view/material_list_screen.dart';
 
 // 認証サービス
 class AuthService {

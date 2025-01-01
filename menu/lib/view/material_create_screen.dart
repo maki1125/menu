@@ -135,6 +135,8 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
           floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           border: const OutlineInputBorder(),
+          hintStyle: TextStyle(
+              color: const Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
         ),
       ),
     );

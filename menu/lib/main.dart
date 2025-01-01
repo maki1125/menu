@@ -8,11 +8,16 @@ import 'package:menu/kudo_test.dart';
 //import 'data/repository/menu_repository.dart';
 import 'data/repository/o_user_repository.dart';
 import 'package:menu/material_create_screen.dart';
+import 'view/main_screen.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(ProviderScope(child: MyApp()));
+  await initializeDateFormatting('ja');
+  runApp(
+    ProviderScope(child: MyApp()),
+  );
 }
 
 class MyApp extends ConsumerWidget {

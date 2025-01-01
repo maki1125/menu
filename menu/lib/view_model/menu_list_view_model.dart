@@ -12,3 +12,42 @@ final _currentUser= UserRepository().getCurrentUser();
 final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository(currentUser!).getMenuList();
 });
+
+//合計金額
+final totalPriceProvider = Provider<List<int>>((ref) {
+  final menuListAsyncValue = ref.watch(menuListProvider);
+
+  // 合計金額を計算
+  return menuListAsyncValue.when(
+    data: (menus) {
+      return menus.map((menu) {
+        // 各メニューのmaterialを使って合計金額を計算
+        return menu.material!.fold(0, (materialSum, material) {
+          return materialSum + (material['price'] as int) * (material['quantity'] as int);
+        });
+      }).toList();
+    },
+    loading: () => [], // ローディング中は空のリストを返す
+    error: (e, stack) => [], // エラー時も空のリストを返す
+  );
+});
+
+//お気に入りボタン
+void favoriteButton(menu){
+  if(menu.isFavorite){
+    menu.isFavorite = false;
+  }else{
+    menu.isFavorite = true;  
+  }
+  MenuRepository(_currentUser!).editMenu(menu);
+}
+
+//お気に入りボタン
+void dinnerButton(menu){
+  if(menu.isDinner){
+    menu.isDinner = false;
+  }else{
+    menu.isDinner = true;  
+  }
+  MenuRepository(_currentUser!).editMenu(menu);
+}
