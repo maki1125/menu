@@ -51,6 +51,7 @@ class _MainPageState extends State<MainPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: _currentIndex != 0 ? AppBarComponentWidget() : null, //空のwidegt
       // body: IndexedStack(
       //   index: _currentIndex,
       //   children: _pages, //indexのページを表示

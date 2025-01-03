@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:menu/view/login_screen.dart';
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -14,7 +16,7 @@ class CustomBottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: currentIndex,
-      onTap: onTap,//BottomNavigationBarが内部的にタップイベントを監視し、indexをonTapに渡す。
+      onTap: onTap, //BottomNavigationBarが内部的にタップイベントを監視し、indexをonTapに渡す。
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home),
@@ -28,8 +30,40 @@ class CustomBottomBar extends StatelessWidget {
           icon: Icon(Icons.flatware),
           label: '夕食の履歴',
         ),
-
       ],
     );
   }
+}
+
+class AppBarComponentWidget extends StatelessWidget
+    implements PreferredSizeWidget {
+  AppBarComponentWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(
+        'Cook Dinner',
+        style: GoogleFonts.pacifico(),
+      ),
+      centerTitle: true,
+      elevation: 10.0,
+      leading: IconButton(
+        icon: Icon(Icons.account_circle),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => UserAuthentication(),
+            ),
+          );
+        },
+      ),
+      //centerTitle: true,
+      backgroundColor: Colors.white,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(40);
 }

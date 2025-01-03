@@ -45,6 +45,7 @@ dependencies:
   cached_network_image: ^3.2.0 #画像のキャッシュ
   flutter_datetime_picker_plus: ^2.2.0
   fluttertoast: ^8.2.10
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
