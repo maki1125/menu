@@ -28,9 +28,9 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository(currentUser!).getMenuList();
 });
 
-final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
-  return DinnerRepository(currentUser!).getDinnerList();
-});
+// final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
+//   return DinnerRepository(currentUser!).getDinnerList();
+// });
 
 // FirebaseAuthインスタンスのプロバイダ
 // final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {

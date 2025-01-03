@@ -15,60 +15,74 @@ class MaterialListScreen extends ConsumerWidget {
     return Stack(
       children: [
         SingleChildScrollView(
+          // スクロール可能なウィジェット
           child: Column(
             children: <Widget>[
               materialList.when(
+                // データ取得状態による表示切り替え
                 data: (materials) {
                   return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: materials.length,
+                    shrinkWrap: true, // 高さ自動調整
+                    physics: NeverScrollableScrollPhysics(), // スクロール禁止
+                    itemCount: materials.length, // リストの数
                     itemBuilder: (context, index) {
-                      final material = materials[index];
+                      final material = materials[index]; // 材料データ
 
                       return ListTile(
                         title: Card(
                           elevation: 2.0,
+                          margin: EdgeInsets.all(0), // 余白
                           shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.blue, width: 1.0),
-                            borderRadius: BorderRadius.circular(10.0),
+                            // カードの形状
+                            side: BorderSide(
+                                color: Colors.blue, width: 1.0), // 枠線
+                            borderRadius: BorderRadius.circular(10.0), // 角丸
                           ),
                           child: ListTile(
+                            contentPadding:
+                                EdgeInsets.symmetric(horizontal: 10.0),
+                            // リストの中身
                             title: Text(
-                                '   ${material.name ?? ''}      ${material.quantity?.toString()}${material.unit}     ${material.price?.toString()}円'),
-                            trailing: SizedBox(
-                              width: 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit),
-                                    onPressed: () {
-                                      ref
-                                          .read(selectButtonProvider.notifier)
-                                          .state = 'edit';
-                                      ref
-                                          .read(materialProvider.notifier)
-                                          .updateMaterial(material);
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              MaterialCreateScreen(
-                                                  user: currentUser!),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      MaterialRepository(currentUser!)
-                                          .deleteMaterial(material);
-                                    },
-                                  ),
-                                ],
-                              ),
+                              '${material.name ?? ''}   ${material.quantity?.toString()}${material.unit}   ${material.price?.toString()}円',
+                              overflow: TextOverflow.ellipsis, // テキストがはみ出た場合の処理
+                              maxLines: 1,
+                            ),
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min, // 最小サイズ
+                              mainAxisAlignment: MainAxisAlignment.end, // 右寄せ
+                              children: [
+                                IconButton(
+                                  icon: Icon(Icons.edit), // 編集アイコン
+                                  onPressed: () {
+                                    ref
+                                        .read(selectButtonProvider
+                                            .notifier) // ボタンの状態を更新
+                                        .state = 'edit';
+                                    ref
+                                        .read(materialProvider
+                                            .notifier) // 材料データを更新
+                                        .updateMaterial(
+                                            material); // 選択した材料データを更新
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        // 画面遷移
+                                        builder: (context) =>
+                                            MaterialCreateScreen(
+                                                user: currentUser!),
+                                      ),
+                                    );
+                                  },
+                                ),
+                                IconButton(
+                                  // 削除アイコン
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    MaterialRepository(currentUser!)
+                                        .deleteMaterial(material);
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -76,27 +90,29 @@ class MaterialListScreen extends ConsumerWidget {
                     },
                   );
                 },
-                loading: () => CircularProgressIndicator(),
+                loading: () => CircularProgressIndicator(), // ローディング中
                 error: (error, stackTrace) => Text('エラーが発生しました: $error'),
               ),
             ],
           ),
         ),
         Positioned(
+          // 画面右下に配置
           bottom: 16,
           right: 16,
           child: FloatingActionButton(
             onPressed: () {
-              ref.read(selectButtonProvider.notifier).state = 'Resist';
+              ref.read(selectButtonProvider.notifier).state =
+                  'Resist'; // ボタンの状態を更新
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      MaterialCreateScreen(user: currentUser!),
+                      MaterialCreateScreen(user: currentUser!), // 画面遷移
                 ),
               );
             },
-            child: const Icon(Icons.add),
+            child: const Icon(Icons.add), // 追加アイコン
           ),
         ),
       ],

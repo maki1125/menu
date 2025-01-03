@@ -40,8 +40,9 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
           builder: (context, ref, child) {
             // 材料データ取得
             final material = ref.watch(materialProvider);
-            final selectButton = ref.watch(selectButtonProvider);
+            final selectButton = ref.watch(selectButtonProvider); // ボタンの状態取得
 
+            // フォームにデータをセット
             materialController.text = material.name ?? '';
             quantityController.text = material.quantity?.toString() ?? '';
             unitController.text = material.unit ?? '';
@@ -83,6 +84,7 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
                       ? _resisterButton()
                       : _updateButton(ref),
                 ),
+                // 戻るボタン
                 TextButton(
                   style: TextButton.styleFrom(
                     foregroundColor: Colors.blueAccent,
@@ -130,9 +132,10 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
     return SizedBox(
       width: 300,
       child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
+        controller: controller, // コントローラー
+        keyboardType: keyboardType, // キーボードタイプ
         decoration: InputDecoration(
+          // テキストフィールドの装飾
           labelText: labelText,
           hintText: hintText,
           floatingLabelAlignment: FloatingLabelAlignment.center,
@@ -150,10 +153,10 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
     return FilledButton(
       onPressed: () async {
         final material = MaterialModel(
-          name: materialController.text,
-          quantity: int.tryParse(quantityController.text),
-          unit: unitController.text,
-          price: int.tryParse(priceController.text),
+          name: materialController.text, // 材料名
+          quantity: int.tryParse(quantityController.text), // 数量
+          unit: unitController.text, // 単位
+          price: int.tryParse(priceController.text), // 価格
           //createAt: DateTime.now(),
         );
         try {
@@ -163,13 +166,20 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
 
           Navigator.pop(context);
           // Toast
-          Fluttertoast.showToast(gravity: ToastGravity.BOTTOM, msg: '登録しました');
+          Fluttertoast.showToast(
+            timeInSecForIosWeb: 1,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16,
+            msg: '登録しました',
+          );
         } catch (e) {
           _showErrorDialog('登録に失敗しました。再度お試しください。');
         }
       },
+      // ボタンのスタイル
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
+          // ボタンの形
           borderRadius: BorderRadius.circular(4),
         ),
       ),
@@ -180,8 +190,9 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
   Widget _updateButton(WidgetRef ref) {
     return FilledButton(
       onPressed: () async {
-        final material = ref.watch(materialProvider);
+        final material = ref.watch(materialProvider); // 材料データ取得
         final materials = MaterialModel(
+          // 更新データ
           id: material.id,
           name: materialController.text,
           quantity: int.tryParse(quantityController.text),
@@ -194,6 +205,14 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
           await MaterialRepository(currentUser!).updateMaterial(materials);
 
           clearform();
+          Navigator.pop(context);
+          // Toast
+          Fluttertoast.showToast(
+            timeInSecForIosWeb: 1,
+            gravity: ToastGravity.CENTER,
+            fontSize: 16,
+            msg: '更新しました',
+          ); //ダイアログ表示
         } catch (e) {
           _showErrorDialog('更新に失敗しました。再度お試しください。$e');
         }

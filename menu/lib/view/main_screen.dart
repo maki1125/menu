@@ -5,6 +5,7 @@ import 'package:menu/kudo_test.dart';
 //import 'package:menu/view/login_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
+import 'package:menu/view/dinner_list_screen.dart';
 
 class MainPage extends StatefulWidget {
   @override
@@ -20,7 +21,8 @@ class _MainPageState extends State<MainPage>
   final List<Widget> _pages = [
     MenuList(category: '全て'),
     MaterialListScreen(),
-    KudoTest(),
+    //KudoTest(),
+    DinnerList(),
   ];
   final List<String> tabCategories = [
     '全て',
@@ -53,8 +55,7 @@ class _MainPageState extends State<MainPage>
       //   index: _currentIndex,
       //   children: _pages, //indexのページを表示
 
-
-      body:Column(
+      body: Column(
         children: [
           _currentIndex == 0
               ? SafeArea(

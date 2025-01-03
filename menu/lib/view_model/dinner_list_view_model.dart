@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
-import 'package:menu/view/dinner_list_screen.dart';
+//import 'package:menu/view/dinner_list_screen.dart';
 import 'package:menu/data/providers.dart';
 import 'package:menu/data/model/dinner.dart';
 import 'package:intl/intl.dart';
