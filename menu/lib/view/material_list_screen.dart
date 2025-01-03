@@ -21,6 +21,15 @@ class MaterialListScreen extends ConsumerWidget {
               materialList.when(
                 // データ取得状態による表示切り替え
                 data: (materials) {
+                  if (materials.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        '材料が登録されていません',
+                        style: TextStyle(height: 10),
+                      ),
+                    );
+                  }
+
                   return ListView.builder(
                     shrinkWrap: true, // 高さ自動調整
                     physics: NeverScrollableScrollPhysics(), // スクロール禁止
