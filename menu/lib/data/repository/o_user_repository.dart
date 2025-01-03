@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+//import 'package:firebase_core/firebase_core.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/view/login_screen.dart';
-import 'package:menu/data/providers.dart';
+//import 'package:menu/view/login_screen.dart';
+//import 'package:menu/data/providers.dart';
 import 'package:menu/firebase_auth_error.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/view/material_create_screen.dart';
-import 'package:menu/view/material_list_screen.dart';
+//import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 
 // 認証サービス

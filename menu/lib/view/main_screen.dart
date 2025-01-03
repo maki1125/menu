@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/kudo_test.dart';
-import 'package:menu/kudo_test2.dart';
-import 'package:menu/view/login_screen.dart';
+//import 'package:menu/kudo_test2.dart';
+//import 'package:menu/view/login_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 
@@ -39,10 +39,6 @@ class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages, //indexのページを表示
 
       body:Column(
         children: [

@@ -4,6 +4,7 @@ import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/providers.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //ログインユーザ
 final _currentUser= UserRepository().getCurrentUser();
@@ -13,6 +14,8 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository(currentUser!).getMenuList();
 });
 
+
+/*
 //合計金額
 final totalPriceProvider = Provider<List<int>>((ref) {
   final menuListAsyncValue = ref.watch(menuListProvider);
@@ -31,6 +34,7 @@ final totalPriceProvider = Provider<List<int>>((ref) {
     error: (e, stack) => [], // エラー時も空のリストを返す
   );
 });
+*/
 
 //お気に入りボタン
 void favoriteButton(menu){
@@ -51,3 +55,33 @@ void dinnerButton(menu){
   }
   MenuRepository(_currentUser!).editMenu(menu);
 }
+
+//？人前を管理
+final quantityProvider = StateProvider.family<int, int>((ref, index) => 1);
+
+//選択した夕食の合計金額の管理
+final totalDinnerPriceProvider = StateProvider<int>((ref) => 0);
+
+
+//夕食の合計金額をfilterdMenusが変更したらリアルタイムに計算するクラス
+class TotalPriceNotifier extends StateNotifier<int> {
+  TotalPriceNotifier() : super(0);
+
+  void updateTotalPrice(List<Menu> menus, WidgetRef ref) {
+    // メニューと quantityProvider の値を元に合計金額を計算
+    int total = menus.asMap().entries.fold(
+      0,
+      (sum, entry) {
+        final index = entry.key;
+        final menu = entry.value;
+        final quantity = ref.read(quantityProvider(index));
+        return sum + (menu.unitPrice ?? 0) * quantity;
+      },
+    );
+    state = total;
+  }
+}
+
+final totalPriceNotifierProvider = StateNotifierProvider<TotalPriceNotifier, int>((ref) {
+  return TotalPriceNotifier();
+});

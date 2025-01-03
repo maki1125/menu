@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+//import 'package:firebase_storage/firebase_storage.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
 import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/model/user.dart';
@@ -26,11 +26,16 @@ class MenuRepository {
 
   //データ追加
   Future<void> addMenu(Menu menu) async{
+
+    menu.price = menu.material!.fold(0, (materialSum, material) {
+          return materialSum! + (material['price'] as int) * (material['quantity'] as int);});
+    menu.unitPrice = menu.price! ~/ menu.quantity!;
+
     DocumentReference docRef = await FirebaseFirestore.instance
     .collection('users/${user.uid}/menus')
     .add(_menuToMap(menu));
-    // ドキュメントIDを追加したい場合
-    await docRef.update({'id': docRef.id});
+   
+    await docRef.update({'id': docRef.id}); // ドキュメントIDを追加
   }
 
   //データ削除
@@ -76,6 +81,8 @@ class MenuRepository {
       'isDinner': menu.isDinner,
       'id': menu.id,
       'dinnerDate': menu.dinnerDate,
+      'price': menu.price,
+      'unitPrice': menu.unitPrice,
     };
   }
 
