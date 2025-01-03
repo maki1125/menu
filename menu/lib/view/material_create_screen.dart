@@ -33,65 +33,70 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        // 材料データ取得
-        final material = ref.watch(materialProvider);
-        final selectButton = ref.watch(selectButtonProvider);
+    return Material(
+      child: SafeArea(
+        top: true,
+        child: Consumer(
+          builder: (context, ref, child) {
+            // 材料データ取得
+            final material = ref.watch(materialProvider);
+            final selectButton = ref.watch(selectButtonProvider);
 
-        materialController.text = material.name ?? '';
-        quantityController.text = material.quantity?.toString() ?? '';
-        unitController.text = material.unit ?? '';
-        priceController.text = material.price?.toString() ?? '';
+            materialController.text = material.name ?? '';
+            quantityController.text = material.quantity?.toString() ?? '';
+            unitController.text = material.unit ?? '';
+            priceController.text = material.price?.toString() ?? '';
 
-        if (selectButton == 'Resist') {
-          // 登録ボタンが押された場合、フォームをクリア
-          clearform();
-        }
+            if (selectButton == 'Resist') {
+              // 登録ボタンが押された場合、フォームをクリア
+              clearform();
+            }
 
-        return Center(
-          child: Column(children: <Widget>[
-            SizedBox(height: 20),
-            _buildTextField(
-                labelText: '材料',
-                hintText: '例：牛肉',
-                controller: materialController,
-                keyboardType: TextInputType.text),
-            SizedBox(height: 20),
-            _buildTextField(
-                labelText: '数量',
-                controller: quantityController,
-                keyboardType: TextInputType.number),
-            SizedBox(height: 20),
-            _buildTextField(
-                labelText: '単位',
-                hintText: '例：本、袋',
-                controller: unitController,
-                keyboardType: TextInputType.text),
-            SizedBox(height: 20),
-            _buildTextField(
-                labelText: '価格',
-                controller: priceController,
-                keyboardType: TextInputType.number),
-            SizedBox(height: 20),
-            SizedBox(
-              width: 100,
-              child: selectButton == 'Resist'
-                  ? _resisterButton()
-                  : _updateButton(ref),
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.blueAccent,
-              ),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('戻る'),
-            )
-          ]),
-        );
-      },
+            return Center(
+              child: Column(children: <Widget>[
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '材料',
+                    hintText: '例：牛肉',
+                    controller: materialController,
+                    keyboardType: TextInputType.text),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '数量',
+                    controller: quantityController,
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '単位',
+                    hintText: '例：本、袋',
+                    controller: unitController,
+                    keyboardType: TextInputType.text),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '価格',
+                    controller: priceController,
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 100,
+                  child: selectButton == 'Resist'
+                      ? _resisterButton()
+                      : _updateButton(ref),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Colors.blueAccent,
+                  ),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('戻る'),
+                )
+              ]),
+            );
+          },
+        ),
+      ),
     );
   }
 
