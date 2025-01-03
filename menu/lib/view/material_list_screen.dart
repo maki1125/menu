@@ -12,68 +12,94 @@ class MaterialListScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final materialList = ref.watch(materialListProvider);
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('材料一覧'),
-        centerTitle: true,
-        titleTextStyle: TextStyle(color: Colors.white, fontSize: 20),
-        backgroundColor: Colors.blueAccent,
-      ),
-      body: Column(
-        children: <Widget>[
-          materialList.when(
-            data: (materials) {
-              return Expanded(
-                child: ListView.builder(
-                  itemCount: materials.length,
-                  itemBuilder: (context, index) {
-                    final material = materials[index];
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              materialList.when(
+                data: (materials) {
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: materials.length,
+                    itemBuilder: (context, index) {
+                      final material = materials[index];
 
-                    return ListTile(
-                      title: Card(
-                        elevation: 2.0,
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.blue, width: 1.0),
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        child: ListTile(
-                          title: Text(
-                              '   ${material.name ?? ''}      ${material.quantity?.toString()}${material.unit}     ${material.price?.toString()}円'),
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              MaterialRepository(currentUser!)
-                                  .deleteMaterial(material);
-                            },
+                      return ListTile(
+                        title: Card(
+                          elevation: 2.0,
+                          shape: RoundedRectangleBorder(
+                            side: BorderSide(color: Colors.blue, width: 1.0),
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: ListTile(
+                            title: Text(
+                                '   ${material.name ?? ''}      ${material.quantity?.toString()}${material.unit}     ${material.price?.toString()}円'),
+                            trailing: SizedBox(
+                              width: 100,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.edit),
+                                    onPressed: () {
+                                      ref
+                                          .read(selectButtonProvider.notifier)
+                                          .state = 'edit';
+                                      ref
+                                          .read(materialProvider.notifier)
+                                          .updateMaterial(material);
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              MaterialCreateScreen(
+                                                  user: currentUser!),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  IconButton(
+                                    icon: Icon(Icons.delete),
+                                    onPressed: () {
+                                      MaterialRepository(currentUser!)
+                                          .deleteMaterial(material);
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  );
+                },
+                loading: () => CircularProgressIndicator(),
+                error: (error, stackTrace) => Text('エラーが発生しました: $error'),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          bottom: 16,
+          right: 16,
+          child: FloatingActionButton(
+            onPressed: () {
+              ref.read(selectButtonProvider.notifier).state = 'Resist';
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MaterialCreateScreen(user: currentUser!),
                 ),
               );
             },
-            loading: () => CircularProgressIndicator(),
-            error: (error, stackTrace) => Text('エラーが発生しました'),
+            child: const Icon(Icons.add),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        MaterialCreateScreen(user: currentUser!),
-                  ),
-                );
-              },
-              child: const Text('追加'),
-            ),
-          ),
-          const Divider(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

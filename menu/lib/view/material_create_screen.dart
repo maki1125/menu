@@ -5,6 +5,7 @@ import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/data/providers.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class MaterialCreateScreen extends StatefulWidget {
   MaterialCreateScreen({super.key, required this.user});
@@ -43,49 +44,52 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
         unitController.text = material.unit ?? '';
         priceController.text = material.price?.toString() ?? '';
 
-        return Scaffold(
-          body: Center(
-            child: Column(children: <Widget>[
-              SizedBox(height: 20),
-              _buildTextField(
-                  labelText: '材料',
-                  hintText: '例：牛肉',
-                  controller: materialController,
-                  keyboardType: TextInputType.text),
-              SizedBox(height: 20),
-              _buildTextField(
-                  labelText: '数量',
-                  controller: quantityController,
-                  keyboardType: TextInputType.number),
-              SizedBox(height: 20),
-              _buildTextField(
-                  labelText: '単位',
-                  hintText: '例：本、袋',
-                  controller: unitController,
-                  keyboardType: TextInputType.text),
-              SizedBox(height: 20),
-              _buildTextField(
-                  labelText: '価格',
-                  controller: priceController,
-                  keyboardType: TextInputType.number),
-              SizedBox(height: 20),
-              SizedBox(
-                width: 100,
-                child: selectButton == 'Resist'
-                    ? _resisterButton()
-                    : _updateButton(ref),
+        if (selectButton == 'Resist') {
+          // 登録ボタンが押された場合、フォームをクリア
+          clearform();
+        }
+
+        return Center(
+          child: Column(children: <Widget>[
+            SizedBox(height: 20),
+            _buildTextField(
+                labelText: '材料',
+                hintText: '例：牛肉',
+                controller: materialController,
+                keyboardType: TextInputType.text),
+            SizedBox(height: 20),
+            _buildTextField(
+                labelText: '数量',
+                controller: quantityController,
+                keyboardType: TextInputType.number),
+            SizedBox(height: 20),
+            _buildTextField(
+                labelText: '単位',
+                hintText: '例：本、袋',
+                controller: unitController,
+                keyboardType: TextInputType.text),
+            SizedBox(height: 20),
+            _buildTextField(
+                labelText: '価格',
+                controller: priceController,
+                keyboardType: TextInputType.number),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 100,
+              child: selectButton == 'Resist'
+                  ? _resisterButton()
+                  : _updateButton(ref),
+            ),
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blueAccent,
               ),
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blueAccent,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('戻る'),
-              )
-            ]),
-          ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('戻る'),
+            )
+          ]),
         );
       },
     );
@@ -129,8 +133,8 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
           floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelBehavior: FloatingLabelBehavior.always,
           border: const OutlineInputBorder(),
-          hintStyle: TextStyle(
-              color: const Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
+          hintStyle: const TextStyle(
+              color: Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
         ),
       ),
     );
@@ -150,8 +154,11 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
         try {
           // 追加
           await MaterialRepository(currentUser!).addMaterial(material);
-
           clearform();
+
+          Navigator.pop(context);
+          // Toast
+          Fluttertoast.showToast(gravity: ToastGravity.BOTTOM, msg: '登録しました');
         } catch (e) {
           _showErrorDialog('登録に失敗しました。再度お試しください。');
         }
