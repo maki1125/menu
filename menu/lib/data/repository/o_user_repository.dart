@@ -16,12 +16,13 @@ import 'package:menu/view/material_list_screen.dart';
 // 認証サービス
 class AuthService {
   final FirebaseAuth _auth;
-  late String errorMessage = '';
+  late String errorMessage = ''; // エラーメッセージ
 
-  AuthService(this._auth);
+  AuthService(this._auth); // コンストラクタ
 
   //Stream<User?> get authStateChanges => _auth.authStateChanges();
   Stream<UserModel?> get authStateChanges {
+    // ユーザー情報を取得
     return _auth.authStateChanges().map((User? firebaseUser) {
       // userModelに変換
       if (firebaseUser != null) {
@@ -37,8 +38,9 @@ class AuthService {
   Future<void> signInEmailAndPassword(BuildContext context, String email,
       String password, WidgetRef ref) async {
     try {
-      ref.watch(errorMessageProvider.notifier).state = '';
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
+      await _auth.signInWithEmailAndPassword(
+          email: email, password: password); // サインイン処理
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -53,9 +55,10 @@ class AuthService {
           errorMessage = AuthErrorMessages.unknownError;
           print('その他；$e.code');
       }
-      ref.read(errorMessageProvider.notifier).state = errorMessage;
+      ref.read(errorMessageProvider.notifier).state =
+          errorMessage; // エラーメッセージを更新
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(errorMessage)));
+          .showSnackBar(SnackBar(content: Text(errorMessage))); // エラーメッセージを表示
       rethrow;
     }
   }
@@ -64,17 +67,18 @@ class AuthService {
   Future<void> singUpEmailAndPassword(BuildContext context, String email,
       String password, WidgetRef ref) async {
     try {
-      ref.watch(errorMessageProvider.notifier).state = '';
+      ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
       // サインアップ処理
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
       // 確認メール送信
       await userCredential.user!.sendEmailVerification();
       if (context.mounted) {
-        ScaffoldMessenger.of(context)
+        ScaffoldMessenger.of(context) // メッセージ表示
             .showSnackBar(SnackBar(content: Text('確認メールを送信しました')));
       }
     } on FirebaseAuthException catch (e) {
+      // エラーハンドリング
       switch (e.code) {
         case 'weak-password':
           errorMessage = AuthErrorMessages.weakPassword;
@@ -88,7 +92,8 @@ class AuthService {
           errorMessage = AuthErrorMessages.unknownError;
           print('その他：$e.code');
       }
-      ref.read(errorMessageProvider.notifier).state = errorMessage;
+      ref.read(errorMessageProvider.notifier).state =
+          errorMessage; // エラーメッセージを更新
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(errorMessage)));
       rethrow;
@@ -158,9 +163,18 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  // 現在のユーザーを取得
+  UserModel? getCurrentUser() {
+    final firebaseuser = _auth.currentUser;
+    return firebaseuser != null
+        ? UserModel.fromFirebaseUser(firebaseuser)
+        : null;
+  }
 }
 
 class SignInAnony extends ConsumerStatefulWidget {
+  // 匿名ログイン
   const SignInAnony({super.key});
 
   @override
@@ -179,6 +193,7 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
   }*/
 
   Future<void> _signInAnonymously() async {
+    // 匿名ログイン処理
     try {
       ref.read(authServiceProvider).signInAnony(ref);
       //setState(() {
@@ -194,16 +209,17 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+      stream: FirebaseAuth.instance.authStateChanges(), // ユーザー情報を取得
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
               child: CircularProgressIndicator()); // ローディング中のウィジェット
         }
         if (snapshot.hasData) {
+          // ユーザー情報がある場合
           //return UserAuthentication();
         }
-        _signInAnonymously();
+        _signInAnonymously(); // 匿名ログイン処理
         //return UserAuthentication();
         return MaterialListScreen();
         //return DinnerList();

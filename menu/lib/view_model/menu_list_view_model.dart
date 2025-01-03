@@ -1,19 +1,17 @@
-import 'package:riverpod/riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/menu.dart';
-import 'package:menu/data/model/user.dart';
+//import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/providers.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 //ログインユーザ
-final _currentUser= UserRepository().getCurrentUser();
+final _currentUser = UserRepository().getCurrentUser();
 
 //メニューリスト
 final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository(currentUser!).getMenuList();
 });
-
 
 /*
 //合計金額
@@ -37,21 +35,21 @@ final totalPriceProvider = Provider<List<int>>((ref) {
 */
 
 //お気に入りボタン
-void favoriteButton(menu){
-  if(menu.isFavorite){
+void favoriteButton(menu) {
+  if (menu.isFavorite) {
     menu.isFavorite = false;
-  }else{
-    menu.isFavorite = true;  
+  } else {
+    menu.isFavorite = true;
   }
   MenuRepository(_currentUser!).editMenu(menu);
 }
 
 //お気に入りボタン
-void dinnerButton(menu){
-  if(menu.isDinner){
+void dinnerButton(menu) {
+  if (menu.isDinner) {
     menu.isDinner = false;
-  }else{
-    menu.isDinner = true;  
+  } else {
+    menu.isDinner = true;
   }
   MenuRepository(_currentUser!).editMenu(menu);
 }
@@ -61,7 +59,6 @@ final quantityProvider = StateProvider.family<int, int>((ref, index) => 1);
 
 //選択した夕食の合計金額の管理
 final totalDinnerPriceProvider = StateProvider<int>((ref) => 0);
-
 
 //夕食の合計金額をfilterdMenusが変更したらリアルタイムに計算するクラス
 class TotalPriceNotifier extends StateNotifier<int> {
@@ -82,6 +79,7 @@ class TotalPriceNotifier extends StateNotifier<int> {
   }
 }
 
-final totalPriceNotifierProvider = StateNotifierProvider<TotalPriceNotifier, int>((ref) {
+final totalPriceNotifierProvider =
+    StateNotifierProvider<TotalPriceNotifier, int>((ref) {
   return TotalPriceNotifier();
 });
