@@ -1,10 +1,10 @@
 import 'package:menu/data/repository/user_repository.dart';
 import 'repository/menu_repository.dart';
-import 'repository/dinner_repository.dart';
+//import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
 import 'model/menu.dart';
-import 'model/dinner.dart';
+//import 'model/dinner.dart';
 //import 'repository/o_user_repository.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:firebase_storage/firebase_storage.dart';
