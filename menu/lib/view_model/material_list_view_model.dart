@@ -23,5 +23,5 @@ class MaterialNotifier extends Notifier<MaterialModel> {
   }
 }
 
-// appBarタイトル
+// 登録か更新かの選択
 final selectButtonProvider = StateProvider<String>((ref) => 'Resist');
