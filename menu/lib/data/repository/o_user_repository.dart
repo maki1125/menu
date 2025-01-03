@@ -11,6 +11,7 @@ import 'package:menu/view/material_create_screen.dart';
 //import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 import 'package:menu/view/dinner_list_screen.dart';
+import 'package:menu/view/material_list_screen.dart';
 
 // 認証サービス
 class AuthService {
