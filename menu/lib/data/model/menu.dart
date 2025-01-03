@@ -15,6 +15,8 @@ class Menu {
     this.isDinner,
     this.id,
     this.dinnerDate,
+    this.price,
+    this.unitPrice,
   });
 
   DateTime? createAt;
@@ -31,6 +33,8 @@ class Menu {
   bool? isDinner;
   String? id;
   DateTime? dinnerDate;
+  int? price;
+  int? unitPrice;
 
     //FirestoreからのデータからDinnerインスタンスを生成する
   factory Menu.fromFirestore(Map<String, dynamic> data) {
@@ -48,7 +52,9 @@ class Menu {
       isFavorite: data['isFavorite'] as bool? ?? false,
       isDinner: data['isDinner'] as bool? ?? false,
       id: data['id'] as String? ?? "noData",
-      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate()  //nullの可能性あり
+      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate(),  //nullの可能性あり
+      price: data['price'] as int? ?? 0,
+      unitPrice: data['unitPrice'] as int? ?? 0,
     );
   }
 }

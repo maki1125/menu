@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/data/providers.dart';
-import 'package:menu/kudo_test.dart';
 //import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/providers.dart';
+//import 'package:menu/kudo_test.dart';
+//import 'package:firebase_core/firebase_core.dart';
+//import 'package:flutter_riverpod/flutter_riverpod.dart';
+//import 'package:menu/data/providers.dart';
 import 'package:menu/data/repository/image_repository.dart';
 //import 'package:menu/kudo_test.dart';
 import 'data/model/menu.dart';
@@ -15,7 +15,7 @@ import 'data/repository/menu_repository.dart';
 import 'data/repository/user_repository.dart';
 import 'data/repository/dinner_repository.dart';
 //import 'package:file_picker/file_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 
 class KudoTest extends ConsumerWidget {
   List<Menu>? menuList;
@@ -39,8 +39,10 @@ class KudoTest extends ConsumerWidget {
                     {"name": "にんじん", "quantity": 1, "unit": "本", "price": 100},
                     {"name": "ピーマン", "quantity": 2, "unit": "個", "price": 200},
                     {"name": "キャベツ", "quantity": 3, "unit": "個", "price": 50}
+                    
                     ],
-                    id: "IzLlkWNi8TLq63NMTJ5z",
+                    quantity: 2,
+                    //id: "IzLlkWNi8TLq63NMTJ5z",
                   );
     //Dinner dinner = Dinner(
 
@@ -55,7 +57,7 @@ class KudoTest extends ConsumerWidget {
     final menuListAsyncValue = ref.watch(menuListProvider);
     final dinnerListAsyncValue = ref.watch(dinnerListProvider);
     final currentUser = ref.watch(userProvider);
-
+    print(currentUser!.uid);
     return //Scaffold(
       //appBar: AppBar(
         //title: const Text('Scaffold Example'),
