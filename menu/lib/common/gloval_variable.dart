@@ -1,0 +1,1 @@
+int initOtherPage = 99;

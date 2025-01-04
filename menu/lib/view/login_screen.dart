@@ -5,14 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/data/providers.dart';
+import 'package:menu/common/gloval_variable.dart';
 
-class UserAuthentication extends ConsumerWidget {
-  //final AuthService _auth;
+class UserAuthentication extends ConsumerStatefulWidget {
   UserAuthentication({super.key});
-  //: _auth = AuthService(FirebaseAuth.instance);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  _UserAuthentication createState() => _UserAuthentication();
+}
+
+class _UserAuthentication extends ConsumerState<UserAuthentication> {
+  @override
+  void initState() {
+    super.initState();
+
+    // ウィジェットツリーがビルドされた後に状態を変更する
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 状態変更をここで行う
+      ref.read(pageProvider.notifier).state = initOtherPage;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final emailController = TextEditingController(); // メールアドレス入力用
     final passwordController = TextEditingController(); // パスワード入力用
     final authService = ref.read(authServiceProvider); // 認証サービス取得

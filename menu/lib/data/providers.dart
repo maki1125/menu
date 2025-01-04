@@ -1,3 +1,4 @@
+import 'package:menu/common/gloval_variable.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'repository/menu_repository.dart';
 //import 'repository/dinner_repository.dart';
@@ -49,8 +50,9 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
 //  return ref.watch(firebaseAuthProvider).authStateChanges();
 //});
 
-// エラーメッセージプロバイダー
-//final errorMessageProvider = StateProvider<String>((ref) => '');
-
 // 匿名ログインが完了状態を監視
 //final anonymousProvider = StateProvider<bool>((ref) => false);
+
+final indexProvider = StateProvider<int>((ref) => 0); // メニュー画面のインデックス
+
+final pageProvider = StateProvider<int>((ref) => initOtherPage); // メニュー画面以外のページ

@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
+import 'package:menu/view/main_screen.dart';
+import 'package:menu/data/providers.dart';
 
 class MaterialListScreen extends ConsumerWidget {
   MaterialListScreen({super.key});
@@ -72,13 +74,14 @@ class MaterialListScreen extends ConsumerWidget {
                                             .notifier) // 材料データを更新
                                         .updateMaterial(
                                             material); // 選択した材料データを更新
+                                    // ref.read(indexProvider.notifier).state =
+                                    //     index;
+                                    ref.read(pageProvider.notifier).state = 0;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         // 画面遷移
-                                        builder: (context) =>
-                                            MaterialCreateScreen(
-                                                user: currentUser!),
+                                        builder: (context) => MainPage(),
                                       ),
                                     );
                                   },
@@ -113,11 +116,18 @@ class MaterialListScreen extends ConsumerWidget {
             onPressed: () {
               ref.read(selectButtonProvider.notifier).state =
                   'Resist'; // ボタンの状態を更新
+              ref.read(pageProvider.notifier).state = 0;
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         MaterialCreateScreen(user: currentUser!), // 画面遷移
+              //   ),
+              // );
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      MaterialCreateScreen(user: currentUser!), // 画面遷移
+                  builder: (context) => MainPage(), // 画面遷移
                 ),
               );
             },
