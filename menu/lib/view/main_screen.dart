@@ -64,9 +64,10 @@ class _MainPageState extends ConsumerState<MainPage>
     final otherPage = ref.read(pageProvider.notifier);
 
     return Scaffold(
-      appBar: _currentIndex != 0 || otherPage.state != initOtherPage
-          ? AppBarComponentWidget()
-          : null, //空のwidegt
+      appBar: AppBarComponentWidget(),
+      // appBar: _currentIndex != 0 || otherPage.state != initOtherPage
+      //     ? AppBarComponentWidget()
+      //     : null, //空のwidegt
       // body: IndexedStack(
       //   index: _currentIndex,
       //   children: _pages, //indexのページを表示
