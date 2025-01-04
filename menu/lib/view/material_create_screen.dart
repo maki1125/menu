@@ -102,7 +102,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                     foregroundColor: Colors.blueAccent,
                   ),
                   onPressed: () {
-                    ref.read(pageProvider.notifier).state = 10;
+                    ref.read(pageProvider.notifier).state = initOtherPage;
                     Navigator.pop(context);
                   },
                   child: const Text('戻る'),
