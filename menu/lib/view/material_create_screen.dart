@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu/common/gloval_variable.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
@@ -7,7 +8,7 @@ import 'package:menu/data/model/user.dart';
 import 'package:menu/data/providers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-class MaterialCreateScreen extends StatefulWidget {
+class MaterialCreateScreen extends ConsumerStatefulWidget {
   MaterialCreateScreen({super.key, required this.user});
 
   final UserModel user;
@@ -16,7 +17,7 @@ class MaterialCreateScreen extends StatefulWidget {
   _MaterialCreateScreenstate createState() => _MaterialCreateScreenstate();
 }
 
-class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
+class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   final materialController = TextEditingController();
   final quantityController = TextEditingController();
   final unitController = TextEditingController();
@@ -29,6 +30,17 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
     unitController.dispose();
     priceController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // ウィジェットツリーがビルドされた後に状態を変更する
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // 状態変更をここで行う
+      ref.read(pageProvider.notifier).state = initOtherPage;
+    });
   }
 
   @override
@@ -90,6 +102,7 @@ class _MaterialCreateScreenstate extends State<MaterialCreateScreen> {
                     foregroundColor: Colors.blueAccent,
                   ),
                   onPressed: () {
+                    ref.read(pageProvider.notifier).state = 10;
                     Navigator.pop(context);
                   },
                   child: const Text('戻る'),

@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:menu/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/data/providers.dart';
+import 'package:menu/view/main_screen.dart';
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -63,10 +65,11 @@ class AppBarComponentWidget extends ConsumerWidget
                 radius: 16,
               ),
               onPressed: () {
+                ref.read(pageProvider.notifier).state = 1;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserAuthentication(),
+                    builder: (context) => MainPage(),
                   ),
                 );
               },
@@ -75,10 +78,11 @@ class AppBarComponentWidget extends ConsumerWidget
             return IconButton(
               icon: const Icon(Icons.account_circle, size: 24),
               onPressed: () {
+                ref.read(pageProvider.notifier).state = 1;
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserAuthentication(),
+                    builder: (context) => MainPage(),
                   ),
                 );
               },
@@ -96,4 +100,19 @@ class AppBarComponentWidget extends ConsumerWidget
 
   @override
   Size get preferredSize => const Size.fromHeight(40);
+}
+
+Widget iconButton(context, ref, icon) {
+  return IconButton(
+    icon: icon,
+    onPressed: () {
+      ref.read(pageProvider.notifier).state = 1;
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserAuthentication(),
+        ),
+      );
+    },
+  );
 }

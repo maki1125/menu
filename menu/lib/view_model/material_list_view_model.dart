@@ -23,4 +23,4 @@ class MaterialNotifier extends Notifier<MaterialModel> {
 }
 
 // ボタンの状態管理
-final selectButtonProvider = StateProvider<String>((ref) => 'Resist');
+final selectButtonProvider = StateProvider<String>((ref) => '');
