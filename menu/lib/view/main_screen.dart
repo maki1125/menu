@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
-import 'package:menu/kudo_test.dart';
+import 'package:menu/view/kudo_test.dart';
 import 'package:menu/view/menu_create_screen.dart';
 //import 'package:menu/kudo_test2.dart';
 //import 'package:menu/view/login_screen.dart';
@@ -8,7 +8,7 @@ import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view/dinner_list_screen.dart';
 import 'package:menu/view/material_create_screen.dart';
-import 'package:menu/data/providers.dart';
+//import 'package:menu/data/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:menu/view/login_screen.dart';
@@ -30,8 +30,8 @@ class _MainPageState extends ConsumerState<MainPage>
     MenuList(category: '全て'),
     //MenuCreateScreen(),
     MaterialListScreen(),
-    //DinnerList(),
-    KudoTest(),
+    DinnerList(),
+    //KudoTest(),
   ];
 
 

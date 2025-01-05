@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:menu/data/model/user.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/data/repository/material_repository.dart';
-import 'package:menu/data/providers.dart';
+//import 'package:menu/data/providers.dart';
 import 'package:menu/common/common_providers.dart';
 
 // MaterialRepository を提供するプロバイダー
