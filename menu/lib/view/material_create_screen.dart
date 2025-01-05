@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:menu/common/gloval_variable.dart';
+import 'package:menu/common/common_constants.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
@@ -7,6 +7,7 @@ import 'package:menu/data/model/material.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/data/providers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:menu/common/common_providers.dart';
 
 class MaterialCreateScreen extends ConsumerStatefulWidget {
   MaterialCreateScreen({super.key, required this.user});
@@ -70,23 +71,25 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                 SizedBox(height: 20),
                 _buildTextField(
                     labelText: '材料',
-                    hintText: '例：牛肉',
+                    hintText: '牛肉',
                     controller: materialController,
                     keyboardType: TextInputType.text),
                 SizedBox(height: 20),
                 _buildTextField(
                     labelText: '数量',
+                    hintText: '100',
                     controller: quantityController,
                     keyboardType: TextInputType.number),
                 SizedBox(height: 20),
                 _buildTextField(
                     labelText: '単位',
-                    hintText: '例：本、袋',
+                    hintText: 'g',
                     controller: unitController,
                     keyboardType: TextInputType.text),
                 SizedBox(height: 20),
                 _buildTextField(
                     labelText: '価格',
+                    hintText: '200',
                     controller: priceController,
                     keyboardType: TextInputType.number),
                 SizedBox(height: 20),

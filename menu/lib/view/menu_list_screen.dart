@@ -4,6 +4,7 @@ import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
+import 'package:menu/view/menu_create_screen.dart';
 
 class MenuList extends ConsumerWidget {
 
@@ -16,12 +17,13 @@ class MenuList extends ConsumerWidget {
 
     int nameMaxLength = 10;
     final menuListAsyncValue = ref.watch(menuListProvider);
-    //final totalPrice = ref.watch(totalDinnerPriceProvider);
-    //final totalDinnerPrice = ref.watch(totalPriceNotifierProvider);
     final totalPrice = ref.watch(totalPriceNotifierProvider);
     
+    return Stack(
+      children: [
 
-    return menuListAsyncValue.when(
+      
+    menuListAsyncValue.when(
       data: (menus){
 
         //タグのフィルター
@@ -33,31 +35,6 @@ class MenuList extends ConsumerWidget {
               ? menus.where((menu) => menu.isFavorite == true).toList()
               : menus.where((menu) => menu.tag == category).toList();
 
-        
-
-/*
-        //夕食の合計金額を計算する関数
-        void updateTotalPrice(List<Menu> menus) {
-          final quantities = List<int>.generate(menus.length, (index) {
-            return ref.watch(quantityProvider(index)); // 各アイテムの数量を取得
-          });
-
-          final totalDinnerPrice = menus.asMap().entries.fold(0, (sum, entry) {
-            final index = entry.key;
-            final menu = entry.value;
-            return sum + (menu.unitPrice ?? 0) * quantities[index];
-          });
-
-          ref.read(totalDinnerPriceProvider.notifier).state = totalDinnerPrice;
-        }
-*/
-
-        // `totalPriceNotifier` を更新
-      //if (category == '今日の夕食') {
-        //WidgetsBinding.instance.addPostFrameCallback((_) {
-          //ref.read(totalPriceNotifierProvider.notifier).updateTotalPrice(filteredMenus);
-        //});
-      //}
       // 初期計算
         if (category == '今日の夕食') {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -88,21 +65,15 @@ class MenuList extends ConsumerWidget {
           },
         );
       }
-        
-        //if(category == '今日の夕食'){
-         //(updateTotalPrice(filteredMenus));
-        //}
-        
 
-
-        return ListView.builder(
-          padding: EdgeInsets.zero, // 隙間を無くす
-          itemCount: filteredMenus.length+1,//+1は今日の夕飯の最後のテキストのため。
-          itemBuilder: (context, index){
+      return ListView.builder(
+        padding: EdgeInsets.zero, // 隙間を無くす
+        itemCount: filteredMenus.length+1,//+1は今日の夕飯の最後のテキストのため。
+        itemBuilder: (context, index){
             
-            final dispQuantity = ref.watch(quantityProvider(index));//何人前
+          final dispQuantity = ref.watch(quantityProvider(index));//何人前
 
-if(index < filteredMenus.length){
+          if(index < filteredMenus.length){
             return Card(
               color: filteredMenus[index].isDinner! ? const Color.fromARGB(255, 251, 237, 237) : Colors.white,
               elevation: 1, //影の深さ
@@ -272,47 +243,45 @@ if(index < filteredMenus.length){
                 ),
               ),
             );
-}else{
-  return category == '今日の夕食'
+          }else{
+            return category == '今日の夕食'
   
-        ? Column(
-          children: [
-            SizedBox(height: 10),
-            
-            Text("${DateFormat('yyyy/MM/dd(E)','ja').format(DateTime.now()) }の夕食  合計${totalPrice}円"),
-            OutlinedButton(//枠線ありボタン
-              onPressed: () { /* ボタンがタップされた時の処理 */ },
-              child: Text('今日の夕飯はこれで決まり！'),
-            ),
-          ],
-        )
-        :SizedBox.shrink();
-}
+              ? Column(
+                children: [
+                  SizedBox(height: 10),
+                  
+                  Text("${DateFormat('yyyy/MM/dd(E)','ja').format(DateTime.now()) }の夕食  合計${totalPrice}円"),
+                  OutlinedButton(//枠線ありボタン
+                    onPressed: () { /* ボタンがタップされた時の処理 */ },
+                    child: Text('今日の夕飯はこれで決まり！'),
+                  ),
+                ],
+              )
+              :SizedBox.shrink();
           }
-        );
-        /*
-        ),
-
-        category == '今日の夕食'
-        ? Column(
-          children: [
-            Text("2024/12/31(月)の夕食  合計290円"),
-            OutlinedButton(//枠線ありボタン
-              onPressed: () { /* ボタンがタップされた時の処理 */ },
-              child: Text('決定'),
-            ),
-          ],
-        )
-            
-         
-      
-        :SizedBox.shrink(), // 表示しない場合
-        ],
-        );
-    */  
+        }
+      );
     }, 
     error: (e, stackTrace) => Center(child: Text('Error: $e')), 
     loading: () => Center(child: CircularProgressIndicator()),
+    ),
+
+    // フローティングボタンを配置
+    Positioned(
+      bottom: 16, // 下からの距離
+      right: 16,  // 右からの距離
+      child: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MenuCreateScreen()),
+            );
+        },
+        child: Icon(Icons.add),
+      ),
+    ),
+
+    ],
     );
   }
 }

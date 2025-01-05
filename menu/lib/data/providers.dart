@@ -1,10 +1,10 @@
-import 'package:menu/common/gloval_variable.dart';
-import 'package:menu/data/repository/user_repository.dart';
-import 'repository/menu_repository.dart';
+import 'package:menu/common/common_constants.dart';
+import 'package:menu/data/repository/o_user_repository.dart';
+//import 'repository/menu_repository.dart';
 //import 'repository/dinner_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'model/user.dart';
-import 'model/menu.dart';
+////import 'model/menu.dart';
 //import 'model/dinner.dart';
 //import 'repository/o_user_repository.dart';
 //import 'package:firebase_auth/firebase_auth.dart';
@@ -12,8 +12,11 @@ import 'model/menu.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
 //final userProvider = StateProvider<UserModel?>((ref) =>UserRepository().getCurrentUser());
-UserModel? currentUser = UserRepository().getCurrentUser();
-final userProvider = StateProvider<UserModel?>((ref) => currentUser);
+//UserModel? currentUser = UserRepository().getCurrentUser();
+
+//UserModel? currentUser = AuthService().getCurrentUser();
+
+//final userProvider = StateProvider<UserModel?>((ref) => currentUser);
 /*
             UserModel(
             //createAt: DateTime.now(), 
@@ -25,9 +28,9 @@ final userProvider = StateProvider<UserModel?>((ref) => currentUser);
 //  return MenuRepository(user).getMenuList();
 //});
 
-final menuListProvider = StreamProvider<List<Menu>>((ref) {
-  return MenuRepository(currentUser!).getMenuList();
-});
+//final menuListProvider = StreamProvider<List<Menu>>((ref) {
+  //return MenuRepository(currentUser!).getMenuList();
+//});
 
 // final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
 //   return DinnerRepository(currentUser!).getDinnerList();
@@ -53,6 +56,8 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
 // 匿名ログインが完了状態を監視
 //final anonymousProvider = StateProvider<bool>((ref) => false);
 
-final indexProvider = StateProvider<int>((ref) => 0); // メニュー画面のインデックス
+// メニュー画面のインデックス
+//final indexProvider = StateProvider<int>((ref) => 0); 
 
-final pageProvider = StateProvider<int>((ref) => initOtherPage); // メニュー画面以外のページ
+// メニュー画面以外のページ
+//final pageProvider = StateProvider<int>((ref) => initOtherPage); 
