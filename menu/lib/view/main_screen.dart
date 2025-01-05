@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/kudo_test.dart';
+import 'package:menu/view/menu_create_screen.dart';
 //import 'package:menu/kudo_test2.dart';
 //import 'package:menu/view/login_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
@@ -11,7 +12,8 @@ import 'package:menu/data/providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:menu/view/login_screen.dart';
-import 'package:menu/common/gloval_variable.dart';
+import 'package:menu/common/common_constants.dart';
+import 'package:menu/common/common_providers.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   @override
@@ -26,15 +28,27 @@ class _MainPageState extends ConsumerState<MainPage>
   //ページの設定
   final List<Widget> _pages = [
     MenuList(category: '全て'),
+    //MenuCreateScreen(),
     MaterialListScreen(),
-    //KudoTest(),
-    DinnerList(),
+    //DinnerList(),
+    KudoTest(),
   ];
+
 
   final List<Widget> _otherPage = [
     MaterialCreateScreen(user: currentUser!),
     UserAuthentication(),
   ];
+
+
+  //final List<String> _appBarTitles = [
+   // "メニュー一覧",
+   // "材料一覧",
+   // "夕食の履歴"
+  //];
+
+
+/*common_constants.dartファイルに移動。新規登録のタグ選択でも使用するため、共通定数とする。
   final List<String> tabCategories = [
     '全て',
     'お気に入り',
@@ -45,6 +59,7 @@ class _MainPageState extends ConsumerState<MainPage>
     'デザート',
     'ご飯もの'
   ];
+*/
 
   //タッチしたアイコンの番号を現在のインデックスにセット
   void _onItemTapped(int index) {
@@ -64,10 +79,16 @@ class _MainPageState extends ConsumerState<MainPage>
     final otherPage = ref.read(pageProvider.notifier);
 
     return Scaffold(
+
       appBar: AppBarComponentWidget(),
       // appBar: _currentIndex != 0 || otherPage.state != initOtherPage
       //     ? AppBarComponentWidget()
       //     : null, //空のwidegt
+
+      //appBar: AppBar(
+        //title: Text(_appBarTitles[_currentIndex]),
+      //),
+
       // body: IndexedStack(
       //   index: _currentIndex,
       //   children: _pages, //indexのページを表示

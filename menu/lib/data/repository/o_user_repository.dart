@@ -14,15 +14,16 @@ import 'package:menu/view/material_list_screen.dart';
 
 // 認証サービス
 class AuthService {
-  final FirebaseAuth _auth;
+  final FirebaseAuth _auth;  // FirebaseAuthを自動でインスタンス化;
   late String errorMessage = ''; // エラーメッセージ
 
-  AuthService(this._auth); // コンストラクタ
+  AuthService([FirebaseAuth? auth]) : this._auth = auth ?? FirebaseAuth.instance; // コンストラクタ.引数なしでもOKとなるようにした。
+  //AuthService(this._auth); // コンストラクタ
 
   //Stream<User?> get authStateChanges => _auth.authStateChanges();
   Stream<UserModel?> get authStateChanges {
     // ユーザー情報を取得
-    return _auth.authStateChanges().map((User? firebaseUser) {
+    return _auth!.authStateChanges().map((User? firebaseUser) {
       // userModelに変換
       if (firebaseUser != null) {
         return UserModel.fromFirebaseUser(firebaseUser);
@@ -38,7 +39,7 @@ class AuthService {
       String password, WidgetRef ref) async {
     try {
       ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
-      await _auth.signInWithEmailAndPassword(
+      await _auth!.signInWithEmailAndPassword(
           email: email, password: password); // サインイン処理
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
@@ -68,7 +69,7 @@ class AuthService {
     try {
       ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
       // サインアップ処理
-      UserCredential userCredential = await _auth
+      UserCredential userCredential = await _auth!
           .createUserWithEmailAndPassword(email: email, password: password);
       // 確認メール送信
       await userCredential.user!.sendEmailVerification();
@@ -160,12 +161,12 @@ class AuthService {
 
   // サインアウト
   Future<void> signOut() async {
-    await _auth.signOut();
+    await _auth!.signOut();
   }
 
   // 現在のユーザーを取得
   UserModel? getCurrentUser() {
-    final firebaseuser = _auth.currentUser;
+    final firebaseuser = _auth!.currentUser;
     return firebaseuser != null
         ? UserModel.fromFirebaseUser(firebaseuser)
         : null;

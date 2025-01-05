@@ -1,9 +1,11 @@
+import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/providers.dart';
+import 'package:menu/common/common_providers.dart';
 
 //ログインユーザ
 final _currentUser = UserRepository().getCurrentUser();
@@ -83,3 +85,6 @@ final totalPriceNotifierProvider =
     StateNotifierProvider<TotalPriceNotifier, int>((ref) {
   return TotalPriceNotifier();
 });
+
+//メニュー新規作成から選択したファイル
+final selectedImageProvider = StateProvider<File?>((ref) => null);

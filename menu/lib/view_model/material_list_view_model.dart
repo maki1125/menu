@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/providers.dart';
+import 'package:menu/common/common_providers.dart';
 
 // MaterialRepository を提供するプロバイダー
 final materialRepositoryProvider = Provider<MaterialRepository>((ref) {
@@ -64,5 +65,5 @@ class MaterialNotifier extends StateNotifier<AsyncValue<MaterialModel?>> {
 //   }
 // }
 
-// ボタンの状態管理
+// ボタンの状態管理(edit（編集） or Resist（新規作成？）)
 final selectButtonProvider = StateProvider<String>((ref) => '');

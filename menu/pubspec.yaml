@@ -46,6 +46,9 @@ dependencies:
   flutter_datetime_picker_plus: ^2.2.0
   fluttertoast: ^8.2.10
   google_fonts: ^6.2.1
+  # path_provider: ^2.0.11
+  image_picker: ^0.8.8 #画像の選択
+
 
 dev_dependencies:
   flutter_test:

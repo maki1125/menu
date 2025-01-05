@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:menu/common/gloval_variable.dart';
+import 'package:menu/common/common_constants.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
@@ -7,6 +7,7 @@ import 'package:menu/data/model/material.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/data/providers.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:menu/common/common_providers.dart';
 
 class MaterialCreateScreen extends ConsumerStatefulWidget {
   MaterialCreateScreen({super.key, required this.user});
@@ -70,38 +71,56 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     return Material(
       child: SafeArea(
         top: true,
-        child: Center(
-          child: Column(children: <Widget>[
-            SizedBox(height: 20),
-            _buildTextField(
-              labelText: '材料',
-              hintText: '例：牛肉',
-              controller: materialController,
-              keyboardType: TextInputType.text,
-              width: 300,
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              width: 300,
-              child: FittedBox(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildTextField(
-                      labelText: '数量',
-                      controller: quantityController,
-                      keyboardType: TextInputType.number,
-                      width: 150,
-                    ),
-                    const SizedBox(width: 20),
-                    _buildTextField(
-                      labelText: '単位',
-                      hintText: '例：本、袋',
-                      controller: unitController,
-                      keyboardType: TextInputType.text,
-                      width: 150,
-                    ),
-                  ],
+        child: Consumer(
+          builder: (context, ref, child) {
+            // 材料データ取得
+            final material = ref.watch(materialProvider);
+            final selectButton = ref.watch(selectButtonProvider); // ボタンの状態取得
+
+            // フォームにデータをセット
+            materialController.text = material.name ?? '';
+            quantityController.text = material.quantity?.toString() ?? '';
+            unitController.text = material.unit ?? '';
+            priceController.text = material.price?.toString() ?? '';
+
+            if (selectButton == 'Resist') {
+              // 登録ボタンが押された場合、フォームをクリア
+              clearform();
+            }
+
+            return Center(
+              child: Column(children: <Widget>[
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '材料',
+                    hintText: '牛肉',
+                    controller: materialController,
+                    keyboardType: TextInputType.text),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '数量',
+                    hintText: '100',
+                    controller: quantityController,
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '単位',
+                    hintText: 'g',
+                    controller: unitController,
+                    keyboardType: TextInputType.text),
+                SizedBox(height: 20),
+                _buildTextField(
+                    labelText: '価格',
+                    hintText: '200',
+                    controller: priceController,
+                    keyboardType: TextInputType.number),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: 100,
+                  child: selectButton == 'Resist'
+                      ? _resisterButton()
+                      : _updateButton(ref),
+
                 ),
               ),
             ),

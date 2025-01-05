@@ -4,6 +4,7 @@ import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/data/providers.dart';
 import 'package:menu/data/model/dinner.dart';
 import 'package:intl/intl.dart';
+import 'package:menu/common/common_providers.dart';
 
 // 日付データ取得
 final dinnerDateNotifierProvider =

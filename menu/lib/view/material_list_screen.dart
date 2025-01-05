@@ -6,6 +6,7 @@ import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/data/providers.dart';
+import 'package:menu/common/common_providers.dart';
 
 class MaterialListScreen extends ConsumerWidget {
   MaterialListScreen({super.key});
@@ -114,9 +115,16 @@ class MaterialListScreen extends ConsumerWidget {
           right: 16,
           child: FloatingActionButton(
             onPressed: () {
-              ref.read(selectButtonProvider.notifier).state =
-                  'Resist'; // ボタンの状態を更新
-              ref.read(pageProvider.notifier).state = 0; // ページの状態を更新
+
+              ref.read(selectButtonProvider.notifier).state = 'Resist'; // ボタンの状態を更新
+              ref.read(pageProvider.notifier).state = 0;
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         MaterialCreateScreen(user: currentUser!), // 画面遷移
+              //   ),
+              // );
 
               Navigator.push(
                 context,

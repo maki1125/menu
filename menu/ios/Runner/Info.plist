@@ -45,5 +45,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+  <key>NSDocumentsFolderUsageDescription</key>
+  <string>アプリがドキュメントフォルダにアクセスするために必要です。</string>
 </dict>
 </plist>

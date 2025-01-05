@@ -6,15 +6,18 @@ import 'package:menu/data/providers.dart';
 //import 'package:firebase_core/firebase_core.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:menu/data/providers.dart';
-import 'package:menu/data/repository/image_repository.dart';
+
 //import 'package:menu/kudo_test.dart';
 import 'data/model/menu.dart';
 import 'data/model/user.dart';
 import 'data/model/dinner.dart';
+import 'package:menu/data/repository/image_repository.dart';
 import 'data/repository/menu_repository.dart';
 import 'data/repository/user_repository.dart';
 import 'data/repository/dinner_repository.dart';
 import 'package:menu/view_model/dinner_list_view_model.dart';
+import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/view_model/login_screen_view_model.dart';
 //import 'package:file_picker/file_picker.dart';
 //import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -147,7 +150,7 @@ class KudoTest extends ConsumerWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                ImageRepository(user, menu2)
+                ImageRepository(user, menu2, ref)
                     .addImage()
                     .then((value) => print(menu2.imageURL));
               },
@@ -156,7 +159,7 @@ class KudoTest extends ConsumerWidget {
             ElevatedButton(
               onPressed: () {
                 print(menu2.id);
-                ImageRepository(user, menu2)
+                ImageRepository(user, menu2, ref)
                     .deleteImage()
                     .then((value) => print(menu2.imageURL));
               },

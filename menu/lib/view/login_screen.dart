@@ -6,7 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 import 'package:menu/data/providers.dart';
-import 'package:menu/common/gloval_variable.dart';
+import 'package:menu/common/common_constants.dart';
+import 'package:menu/common/common_providers.dart';
 
 class UserAuthentication extends ConsumerStatefulWidget {
   UserAuthentication({super.key});
