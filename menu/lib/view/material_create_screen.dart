@@ -10,9 +10,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:menu/common/common_providers.dart';
 
 class MaterialCreateScreen extends ConsumerStatefulWidget {
-  MaterialCreateScreen({super.key, required this.user});
-
-  final UserModel user;
+  MaterialCreateScreen({super.key});
 
   @override
   _MaterialCreateScreenstate createState() => _MaterialCreateScreenstate();
