@@ -34,19 +34,16 @@ class _MainPageState extends ConsumerState<MainPage>
     //KudoTest(),
   ];
 
-
   final List<Widget> _otherPage = [
-    MaterialCreateScreen(user: currentUser!),
+    MaterialCreateScreen(),
     UserAuthentication(),
   ];
 
-
   //final List<String> _appBarTitles = [
-   // "メニュー一覧",
-   // "材料一覧",
-   // "夕食の履歴"
+  // "メニュー一覧",
+  // "材料一覧",
+  // "夕食の履歴"
   //];
-
 
 /*common_constants.dartファイルに移動。新規登録のタグ選択でも使用するため、共通定数とする。
   final List<String> tabCategories = [
@@ -79,14 +76,13 @@ class _MainPageState extends ConsumerState<MainPage>
     final otherPage = ref.read(pageProvider.notifier);
 
     return Scaffold(
-
       appBar: AppBarComponentWidget(),
       // appBar: _currentIndex != 0 || otherPage.state != initOtherPage
       //     ? AppBarComponentWidget()
       //     : null, //空のwidegt
 
       //appBar: AppBar(
-        //title: Text(_appBarTitles[_currentIndex]),
+      //title: Text(_appBarTitles[_currentIndex]),
       //),
 
       // body: IndexedStack(

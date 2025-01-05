@@ -88,3 +88,7 @@ final totalPriceNotifierProvider =
 
 //メニュー新規作成から選択したファイル
 final selectedImageProvider = StateProvider<File?>((ref) => null);
+
+final StateProvider<String> dropDownProvider = StateProvider<String>((ref) {
+  return '全て';
+});
