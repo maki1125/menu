@@ -115,6 +115,7 @@ class MaterialListScreen extends ConsumerWidget {
           right: 16,
           child: FloatingActionButton(
             onPressed: () {
+
               ref.read(selectButtonProvider.notifier).state = 'Resist'; // ボタンの状態を更新
               ref.read(pageProvider.notifier).state = 0;
               // Navigator.push(
@@ -124,6 +125,7 @@ class MaterialListScreen extends ConsumerWidget {
               //         MaterialCreateScreen(user: currentUser!), // 画面遷移
               //   ),
               // );
+
               Navigator.push(
                 context,
                 MaterialPageRoute(

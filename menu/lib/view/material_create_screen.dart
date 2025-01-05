@@ -46,6 +46,28 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // 材料データ取得
+    final materialasync = ref.watch(materialProvider);
+    final selectButton = ref.watch(selectButtonProvider); // ボタンの状態取得
+
+    // フォームにデータをセット
+
+    materialasync.when(
+      data: (material) {
+        materialController.text = material?.name ?? '';
+        quantityController.text = material?.quantity?.toString() ?? '';
+        unitController.text = material?.unit ?? '';
+        priceController.text = material?.price?.toString() ?? '';
+      },
+      loading: () => const CircularProgressIndicator(), // ローディング中はインジケーター表示
+      error: (e, stack) => Text('エラーが発生しました: $e'), // エラー時にダイアログ表示
+    );
+
+    if (selectButton == 'Resist') {
+      // 登録ボタンが押された場合、フォームをクリア
+      clearform();
+    }
+
     return Material(
       child: SafeArea(
         top: true,
@@ -98,21 +120,36 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   child: selectButton == 'Resist'
                       ? _resisterButton()
                       : _updateButton(ref),
+
                 ),
-                // 戻るボタン
-                TextButton(
-                  style: TextButton.styleFrom(
-                    foregroundColor: Colors.blueAccent,
-                  ),
-                  onPressed: () {
-                    ref.read(pageProvider.notifier).state = initOtherPage;
-                    Navigator.pop(context);
-                  },
-                  child: const Text('戻る'),
-                )
-              ]),
-            );
-          },
+              ),
+            ),
+            SizedBox(height: 20),
+            _buildTextField(
+              labelText: '価格',
+              controller: priceController,
+              keyboardType: TextInputType.number,
+              width: 300,
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              width: 100,
+              //child: selectButton == 'Resist'
+              child: _actionButton(ref, selectButton), // 登録、更新ボタン
+              //material.id == null ? _resisterButton() : _updateButton(ref),
+            ),
+            // 戻るボタン
+            TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blueAccent,
+              ),
+              onPressed: () {
+                ref.read(pageProvider.notifier).state = initOtherPage;
+                Navigator.pop(context);
+              },
+              child: const Text('戻る'),
+            )
+          ]),
         ),
       ),
     );
@@ -144,9 +181,10 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     final String hintText = '',
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
+    final double width = 130,
   }) {
     return SizedBox(
-      width: 300,
+      width: width,
       child: TextField(
         controller: controller, // コントローラー
         keyboardType: keyboardType, // キーボードタイプ
@@ -164,81 +202,70 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     );
   }
 
-  // 登録ボタン
-  Widget _resisterButton() {
-    return FilledButton(
-      onPressed: () async {
-        final material = MaterialModel(
-          name: materialController.text, // 材料名
-          quantity: int.tryParse(quantityController.text), // 数量
-          unit: unitController.text, // 単位
-          price: int.tryParse(priceController.text), // 価格
-          //createAt: DateTime.now(),
+  // 登録、更新ボタン
+  Widget _actionButton(WidgetRef ref, selectButton) {
+    final materialasync = ref.watch(materialProvider);
+    return materialasync.when(
+      data: (material) {
+        final isUpdate = selectButton != 'Resist';
+        print('通過');
+
+        return FilledButton(
+          onPressed: () async {
+            final materials = MaterialModel(
+              id: isUpdate ? material?.id : null, // ID
+              name: materialController.text, // 材料名
+              quantity: int.tryParse(quantityController.text), // 数量
+              unit: unitController.text, // 単位
+              price: int.tryParse(priceController.text), // 価格
+              //createAt: DateTime.now(),
+            );
+            try {
+              if (isUpdate) {
+                await MaterialRepository(currentUser!)
+                    .updateMaterial(materials);
+                // Toast
+                Fluttertoast.showToast(
+                  timeInSecForIosWeb: 1,
+                  gravity: ToastGravity.CENTER,
+                  fontSize: 16,
+                  msg: '更新しました',
+                ); //ダイアログ表示
+              } else {
+                // 追加
+                if (currentUser == null) {
+                  _showErrorDialog('ユーザー情報が取得できませんでした。');
+                }
+                await MaterialRepository(currentUser!).addMaterial(materials);
+                Fluttertoast.showToast(
+                  timeInSecForIosWeb: 1,
+                  gravity: ToastGravity.CENTER, // 位置
+                  fontSize: 16,
+                  msg: '登録しました',
+                );
+              }
+
+              clearform();
+
+              Navigator.pop(context);
+              // Toast
+            } catch (e) {
+              _showErrorDialog('${isUpdate ? '更新' : '登録'}に失敗しました。再度お試しください。$e');
+            }
+          },
+          // ボタンのスタイル
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              // ボタンの形
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          child: Text(isUpdate ? '更新' : '登録'),
         );
-        try {
-          // 追加
-          await MaterialRepository(currentUser!).addMaterial(material);
-          clearform();
-
-          Navigator.pop(context);
-          // Toast
-          Fluttertoast.showToast(
-            timeInSecForIosWeb: 1,
-            gravity: ToastGravity.CENTER,
-            fontSize: 16,
-            msg: '登録しました',
-          );
-        } catch (e) {
-          _showErrorDialog('登録に失敗しました。再度お試しください。');
-        }
       },
-      // ボタンのスタイル
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          // ボタンの形
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ),
-      child: const Text('登録'),
-    );
-  }
-
-  Widget _updateButton(WidgetRef ref) {
-    return FilledButton(
-      onPressed: () async {
-        final material = ref.watch(materialProvider); // 材料データ取得
-        final materials = MaterialModel(
-          // 更新データ
-          id: material.id,
-          name: materialController.text,
-          quantity: int.tryParse(quantityController.text),
-          unit: unitController.text,
-          price: int.tryParse(priceController.text),
-          //createAt: DateTime.now(),
-        );
-        try {
-          // 更新
-          await MaterialRepository(currentUser!).updateMaterial(materials);
-
-          clearform();
-          Navigator.pop(context);
-          // Toast
-          Fluttertoast.showToast(
-            timeInSecForIosWeb: 1,
-            gravity: ToastGravity.CENTER,
-            fontSize: 16,
-            msg: '更新しました',
-          ); //ダイアログ表示
-        } catch (e) {
-          _showErrorDialog('更新に失敗しました。再度お試しください。$e');
-        }
-      },
-      style: OutlinedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
-      ),
-      child: const Text('更新'),
+      //loading: () => const CircularProgressIndicator(),
+      loading: () => Text('ローティング'),
+      error: (e, stack) => Text('エラーが発生しました: $e'),
     );
   }
 
