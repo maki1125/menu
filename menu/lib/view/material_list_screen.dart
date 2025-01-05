@@ -116,14 +116,8 @@ class MaterialListScreen extends ConsumerWidget {
             onPressed: () {
               ref.read(selectButtonProvider.notifier).state =
                   'Resist'; // ボタンの状態を更新
-              ref.read(pageProvider.notifier).state = 0;
-              // Navigator.push(
-              //   context,
-              //   MaterialPageRoute(
-              //     builder: (context) =>
-              //         MaterialCreateScreen(user: currentUser!), // 画面遷移
-              //   ),
-              // );
+              ref.read(pageProvider.notifier).state = 0; // ページの状態を更新
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
