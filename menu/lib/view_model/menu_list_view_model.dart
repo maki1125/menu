@@ -4,7 +4,7 @@ import 'package:menu/data/model/menu.dart';
 //import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/user_repository.dart';
-//import 'package:menu/data/providers.dart';
+import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/common/common_providers.dart';
 
 //ログインユーザ
@@ -43,10 +43,12 @@ void favoriteButton(menu) {
   } else {
     menu.isFavorite = true;
   }
+  if(menu.id != null){//新規登録の場合は、idがまだないため。
   MenuRepository(_currentUser!).editMenu(menu);
+  }
 }
 
-//お気に入りボタン
+//「今日の夕飯」ボタン
 void dinnerButton(menu) {
   if (menu.isDinner) {
     menu.isDinner = false;
@@ -89,6 +91,13 @@ final totalPriceNotifierProvider =
 //メニュー新規作成から選択したファイル
 final selectedImageProvider = StateProvider<File?>((ref) => null);
 
+
+//タグのプルダウンの選択項目
 final StateProvider<String> dropDownProvider = StateProvider<String>((ref) {
   return '全て';
 });
+
+//保存する材料リストのプロバイダー
+
+
+
