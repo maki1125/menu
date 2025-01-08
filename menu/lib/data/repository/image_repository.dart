@@ -18,12 +18,8 @@ class ImageRepository {
 
   ImageRepository(this.user, this.menu, this.ref);
   
-  
-
-
-
-  //画像追加
-  Future<void> addImage() async{
+  //画像選択
+  Future<void> selectImage() async{
     //画像ファイル選択
     //final FilePickerResult? result = await FilePicker.platform.pickFiles(
       //type: FileType.image,
@@ -33,22 +29,29 @@ class ImageRepository {
     );
 
     if(result != null){
-      final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
+      //final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
       final File file = File(result.path); //選択したファイルパスの取得.'/Users/maki/Library/Developer/CoreSimulator/Devices/D3DA9B85-B1E2-44EB-BB5C-C04B9B3328A0/data/Containers/Data/Application/CBC9AFE6-6064-4375-AB03-12608EDF94D4/tmp/IMG_0111.jpeg'
       ref.read(selectedImageProvider.notifier).state = file;  // Riverpodで状態管理
-      final String name = file.path.split('/').last;
-      final String filename = '${timestamp}_$name';
-      final TaskSnapshot task = await FirebaseStorage.instance
-        .ref()
-        .child('users/${user.uid}/images')
-        .child(filename)
-        .putFile(file);
-      final String imageURL = await task.ref.getDownloadURL();
-      final String imagePath = task.ref.fullPath;// 画像削除時に使用。users/AC3iWb7RnqM4gCmeLOD9/images/1735480514815890_IMG_0111.jpeg
-      menu.imageURL = imageURL;
-      menu.imagePath = imagePath;
-      MenuRepository(user).addMenu(menu);
+      
     }
+  }
+  Future<void> addImage() async{
+    final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
+    final File? file = ref.watch(selectedImageProvider);  // Riverpodで値取得
+    final String name = file!.path.split('/').last;
+    final String filename = '${timestamp}_$name';
+    final TaskSnapshot task = await FirebaseStorage.instance
+      .ref()
+      .child('users/${user.uid}/images')
+      .child(filename)
+      .putFile(file);
+    final String imageURL = await task.ref.getDownloadURL();
+    final String imagePath = task.ref.fullPath;// 画像削除時に使用。users/AC3iWb7RnqM4gCmeLOD9/images/1735480514815890_IMG_0111.jpeg
+    menu.imageURL = imageURL;
+    menu.imagePath = imagePath;
+    MenuRepository(user).addMenu(menu);
+    print(menu.imageURL);
+    ref.read(selectedImageProvider.notifier).state = null;
   }
 
   //画像削除
