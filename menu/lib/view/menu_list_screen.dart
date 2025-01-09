@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 import 'package:menu/view/menu_create_screen.dart';
+import 'package:menu/view/main_screen.dart';
+import 'package:menu/common/common_providers.dart';
 
 class MenuList extends ConsumerWidget {
 
@@ -272,10 +274,20 @@ class MenuList extends ConsumerWidget {
       right: 16,  // 右からの距離
       child: FloatingActionButton(
         onPressed: () {
+          ref.read(pageProvider.notifier).state = 2;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              // 画面遷移
+              builder: (context) => MainPage(),
+            ),
+          );
+          /*
           Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MenuCreateScreen()),
-            );
+          );
+          */
         },
         child: Icon(Icons.add),
       ),

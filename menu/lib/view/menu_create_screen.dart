@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
+import 'package:menu/view/main_screen.dart';
 import 'package:menu/data/repository/image_repository.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
@@ -85,8 +86,16 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
               print("メニューの画像とデータを保存しました。");
-
-              Navigator.pop(context);//元画面(メニュー一覧)に遷移
+              
+              ref.read(pageProvider.notifier).state = 99;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // 画面遷移
+                  builder: (context) => MainPage(),
+                ),
+              );
+              //Navigator.pop(context);//元画面(メニュー一覧)に遷移
 
               setState(() {
                 _isLoading = false; // ローディング終了

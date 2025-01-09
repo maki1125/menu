@@ -37,6 +37,7 @@ class _MainPageState extends ConsumerState<MainPage>
   final List<Widget> _otherPage = [
     MaterialCreateScreen(),
     UserAuthentication(),
+    MenuCreateScreen(),
   ];
 
   //final List<String> _appBarTitles = [
@@ -63,6 +64,7 @@ class _MainPageState extends ConsumerState<MainPage>
     setState(() {
       _currentIndex = index;
     });
+    ref.read(pageProvider.notifier).state = 99;
   }
 
   @override
