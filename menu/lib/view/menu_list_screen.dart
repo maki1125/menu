@@ -16,6 +16,7 @@ class MenuList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    print("menu_list");
 
     int nameMaxLength = 10;
     final menuListAsyncValue = ref.watch(menuListProvider);
@@ -90,7 +91,7 @@ class MenuList extends ConsumerWidget {
                   children: [
                     //テキストエリア
                     Expanded(
-                      flex: 3,//テキスト領域の比率
+                      flex: 2,//テキスト領域の比率
                       child: 
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start, // 左寄せ
@@ -144,13 +145,15 @@ class MenuList extends ConsumerWidget {
                                 ),
 
                                 //値段とプラマイアイコン
-                                category == '今日の夕食'
+                                //category == '今日の夕食'
 
                                 
-                                ?Row(
+                                //?
+                                Row(
                                   mainAxisSize: MainAxisSize.min, // ウィジェットが必要な最小限のスペースを占有
                                   children: [
-                                    IconButton(
+                                    category == '今日の夕食'
+                                    ? IconButton(
                                       onPressed: () {
                                         ref.read(quantityProvider(index).notifier).state =
                                           (dispQuantity > 1) ? dispQuantity - 1 : 1;
@@ -159,7 +162,9 @@ class MenuList extends ConsumerWidget {
                                       icon: Icon(Icons.do_not_disturb_on_outlined),
                                       padding: EdgeInsets.zero,
                                       iconSize: 25,
-                                    ),
+                                    )
+                                    : SizedBox.shrink(),
+                                    
                                     Column(
                                       children: [
                                         Text("${dispQuantity}人前 ",
@@ -171,7 +176,8 @@ class MenuList extends ConsumerWidget {
                                       ],
                                     ),
 
-                                    IconButton(
+                                    category == '今日の夕食'
+                                    ? IconButton(
                                       onPressed: () {
                                         ref.read(quantityProvider(index).notifier).state =
                                           dispQuantity + 1;
@@ -180,11 +186,12 @@ class MenuList extends ConsumerWidget {
                                       icon: Icon(Icons.control_point_rounded),
                                       padding: EdgeInsets.zero,
                                       iconSize: 25,
-                                    ),
+                                    )
+                                    : SizedBox(width: 30,),
                                   ],
                                   
                                 )
-                                : SizedBox.shrink()
+                                //: SizedBox.shrink()
                               ],
                             )
                           ],
@@ -274,6 +281,7 @@ class MenuList extends ConsumerWidget {
       right: 16,  // 右からの距離
       child: FloatingActionButton(
         onPressed: () {
+          /*
           ref.read(pageProvider.notifier).state = 2;
           Navigator.push(
             context,
@@ -282,12 +290,12 @@ class MenuList extends ConsumerWidget {
               builder: (context) => MainPage(),
             ),
           );
-          /*
+          */
           Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MenuCreateScreen()),
+              MaterialPageRoute(builder: (context) => const MenuCreateScreen()),
           );
-          */
+          
         },
         child: Icon(Icons.add),
       ),

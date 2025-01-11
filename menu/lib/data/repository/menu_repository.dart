@@ -26,12 +26,19 @@ class MenuRepository {
 
   //データ追加
   Future<void> addMenu(Menu menu) async{
-
-    if(menu.price != null){
+    print("menu.price");
+    //print(menu.price);
+    if(menu.price == null && menu.material!.isNotEmpty){
+      print("price計算します。");
+      print(menu.material![0]['price'].toString()+"_"+menu.material![0]['quantity'].toString());
       menu.price = menu.material!.fold(0, (materialSum, material) {
-            return materialSum! + (material['price'] as int) * (material['quantity'] as int);});
+        //print(material['price']+"_"+material['quantity']);
+        return materialSum! + (material['price'] as int) * (material['quantity'] as int);
+        });
       menu.unitPrice = menu.price! ~/ menu.quantity!;
+      
     }
+    print("menu_add");
     DocumentReference docRef = await FirebaseFirestore.instance
     .collection('users/${user.uid}/menus')
     .add(_menuToMap(menu));

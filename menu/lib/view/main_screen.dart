@@ -75,9 +75,11 @@ class _MainPageState extends ConsumerState<MainPage>
 
   @override
   Widget build(BuildContext context) {
+    print("main");
     final otherPage = ref.read(pageProvider.notifier);
 
     return Scaffold(
+      
       appBar: AppBarComponentWidget(),
       // appBar: _currentIndex != 0 || otherPage.state != initOtherPage
       //     ? AppBarComponentWidget()
