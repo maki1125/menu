@@ -2,10 +2,11 @@ import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
+import 'package:menu/common/common_widget.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
-import 'package:menu/view/main_screen.dart';
+//import 'package:menu/view/main_screen.dart';
 import 'package:menu/data/repository/image_repository.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
@@ -15,21 +16,22 @@ class MenuCreateScreen extends ConsumerStatefulWidget {
   const MenuCreateScreen({Key? key}) : super(key: key); // Keyの引き渡し
 
   @override
-  _MenuCreateScreenState createState() => _MenuCreateScreenState();
+  MenuCreateScreenState createState() => MenuCreateScreenState();
 }
 
-class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
+class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
-  //入力項目の設定
+  //入力項目の設定。初期値は"""
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _quantityController = TextEditingController();
+  final TextEditingController _quantityController = TextEditingController(text: "1");
   final TextEditingController _materialController = TextEditingController();
-  final TextEditingController _numController = TextEditingController();
+  final TextEditingController _numController = TextEditingController(text: "1");
   final TextEditingController _unitController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _howToMakeController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
 
+  //リソース解放。ウィジェット破棄後に、コントローラを破棄。
   @override
   void dispose() {
     _nameController.dispose();
@@ -43,22 +45,54 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     super.dispose();
   }
 
+  //変数
   final List<Map<String, dynamic>> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
   late Menu _menu; //登録するデータをここに入れる
   final List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
   bool _isLoading = false; // 登録処理のローディング状態を管理
 
+  //初期化処理
   @override
   void initState() {
     super.initState();
     _menu = Menu(); // インスタンスを初期化
     _menu.isFavorite = false; // 初期値を設定
   }
+
+  // フォームのクリア
+  void _clearform() {
+
+    //材料の削除
+    _savedMaterials.clear();
+    
+    //テキストフィールド
+    _nameController.clear();
+    _quantityController.clear();
+    _materialController.clear();
+    _numController.clear();
+    _unitController.clear();
+    _priceController.clear();
+    _howToMakeController.clear();
+    _memoController.clear();
+
+    //タグ
+    ref.read(dropDownProvider.notifier).state = "全て"; // 値を更新
+
+    //画像のクリア
+    ref.read(selectedImageProvider.notifier).state = null;
+
+    //お気に入りアイコン
+    setState((){ //これによりtrueの場合でも再描写されるので、材料もクリアされる。
+    _menu.isFavorite = false;
+    });
+
+  }
   
   @override
   Widget build(BuildContext context) {    
-    
+    print("menu_create");
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('メニュー登録'),
 
@@ -66,6 +100,9 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
         actions: [
           OutlinedButton(//枠線ありボタン
             onPressed: () async{ 
+              if(_nameController.text == ""){
+                showMessage("料理名を入力してください。");
+              }else{
               setState(() {
                 _isLoading = true; // ローディング開始
               });
@@ -74,9 +111,9 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.name = _nameController.text;
               //_menu.imageURL  //addImage()で保存される
               //_menu.imagePath  //addImage()で保存される
-              _menu.quantity = int.tryParse(_quantityController.text);
+              _menu.quantity = int.tryParse(_quantityController.text) ?? 1;
               _menu.tag = "全て";
-              _menu.material = []; //あとで
+              _menu.material = _savedMaterials; //あとで
               _menu.howToMake = _howToMakeController.text;
               _menu.memo = _memoController.text;
               //_menu.id //addMenu()で保存される
@@ -87,6 +124,7 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
               print("メニューの画像とデータを保存しました。");
               
+              /*
               ref.read(pageProvider.notifier).state = 99;
               Navigator.push(
                 context,
@@ -95,16 +133,18 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   builder: (context) => MainPage(),
                 ),
               );
-              //Navigator.pop(context);//元画面(メニュー一覧)に遷移
+              */
+              Navigator.pop(context);//元画面(メニュー一覧)に遷移
 
               setState(() {
                 _isLoading = false; // ローディング終了
               });
+              }
             },
             style: OutlinedButton.styleFrom(
 	            //padding: EdgeInsets.zero, // 完全にパディングを削除
               //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
-              minimumSize: Size(50, 30), // 最小サイズを指定
+              minimumSize: const Size(50, 30), // 最小サイズを指定
               backgroundColor:  Colors.orange,
             ),
             child: const Text('登録',
@@ -116,9 +156,9 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
           ),
 
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
-              print('削除ボタン');
+              _clearform();
             },
           ),
         ],
@@ -226,7 +266,7 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   builder: (context, ref, child) {
                     final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目
                     return DropdownButton<String>(
-                      hint: const Text('メイン'), // ヒント表示
+                      hint: const Text('カテゴリー無'), // ヒント表示
                       value: dropdownItems.contains(selectedValue)
                           ? selectedValue
                           : null, // 選択値がリストに含まれていない場合は`null`
@@ -367,6 +407,22 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               child: const Text('+材料一覧から選択'),
             ),
             const SizedBox(height: 10,),
+            //メモ------------------------------------------------------
+            Row(//Rowで囲まないと材料が左揃えにならないため。
+              children: [
+                _titleText(title: '    メモ   '),
+              ],
+            ),
+            const SizedBox(height: 10,),
+            _buildTextField(
+              hintText: '美味しかった。また作りたい。',
+              controller: _memoController,
+              keyboardType: TextInputType.multiline,
+              setWidth: 350,
+              setHeight: 60,
+              setMaxline: 2,
+              textAlign: TextAlign.left,
+            ),
 
             //作り方ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
             Row(//Rowで囲まないと材料が左揃えにならないため。
@@ -385,22 +441,7 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               textAlign: TextAlign.left,
             ),
 
-            //メモ------------------------------------------------------
-            Row(//Rowで囲まないと材料が左揃えにならないため。
-              children: [
-                _titleText(title: '    メモ   '),
-              ],
-            ),
-            const SizedBox(height: 10,),
-            _buildTextField(
-              hintText: '美味しかった。また作りたい。',
-              controller: _memoController,
-              keyboardType: TextInputType.multiline,
-              setWidth: 350,
-              setHeight: 60,
-              setMaxline: 2,
-              textAlign: TextAlign.left,
-            ),
+
           ],
         ),
         // ローディングインジケーター.
@@ -419,14 +460,15 @@ class _MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   );
 }
 
+ //材料追加ボタン
   void _addButton(){
     if (_materialController.text != ""){
       setState((){
         _savedMaterials.add({
           "name": _materialController.text,
-          "quantity": _numController.text,
+          "quantity": int.tryParse(_numController.text) ?? 1,
           "unit": _unitController.text,
-          "price":_priceController.text != "" ? _priceController.text : 0
+          "price":int.tryParse(_priceController.text) ?? 0,
         });
       });
       _materialController.text = "";
@@ -480,7 +522,7 @@ Widget _buildTextField({
             //floatingLabelAlignment: FloatingLabelAlignment.center,//ラベルがテキストフィールドの中央に配置されます。
             //floatingLabelBehavior: FloatingLabelBehavior.always,//ラベルは常に浮き上がった状態で表示されます。
             border: const OutlineInputBorder(),
-            contentPadding: EdgeInsets.symmetric(
+            contentPadding: const EdgeInsets.symmetric(
                 horizontal: 3, vertical: 5), //hintTextの垂直方向を中央に揃える。
             hintStyle: const TextStyle(
                 color: Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定

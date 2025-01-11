@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:menu/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 //import 'package:menu/data/providers.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
+
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -115,5 +117,17 @@ Widget iconButton(context, ref, icon) {
         ),
       );
     },
+  );
+}
+
+//ポップアップメッセージ
+void showMessage(String message) {
+  Fluttertoast.showToast(
+    msg: message, // メッセージを設定
+    timeInSecForIosWeb: 1, // 表示時間
+    gravity: ToastGravity.CENTER, // 表示位置
+    fontSize: 16.0, // フォントサイズ
+    //backgroundColor: Colors.black, // 背景色
+    //textColor: Colors.white, // 文字色
   );
 }
