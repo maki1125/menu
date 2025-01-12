@@ -175,7 +175,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MainPage(), // 画面遷移
+                  builder: (context) => const MaterialCreateScreen(), // 画面遷移
                 ),
               );
               */
