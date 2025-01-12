@@ -243,8 +243,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           child: Text(isUpdate ? '更新' : '登録'),
         );
       },
-      //loading: () => const CircularProgressIndicator(),
-      loading: () => Text('ローティング'),
+      loading: () => const CircularProgressIndicator(),
       error: (e, stack) => Text('エラーが発生しました: $e'),
     );
   }
