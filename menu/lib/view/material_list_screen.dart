@@ -5,10 +5,9 @@ import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:menu/view/main_screen.dart';
-//import 'package:menu/data/providers.dart';
 import 'package:menu/common/common_providers.dart';
-import 'package:menu/common/common_constants.dart';
-import 'package:menu/data/model/material.dart';
+//import 'package:menu/common/common_constants.dart';
+//import 'package:menu/data/model/material.dart';
 
 class MaterialListScreen extends ConsumerStatefulWidget {
   const MaterialListScreen({super.key});
@@ -35,6 +34,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("material_list");
     final materialList = ref.watch(materialListProvider); // 材料データ取得
     final filteredMaterials =
         ref.watch(filteredMaterialsProvider); // フィルタリングされた材料データ
@@ -112,15 +112,21 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                                 material); // 選択した材料データを更新
                                         // ref.read(indexProvider.notifier).state =
                                         //     index;
+
+                                        /*
                                         // Mainページに自分のページインデックスを渡す
-                                        ref.read(pageProvider.notifier).state =
-                                            0;
+                                        ref.read(pageProvider.notifier).state = 0;
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                             // 画面遷移
                                             builder: (context) => MainPage(),
                                           ),
+                                        );
+                                        */
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(builder: (context) => MaterialCreateScreen()),
                                         );
                                       },
                                     ),
@@ -156,7 +162,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
             onPressed: () {
               ref.read(selectButtonProvider.notifier).state =
                   'Resist'; // ボタンの状態を更新
-              ref.read(pageProvider.notifier).state = 0;
+              //ref.read(pageProvider.notifier).state = 0;
               // Navigator.push(
               //   context,
               //   MaterialPageRoute(
@@ -165,11 +171,17 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
               //   ),
               // );
 
+              /*
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => MainPage(), // 画面遷移
                 ),
+              );
+              */
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MaterialCreateScreen()),
               );
             },
             child: const Icon(Icons.add), // 追加アイコン

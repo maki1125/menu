@@ -124,16 +124,6 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
               print("メニューの画像とデータを保存しました。");
               
-              /*
-              ref.read(pageProvider.notifier).state = 99;
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  // 画面遷移
-                  builder: (context) => MainPage(),
-                ),
-              );
-              */
               Navigator.pop(context);//元画面(メニュー一覧)に遷移
 
               setState(() {
@@ -179,7 +169,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   });
               },
               // 表示アイコン
-              icon: Icon(Icons.favorite),
+              icon: const Icon(Icons.favorite),
               // アイコン色
               color: _menu.isFavorite! == true
               ? Colors.pink
