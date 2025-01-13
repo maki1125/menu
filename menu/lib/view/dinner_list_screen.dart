@@ -5,7 +5,8 @@ import 'package:menu/view_model/dinner_list_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 //import 'package:menu/data/providers.dart';
 import 'package:menu/common/common_providers.dart';
-//import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';
+import 'package:menu/common/common_widget.dart';
 
 // 夕食の履歴画面
 class DinnerList extends StatefulWidget {
@@ -23,7 +24,9 @@ class _DinnerListState extends State<DinnerList> {
           final dinnerDateNotifier =
               ref.read(dinnerDateNotifierProvider.notifier); // 日付の更新
           final dinnerList = ref.watch(dinnerListProvider); // 夕食リスト
-          //final isAllView = ref.watch(isAllViewProvider);
+          var isSelected = ref.watch(isSelectedValueProvider);
+          final selectWeek = ref.watch(selectWeekProvider); // 選択された週
+          print('select $selectWeek');
           final dinnerTotalPrice =
               ref.watch(dinnerTotalPriceProvider); // 夕食合計金額
 
@@ -43,7 +46,8 @@ class _DinnerListState extends State<DinnerList> {
                         fontSize: 16,
                       ),
                     ),
-                  ), // 全て
+                  ),
+                  _dropDownFileter(ref, isSelected), // 週選択の時だけ表示
                   TextButton(
                     onPressed: () {
                       DatePicker.showDatePicker(context,
@@ -62,13 +66,13 @@ class _DinnerListState extends State<DinnerList> {
                     },
                     child: Text(
                       selectedDate,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 20,
                       ),
                     ),
                   ),
                   Text(
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 16,
                       ),
                       dinnerTotalPrice.when(
@@ -86,6 +90,11 @@ class _DinnerListState extends State<DinnerList> {
                 child: SingleChildScrollView(
                   // スクロール可能
                   child: Column(children: <Widget>[
+                    (isSelected == 'week')
+                        ? Text(
+                            '${_dateFormat(selectWeek[0])} ～ ${_dateFormat(selectWeek[6])}',
+                            style: const TextStyle(fontSize: 18)) // 週の表示
+                        : const SizedBox.shrink(),
                     dinnerList.when(
                       // データ取得状態による表示切り替え
                       data: (dinners) {
@@ -100,7 +109,8 @@ class _DinnerListState extends State<DinnerList> {
                         return ListView.builder(
                           // リスト表示
                           shrinkWrap: true, // サイズ制約を設定
-                          physics: NeverScrollableScrollPhysics(), //スクロールが動作する
+                          physics:
+                              const NeverScrollableScrollPhysics(), //スクロールが動作する
                           itemCount: filteredDinners.length,
                           itemBuilder: (context, index) {
                             final dinner = filteredDinners[index]; // 夕食データ
@@ -108,17 +118,17 @@ class _DinnerListState extends State<DinnerList> {
                             return ListTile(
                               title: Card(
                                 elevation: 2.0, // 影の設定
-                                margin: EdgeInsets.all(0), // 余白
+                                margin: const EdgeInsets.all(0), // 余白
                                 shape: RoundedRectangleBorder(
                                   // カードの形状
-                                  side: BorderSide(
+                                  side: const BorderSide(
                                       color: Colors.blue, width: 1.0), // 枠線
                                   borderRadius:
                                       BorderRadius.circular(10.0), // 角丸
                                 ),
                                 child: ListTile(
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 10.0),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10.0),
                                   title: Text(
                                       '${dinner.createAt!.year.toString()} / ${dinner.createAt!.month.toString()} / ${dinner.createAt!.day.toString()}'),
                                   subtitle: Text(
@@ -135,17 +145,15 @@ class _DinnerListState extends State<DinnerList> {
                                       Text('${dinner.price.toString()}円',
                                           style: const TextStyle(fontSize: 14)),
                                       IconButton(
-                                        icon: Icon(Icons.delete),
+                                        icon: const Icon(Icons.delete),
                                         onPressed: () async {
                                           try {
-                                            print(dinner.price);
                                             await DinnerRepository(currentUser!)
                                                 .deleteDinner(
                                                     dinner); // 夕食データ削除
-                                            print(
-                                                'Dinner deleted successfully');
                                           } catch (e) {
-                                            print('Error: deeleteDinner: $e');
+                                            showMessage(
+                                                '削除に失敗しました。再度お試しください。$e');
                                           }
                                         },
                                       ),
@@ -169,5 +177,30 @@ class _DinnerListState extends State<DinnerList> {
         },
       ),
     );
+  }
+
+  // フィルターのドロップダウン
+  Widget _dropDownFileter(ref, isSelected) {
+    return DropdownButton(
+      items: const [
+        DropdownMenuItem(
+          value: 'month',
+          child: Text('月'),
+        ),
+        DropdownMenuItem(
+          value: 'week',
+          child: Text('週'),
+        ),
+      ],
+      value: isSelected,
+      onChanged: (value) {
+        ref.read(isSelectedValueProvider.notifier).state = value;
+      },
+    );
+  }
+
+  // 日付フォーマット
+  String _dateFormat(date) {
+    return DateFormat('yyyy-MM-dd').format(date);
   }
 }
