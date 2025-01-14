@@ -91,70 +91,24 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   @override
   Widget build(BuildContext context) {    
     print("menu_create");
-    return Scaffold(
+    return 
+   /* 
+    Scaffold(
       
       appBar: AppBar(
         title: const Text('メニュー登録'),
 
         //アプリバーの右側のアイテム
         actions: [
-          OutlinedButton(//枠線ありボタン
-            onPressed: () async{ 
-              if(_nameController.text == ""){
-                showMessage("料理名を入力してください。");
-              }else{
-              setState(() {
-                _isLoading = true; // ローディング開始
-              });
-              //メニューのデータ保存
-              _menu.createAt = DateTime.now();
-              _menu.name = _nameController.text;
-              //_menu.imageURL  //addImage()で保存される
-              //_menu.imagePath  //addImage()で保存される
-              _menu.quantity = int.tryParse(_quantityController.text) ?? 1;
-              _menu.tag = "全て";
-              _menu.material = _savedMaterials; //あとで
-              _menu.howToMake = _howToMakeController.text;
-              _menu.memo = _memoController.text;
-              //_menu.id //addMenu()で保存される
-              _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
-              //_menu.price //addMenu()で計算される
-              //_menu.unitPrice = 0; //addMenu()で計算される
+          
 
-              await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
-              print("メニューの画像とデータを保存しました。");
-              
-              Navigator.pop(context);//元画面(メニュー一覧)に遷移
-
-              setState(() {
-                _isLoading = false; // ローディング終了
-              });
-              }
-            },
-            style: OutlinedButton.styleFrom(
-	            //padding: EdgeInsets.zero, // 完全にパディングを削除
-              //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
-              minimumSize: const Size(50, 30), // 最小サイズを指定
-              backgroundColor:  Colors.orange,
-            ),
-            child: const Text('登録',
-              style: TextStyle(
-              //fontSize: 12,
-              color: Colors.white
-              ),
-            ),         
-          ),
-
-          IconButton(
-            icon: const Icon(Icons.delete),
-            onPressed: () {
-              _clearform();
-            },
-          ),
+          
         ],
       ),
 
-      body: SingleChildScrollView(//スクロール可能とする
+      body: 
+ */     
+      SingleChildScrollView(//スクロール可能とする
       child: Stack( //お気に入りボタンを右上に配置するため、stack使用。
         children: [
 
@@ -178,6 +132,20 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               iconSize: 25,
             )
           ),
+
+          //クリアボタン
+          Positioned(
+            top: -10,
+            right: 30,
+            child: IconButton(
+            icon: const Icon(Icons.delete),
+            onPressed: () {
+              _clearform();
+            },
+            iconSize: 25,
+          ),
+          ),
+
 
           Column(
             children: [
@@ -431,6 +399,54 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               textAlign: TextAlign.left,
             ),
 
+            //登録ボタンーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+            OutlinedButton(//枠線ありボタン
+            onPressed: () async{ 
+              if(_nameController.text == ""){
+                showMessage("料理名を入力してください。");
+              }else{
+              setState(() {
+                _isLoading = true; // ローディング開始
+              });
+              //メニューのデータ保存
+              _menu.createAt = DateTime.now();
+              _menu.name = _nameController.text;
+              //_menu.imageURL  //addImage()で保存される
+              //_menu.imagePath  //addImage()で保存される
+              _menu.quantity = int.tryParse(_quantityController.text) ?? 1;
+              _menu.tag = "全て";
+              _menu.material = _savedMaterials; //あとで
+              _menu.howToMake = _howToMakeController.text;
+              _menu.memo = _memoController.text;
+              //_menu.id //addMenu()で保存される
+              _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
+              //_menu.price //addMenu()で計算される
+              //_menu.unitPrice = 0; //addMenu()で計算される
+
+              await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
+              print("メニューの画像とデータを保存しました。");
+              
+              Navigator.pop(context);//元画面(メニュー一覧)に遷移
+
+              setState(() {
+                _isLoading = false; // ローディング終了
+              });
+              }
+            },
+            style: OutlinedButton.styleFrom(
+	            //padding: EdgeInsets.zero, // 完全にパディングを削除
+              //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
+              minimumSize: const Size(50, 30), // 最小サイズを指定
+              backgroundColor:  Colors.orange,
+            ),
+            child: const Text('登録',
+              style: TextStyle(
+              //fontSize: 12,
+              color: Colors.white
+              ),
+            ),         
+          ),
+
 
           ],
         ),
@@ -446,7 +462,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
           )
         ],
       )
-    ) 
+   // ) 
   );
 }
 

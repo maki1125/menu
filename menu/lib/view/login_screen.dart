@@ -24,7 +24,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication> {
     // ウィジェットツリーがビルドされた後に状態を変更する
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 状態変更をここで行う
-      ref.read(pageProvider.notifier).state = initOtherPage;
+      ref.read(pageProvider.notifier).state = 0;
     });
   }
 

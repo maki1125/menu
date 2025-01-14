@@ -1,5 +1,5 @@
 
-int initOtherPage = 99; //メインページ以外のページの識別のための番号
+//int initOtherPage = 99; //メインページ以外のページの識別のための番号
 
 final List<String> tabCategories = [
   '全て',

@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
-//import 'package:menu/view/main_screen.dart';
+import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
 //import 'package:menu/common/common_constants.dart';
 
@@ -159,10 +159,11 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
               ref.read(selectButtonProvider.notifier).state =
                   'Resist'; // ボタンの状態を更新
 
+              ref.read(bottomBarProvider.notifier).state = 1; //ボトムバーの選択
+              ref.read(pageProvider.notifier).state = 4; //表示ページ
               Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MaterialCreateScreen()),
+                  context,
+                  MaterialPageRoute(builder: (context) => MainPage()),
               );
             },
             child: const Icon(Icons.add), // 追加アイコン
