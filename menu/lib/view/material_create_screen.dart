@@ -40,7 +40,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     // ウィジェットツリーがビルドされた後に状態を変更する
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // 状態変更をここで行う
-      ref.read(pageProvider.notifier).state = initOtherPage;
+      //ref.read(pageProvider.notifier).state = initOtherPage;
     });
   }
 
@@ -60,7 +60,9 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
       clearform();
     }
 
-    return Scaffold(
+    return 
+    /*
+    Scaffold(
       appBar: AppBar(
         title: const Text(
           '材料登録',
@@ -70,7 +72,9 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         backgroundColor: Colors.white,
       ),
       body: Material(
-        child: SafeArea(
+        child: 
+        */
+        SafeArea(
           // スマホのノッチ部分に対応
           top: true,
           child: Center(
@@ -127,7 +131,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 80,
+                                    width: 70,
                                     child: Text(
                                       '${material['price']}円',
                                       overflow: TextOverflow
@@ -181,7 +185,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   hintText: '400',
                   controller: priceController,
                   keyboardType: TextInputType.number,
-                  width: 80,
+                  width: 70,
                 ),
                 const SizedBox(width: 10),
                 selectButton != 'Resist'
@@ -225,15 +229,15 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   foregroundColor: Colors.blueAccent,
                 ),
                 onPressed: () {
-                  ref.read(pageProvider.notifier).state = initOtherPage;
+                  //ref.read(pageProvider.notifier).state = initOtherPage;
                   Navigator.pop(context);
                 },
                 child: const Text('戻る'),
               ),
             ]),
           ),
-        ),
-      ),
+        //),
+      //),
     );
   }
 
