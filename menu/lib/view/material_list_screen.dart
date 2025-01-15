@@ -58,15 +58,16 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
 
                   return Column(
                     children: [
+                      // 検索テキストフィールド---------------------------------------
                       _buildTextField(
-                          searchController, ref, materials), // 検索テキストフィールド
+                          searchController, ref, materials), 
 
-                      const SizedBox(height: 10),
-                      // 材料リスト)
+                      //const SizedBox(height: 10),
+
+                      // 材料カードーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
                       ListView.builder(
-                        shrinkWrap: true, // 高さ自動調整
-                        physics:
-                            const NeverScrollableScrollPhysics(), // スクロール禁止
+                        shrinkWrap: true, // 高さ自動調整。ListViewが無限広がろうとするのを防ぐ。
+                        physics: const NeverScrollableScrollPhysics(), // スクロール禁止
                         itemCount: filteredMaterials.length, // リストの数
                         itemBuilder: (context, index) {
                           final material = filteredMaterials[index]; // 材料データ
@@ -81,7 +82,14 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                     color: Colors.blue, width: 1.0), // 枠線
                                 borderRadius: BorderRadius.circular(10.0), // 角丸
                               ),
-                              child: ListTile(
+                              child: IgnorePointer(
+                              ignoring:  ref.read(selectMaterialProvider.notifier).state == 0, //タッチできる状態の時、タッチ可能とする。                          
+                               child: InkWell(//タッチした時にインクが広がる感じのエフェクトを設定
+                                onTap: () {
+                                    ref.read(selectMaterialProvider.notifier).state = 0;
+                                    Navigator.pop(context, material);
+                                },
+                                child:  ListTile(
                                 contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 10.0),
                                 // リストの中身
@@ -137,6 +145,9 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                   ],
                                 ),
                               ),
+                              )
+                              )
+
                             ),
                           );
                         },

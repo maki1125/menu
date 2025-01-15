@@ -4,9 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/data/model/menu.dart';
+import 'package:menu/data/model/material.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
-//import 'package:menu/view/main_screen.dart';
+import 'package:menu/view/main_screen.dart';
 import 'package:menu/data/repository/image_repository.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
@@ -50,6 +51,9 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   late Menu _menu; //登録するデータをここに入れる
   final List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
   bool _isLoading = false; // 登録処理のローディング状態を管理
+  //MaterialModel? _result; //材料一覧から選択時に結果を入れる
+  MaterialModel? selectedMaterial; // 材料一覧から選択時に再描写のために使用
+  int calculatedPrice = 0; // 計算結果を保持する変数
 
   //初期化処理
   @override
@@ -57,6 +61,17 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     super.initState();
     _menu = Menu(); // インスタンスを初期化
     _menu.isFavorite = false; // 初期値を設定
+    //_result = MaterialModel(); 
+    _numController.addListener(_calculatePrice);// コントローラのリスナーを追加
+    
+  }
+  // 計算ロジック
+  void _calculatePrice() {
+    setState(() {
+      // 入力値が空、または不正な場合は0として扱う
+      int quantity = int.tryParse(_numController.text) ?? 1;
+      calculatedPrice = selectedMaterial!.price! * quantity;
+    });
   }
 
   // フォームのクリア
@@ -80,6 +95,9 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
     //画像のクリア
     ref.read(selectedImageProvider.notifier).state = null;
+
+    //材料一覧から選択の結果のクリア
+    selectedMaterial = null;
 
     //お気に入りアイコン
     setState((){ //これによりtrueの場合でも再描写されるので、材料もクリアされる。
@@ -318,7 +336,9 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
             const SizedBox(height: 10,),
 
             //材料入力のエリア
-            Row(
+            
+            selectedMaterial == null
+            ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _buildTextField(
@@ -357,11 +377,65 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   },
                 ),
               ],
-            ),
+            )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 100,
+                    child:Text(selectedMaterial!.name!,
+                    textAlign: TextAlign.center, // テキストを中央揃え),
+                    )
+                  ),
+                  _buildTextField(
+                  hintText: '1',
+                  controller: _numController,
+                  keyboardType: TextInputType.number,
+                  setWidth: 50,
+                ),
+                  SizedBox(
+                    width: 70,
+                    child: Text(selectedMaterial!.unit!,
+                    textAlign: TextAlign.center
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 80,
+                        child: Text(calculatedPrice.toString(),
+                        textAlign: TextAlign.center),
+                        ),
+                      const Text(" 円"),
+                    ]
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.control_point_rounded),
+                    onPressed: () {
+                      _addButton();
+                    },
+                  ),
+                ],
+              ),
 
             //材料一覧から選択ボタン
             TextButton(
-              onPressed: () {/* ボタンがタップされた時の処理 */},
+              onPressed: () async{
+                ref.read(selectMaterialProvider.notifier).state = 1;
+                ref.read(bottomBarProvider.notifier).state = 1;
+                ref.read(pageProvider.notifier).state = 1;
+                ref.read(selectMaterialProvider.notifier).state = 1;
+                MaterialModel _result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainPage()),
+              );
+              
+              setState(() {
+                selectedMaterial = _result; // 結果を保存
+                calculatedPrice = selectedMaterial!.price!;
+              });
+              print(_result.name);
+              },
               child: const Text('+材料一覧から選択'),
             ),
             const SizedBox(height: 10,),
@@ -468,19 +542,30 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
  //材料追加ボタン
   void _addButton(){
-    if (_materialController.text != ""){
+    if (_materialController.text != "" || selectedMaterial != null){
+      
       setState((){
-        _savedMaterials.add({
+        selectedMaterial == null
+        ?_savedMaterials.add({
+          
           "name": _materialController.text,
           "quantity": int.tryParse(_numController.text) ?? 1,
           "unit": _unitController.text,
           "price":int.tryParse(_priceController.text) ?? 0,
+        })
+        :_savedMaterials.add({
+          
+          "name": selectedMaterial!.name,
+          "quantity": int.tryParse(_numController.text) ?? 1,
+          "unit": selectedMaterial!.unit,
+          "price":calculatedPrice ?? 0,
         });
       });
       _materialController.text = "";
       _numController.text = "";
       _unitController.text = "";
       _priceController.text = "";
+      selectedMaterial = null;
     }
   }
 }

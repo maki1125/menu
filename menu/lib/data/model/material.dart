@@ -27,4 +27,9 @@ class MaterialModel {
       createAt: (data['createAt'] as Timestamp).toDate(),
     );
   }
+
+ //空かどうかを判定するメソッド
+  bool isEmpty() {
+    return (name == null || name!.isEmpty);
+  }
 }

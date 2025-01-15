@@ -11,3 +11,6 @@ final pageProvider = StateProvider<int>((ref) => 0);
 
 //ボトムバーの選択
 final bottomBarProvider = StateProvider<int>((ref) => 0); 
+
+//材料一覧から選択のフラグ
+final selectMaterialProvider = StateProvider<int>((ref) => 0);
