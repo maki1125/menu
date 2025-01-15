@@ -4,7 +4,7 @@ import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
-import 'package:menu/view/menu_create_screen.dart';
+//import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
 
