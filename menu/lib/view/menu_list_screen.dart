@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';
+import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/common/common_providers.dart';
 
 class MenuList extends ConsumerWidget {
@@ -84,7 +86,11 @@ class MenuList extends ConsumerWidget {
                     ),
                     child: InkWell(//タッチした時にインクが広がる感じのエフェクトを設定
                       onTap: () {
-                        print("Card tapped!");
+                        ref.read(pageProvider.notifier).state = 5;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => MainPage(menu: filteredMenus[index])),
+                        );
                       },
                       child: Row(
                         children: [

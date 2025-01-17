@@ -32,6 +32,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   final TextEditingController _howToMakeController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
 
+/*
   //リソース解放。ウィジェット破棄後に、コントローラを破棄。
   @override
   void dispose() {
@@ -45,7 +46,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     _memoController.dispose();
     super.dispose();
   }
-
+*/
   //変数
   final List<Map<String, dynamic>> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
   late Menu _menu; //登録するデータをここに入れる
@@ -110,22 +111,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   Widget build(BuildContext context) {    
     print("menu_create");
     return 
-   /* 
-    Scaffold(
-      
-      appBar: AppBar(
-        title: const Text('メニュー登録'),
-
-        //アプリバーの右側のアイテム
-        actions: [
-          
-
-          
-        ],
-      ),
-
-      body: 
- */     
+   
       SingleChildScrollView(//スクロール可能とする
       child: Stack( //お気に入りボタンを右上に配置するため、stack使用。
         children: [
@@ -488,7 +474,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               //_menu.imageURL  //addImage()で保存される
               //_menu.imagePath  //addImage()で保存される
               _menu.quantity = int.tryParse(_quantityController.text) ?? 1;
-              _menu.tag = "全て";
+              _menu.tag = ref.read(dropDownProvider.notifier).state;
               _menu.material = _savedMaterials; //あとで
               _menu.howToMake = _howToMakeController.text;
               _menu.memo = _memoController.text;
