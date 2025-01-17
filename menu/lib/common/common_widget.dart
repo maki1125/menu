@@ -105,6 +105,7 @@ class AppBarComponentWidget extends ConsumerWidget
   Size get preferredSize => const Size.fromHeight(40);
 }
 
+/*
 Widget iconButton(context, ref, icon) {
   return IconButton(
     icon: icon,
@@ -119,8 +120,9 @@ Widget iconButton(context, ref, icon) {
     },
   );
 }
+*/
 
-//ポップアップメッセージ
+//ポップアップメッセージ(メッセージのみ)
 void showMessage(String message) {
   Fluttertoast.showToast(
     msg: message, // メッセージを設定
@@ -130,4 +132,6 @@ void showMessage(String message) {
     //backgroundColor: Colors.black, // 背景色
     //textColor: Colors.white, // 文字色
   );
+
+  
 }
