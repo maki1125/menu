@@ -33,7 +33,8 @@ class MenuRepository {
       print(menu.material![0]['price'].toString()+"_"+menu.material![0]['quantity'].toString());
       menu.price = menu.material!.fold(0, (materialSum, material) {
         //print(material['price']+"_"+material['quantity']);
-        return materialSum! + (material['price'] as int) * (material['quantity'] as int);
+        //return materialSum! + (material['price'] as int) * (material['quantity'] as int);
+        return materialSum! + (material['price'] as int); 
         });
       menu.unitPrice = menu.price! ~/ menu.quantity!;
       

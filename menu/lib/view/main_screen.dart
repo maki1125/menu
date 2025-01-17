@@ -3,11 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/common/common_constants.dart';
+import 'package:menu/common/common_providers.dart';
+import 'package:menu/data/model/menu.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view/menu_create_screen.dart';
-import 'package:menu/common/common_providers.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
+import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view/dinner_list_screen.dart';
 //import 'package:menu/view/material_create_screen.dart';
@@ -15,6 +17,10 @@ import 'package:menu/view/dinner_list_screen.dart';
 
 
 class MainPage extends ConsumerStatefulWidget {
+
+  Menu? menu;
+  MainPage({Key? key, this.menu}) : super(key: key); //menuデータを受け取ることができるようにする。
+
   @override
   _MainPageState createState() => _MainPageState();
 }
@@ -25,23 +31,30 @@ class _MainPageState extends ConsumerState<MainPage>
   int _bottomBarIndex = 0; //現在ボトムバーの選択
   int _pageIndex = 0; //現在のページ
   late TabController _tabController; //メニュー一覧の上部タブに使用
+  late Menu? menu;
+  late List<Widget> _pages;
 
-  //ページの設定
-  final List<Widget> _pages = [
+ //初期処理
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: tabCategories.length, vsync: this);
+    _bottomBarIndex = ref.read(bottomBarProvider.notifier).state;
+    _pageIndex = ref.read(pageProvider.notifier).state;
+
+    menu = widget.menu;
+
+    //ページリストの初期化.menuを参照するため、初期化内で参照する。
+     _pages = [
     const MenuList(category: '全て'),
     const MaterialListScreen(),
     DinnerList(),
     const MenuCreateScreen(),
     const MaterialCreateScreen(),
+    MenuDetailScreen(menu: menu),
   ];
 
-/*
-  final List<Widget> _otherPage = [
-    MaterialCreateScreen(),
-    UserAuthentication(),
-    MenuCreateScreen(),
-  ];
-*/
+  }
    
   //アプリバーの表示
   final List<String> _appBarTitles = [
@@ -50,6 +63,7 @@ class _MainPageState extends ConsumerState<MainPage>
    "夕食の履歴",
    "メニュー登録",
    "材料登録",
+  "メニュー詳細",
 
   ];
 
@@ -62,14 +76,7 @@ class _MainPageState extends ConsumerState<MainPage>
     //ref.read(pageProvider.notifier).state = 99;
   }
 
- //初期処理
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: tabCategories.length, vsync: this);
-    _bottomBarIndex = ref.read(bottomBarProvider.notifier).state;
-    _pageIndex = ref.read(pageProvider.notifier).state;
-  }
+
 
   //ウィジェット
   @override
