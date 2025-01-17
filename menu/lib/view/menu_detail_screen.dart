@@ -1,17 +1,18 @@
-import 'dart:io'; //Fileを扱うため
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+//import 'dart:io'; //Fileを扱うため
+//import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
-import 'package:menu/common/common_widget.dart';
+//import 'package:menu/common/common_widget.dart';
 import 'package:menu/data/model/menu.dart';
-import 'package:menu/data/model/material.dart';
+//import 'package:menu/data/model/material.dart';
+import 'package:menu/data/repository/menu_repository.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
-import 'package:menu/view/main_screen.dart';
-import 'package:menu/data/repository/image_repository.dart';
-import 'package:menu/view_model/menu_list_view_model.dart';
+//import 'package:menu/view/main_screen.dart';
+//import 'package:menu/data/repository/image_repository.dart';
+//import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
-import 'package:menu/common/common_constants.dart';
+//import 'package:menu/common/common_constants.dart';
 
 class MenuDetailScreen extends StatefulWidget {
 
@@ -28,16 +29,16 @@ class _MenuDetailScreenState extends State<MenuDetailScreen> {
   @override
   void initState() {
     super.initState();
-    menu = widget.menu!;
+    menu = widget.menu!; //widgetからメニューを受け取る。
   }
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(//スクロール可能とする
-      child: 
-
-      Stack( //お気に入りボタンを右上に配置するため、stack使用。
+      child: Stack( //お気に入りボタンを右上に配置するため、stack使用。
         children: [
+
+          //タグの表示
           Positioned(
             top: 10,
             left: 10,
@@ -65,20 +66,54 @@ class _MenuDetailScreenState extends State<MenuDetailScreen> {
             )
           ),
 
-          //クリアボタン
+          //削除ボタン
           Positioned(
             top: 0,
             right: 30,
             child: IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {
-              //_clearform();
+            
+            //ポップアップ表示して削除しても良いかを確認する。
+            onPressed: () async{
+              final bool? result = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    //title: const Text('確認'),
+                    content: const Text('このメニューを削除しますか？'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false); // 「いいえ」を選択
+                        },
+                        child: const Text('いいえ'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true); // 「はい」を選択
+                        },
+                        child: const Text('はい'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (result == true) {
+                // 「はい」が選択された場合の処理
+                MenuRepository(currentUser!).deleteMenu(menu); //メニュー削除
+                Navigator.pop(context);//元画面(メニュー一覧)に遷移
+              } else {
+                // 「いいえ」が選択された場合、何もしない
+                print('操作をキャンセルしました');
+              }
+
             },
             iconSize: 25,
           ),
           ),
 
-          //クリアボタン
+          //編集ボタン
           Positioned(
             top: 0,
             right: 0,
@@ -93,14 +128,9 @@ class _MenuDetailScreenState extends State<MenuDetailScreen> {
 
 
           Center(
-            child: 
-          
-          Column(
+            child: Column(
             children: [
-
               //料理名ーーーーーーーーー
-
-                  
                   Text(
                     menu.name!,
                     style: const TextStyle(
@@ -110,9 +140,7 @@ class _MenuDetailScreenState extends State<MenuDetailScreen> {
                     ),
                     //textAlign: TextAlign.center,
                   ),
-                  
 
-              
               //画像ーーーーーーーーーー
               Container(
                     width: 350,

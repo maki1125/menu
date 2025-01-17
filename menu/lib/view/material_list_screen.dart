@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
-import 'package:menu/view/material_create_screen.dart';
+//import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
@@ -34,13 +34,12 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
   Widget build(BuildContext context) {
     print("material_list");
     final materialList = ref.watch(materialListProvider); // 材料データ取得
-    final filteredMaterials =
-        ref.watch(filteredMaterialsProvider); // フィルタリングされた材料データ
+    final filteredMaterials =ref.watch(filteredMaterialsProvider); // フィルタリングされた材料データ
 
     return Stack(
       children: [
-        SingleChildScrollView(
-          // スクロール可能なウィジェット
+        SingleChildScrollView(// スクロール可能なウィジェット
+          
           child: Column(
             children: <Widget>[
               materialList.when(
@@ -62,8 +61,6 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                       _buildTextField(
                           searchController, ref, materials), 
 
-                      //const SizedBox(height: 10),
-
                       // 材料カードーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
                       ListView.builder(
                         shrinkWrap: true, // 高さ自動調整。ListViewが無限広がろうとするのを防ぐ。
@@ -82,72 +79,69 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                     color: Colors.blue, width: 1.0), // 枠線
                                 borderRadius: BorderRadius.circular(10.0), // 角丸
                               ),
-                              child: IgnorePointer(
-                              ignoring:  ref.read(selectMaterialProvider.notifier).state == 0, //タッチできる状態の時、タッチ可能とする。                          
-                               child: InkWell(//タッチした時にインクが広がる感じのエフェクトを設定
-                                onTap: () {
-                                    ref.read(selectMaterialProvider.notifier).state = 0;
-                                    Navigator.pop(context, material);
-                                },
-                                child:  ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 10.0),
-                                // リストの中身
-                                title: Text(
-                                  '${material.name ?? ''}   ${material.quantity?.toString()}${material.unit}   ${material.price?.toString()}円',
-                                  overflow:
-                                      TextOverflow.ellipsis, // テキストがはみ出た場合の処理
-                                  maxLines: 1,
-                                ),
-                                trailing: Row(
-                                  mainAxisSize: MainAxisSize.min, // 最小サイズ
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.end, // 右寄せ
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.edit), // 編集アイコン
-                                      onPressed: () {
-                                        ref
-                                            .read(selectButtonProvider
-                                                .notifier) // ボタンの状態を更新
-                                            .state = 'edit';
-                                        ref
-                                            .read(materialProvider.notifier)
-                                            .state = material;
+                              child: Stack(
+                                children: [
 
-                                        /*
-                                        // Mainページに自分のページインデックスを渡す
-                                        ref.read(pageProvider.notifier).state = 0;
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            // 画面遷移
-                                            builder: (context) => MainPage(),
+                                  //テキスト領域（タップ可能領域）ーーーーーーーーーーーーーーーーーーー
+                                  IgnorePointer(//タップできる条件をつける。
+                                    ignoring:  ref.read(selectMaterialProvider.notifier).state == 0, //「材料一覧から選択」時以外はタッチ不可能にする。                       
+                                    child: InkWell(//タッチした時にインクが広がる感じのエフェクトを設定
+                                      onTap: () {
+                                        ref.read(selectMaterialProvider.notifier).state = 0;//選択後は、タッチ不可にする。
+                                        Navigator.pop(context, material);
+                                      },
+                                      child:  ListTile(
+                                        contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                        title: Text(
+                                          '${material.name ?? ''}   ${material.quantity?.toString()}${material.unit}   ${material.price?.toString()}円',
+                                          overflow: TextOverflow.ellipsis, // テキストがはみ出た場合の処理
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                    )
+                                  ),
+                                  
+                                  //アイコンの配置ーーーーーーーーーーーーーーーー
+                                  Positioned.fill(
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child:Row(
+                                        mainAxisSize: MainAxisSize.min, // 最小サイズ
+                                        mainAxisAlignment: MainAxisAlignment.end, // 右寄せ
+                                        children: [
+                                          
+                                          //編集アイコン
+                                          IconButton(
+                                            icon: const Icon(Icons.edit), 
+                                            onPressed: () {
+                                              ref.read(selectButtonProvider.notifier).state = 'edit'; // ボタンの状態を更新
+                                              ref.read(materialProvider.notifier).state = material;
+
+                                              //ページ遷移
+                                              ref.read(pageProvider.notifier).state = 4;
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  // 画面遷移
+                                                  builder: (context) => MainPage(),
+                                                ),
+                                              );
+                                            },
                                           ),
-                                        );
-                                        */
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const MaterialCreateScreen()),
-                                        );
-                                      },
-                                    ),
-                                    IconButton(
-                                      // 削除アイコン
-                                      icon: const Icon(Icons.delete),
-                                      onPressed: () {
-                                        MaterialRepository(currentUser!)
-                                            .deleteMaterial(material);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              )
-                              )
 
+                                          // 削除アイコン
+                                          IconButton(
+                                            icon: const Icon(Icons.delete),
+                                            onPressed: () {
+                                              MaterialRepository(currentUser!).deleteMaterial(material);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  )
+                                ]
+                              )
                             ),
                           );
                         },
@@ -161,15 +155,15 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
             ],
           ),
         ),
+        
+        //材料追加ボタン
         Positioned(
           // 画面右下に配置
           bottom: 16,
           right: 16,
           child: FloatingActionButton(
             onPressed: () {
-              ref.read(selectButtonProvider.notifier).state =
-                  'Resist'; // ボタンの状態を更新
-
+              ref.read(selectButtonProvider.notifier).state = 'Resist'; // ボタンの状態を更新
               ref.read(bottomBarProvider.notifier).state = 1; //ボトムバーの選択
               ref.read(pageProvider.notifier).state = 4; //表示ページ
               Navigator.push(
