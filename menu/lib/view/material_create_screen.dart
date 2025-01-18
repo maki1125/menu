@@ -43,6 +43,9 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     final selectButton =
         ref.watch(selectButtonProvider.notifier).state; // ボタンの状態取得
 
+    final screenWidth = MediaQuery.of(context).size.width; // 画面幅取得
+    // final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
+
     return
         // Scaffold(
         //   appBar: AppBar(
@@ -103,79 +106,126 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   priceController[0] =
                       TextEditingController(text: materialMap.price.toString());
                 }
-                return ListTile(
-                  title: Row(children: <Widget>[
-                    const SizedBox(width: 10),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start, // 左寄せ
-                        children: <Widget>[
-                          const Align(
-                              alignment: Alignment.centerLeft, // 左寄せ
-                              child: Text('材料')),
-                          const SizedBox(height: 5),
-                          _buildTextField(
-                              name: 'material',
-                              hintText: '牛肉',
-                              controller: materialController[index] ??
-                                  TextEditingController(), // エラー防止のため空のコントローラーをセット
-                              keyboardType: TextInputType.text,
-                              width: 140,
-                              index: index),
-                        ]),
-                    const SizedBox(width: 10),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('数量')),
-                          const SizedBox(height: 5),
-                          _buildTextField(
-                            name: 'quantity',
-                            hintText: '10',
-                            controller: quantityController[index] ??
-                                TextEditingController(),
-                            keyboardType: TextInputType.number,
-                            width: 60,
-                            index: index,
-                          ),
-                        ]),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('単位')),
-                          const SizedBox(height: 5),
-                          _buildTextField(
-                            name: 'unit',
-                            hintText: 'g',
-                            controller: unitController[index] ??
-                                TextEditingController(),
-                            keyboardType: TextInputType.text,
-                            width: 60,
-                            index: index,
-                          ),
-                        ]),
-                    const SizedBox(width: 10),
-                    Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          const Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text('価格')),
-                          const SizedBox(height: 5),
-                          _buildTextField(
-                            name: 'price',
-                            hintText: '400',
-                            controller: priceController[index] ??
-                                TextEditingController(),
-                            keyboardType: TextInputType.number,
-                            width: 80,
-                            index: index,
-                          ),
-                        ]),
-                  ]),
+
+                return Dismissible(
+                  // スワイプで削除
+                  key: Key(materialController[index]
+                      .hashCode
+                      .toString()), // ハッシュ値をキーに設定
+                  direction: DismissDirection.startToEnd, // 右から左へスワイプ
+                  background: Container(
+                    color: Colors.red,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    alignment: Alignment.centerLeft,
+                    child: const Icon(Icons.delete),
+                  ),
+
+                  onDismissed: (direction) {
+                    setState(() {
+                      counter--; // テキストフィールドの数を減らす
+                      materialController.remove(index);
+                      quantityController.remove(index);
+                      unitController.remove(index);
+                      priceController.remove(index);
+                      _materialMap.removeAt(index);
+                    });
+                  },
+                  child: ListTile(
+                    title: SizedBox(
+                      width: screenWidth * 0.9,
+                      //height: screenHeight * 0.1,
+                      child: LayoutBuilder(builder: (context, constraints) {
+                        final screenLayoutWidth = constraints.maxWidth;
+                        return Row(children: <Widget>[
+                          //const SizedBox(width: 10),
+                          Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start, // 左寄せ
+                              children: <Widget>[
+                                index == 0
+                                    ? const Align(
+                                        alignment: Alignment.centerLeft, // 左寄せ
+                                        child: Text('材料'),
+                                      )
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 5),
+                                _buildTextField(
+                                  name: 'material',
+                                  hintText: '牛肉',
+                                  controller: materialController[index] ??
+                                      TextEditingController(), // エラー防止のため空のコントローラーをセット
+                                  keyboardType: TextInputType.text,
+                                  //width: 140,
+                                  width: screenLayoutWidth * 0.48,
+                                  index: index,
+                                ),
+                              ]),
+                          SizedBox(width: screenLayoutWidth * 0.01),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                index == 0
+                                    ? const Align(
+                                        alignment: Alignment.centerLeft, // 左寄せ
+                                        child: Text('数量'))
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 5),
+                                _buildTextField(
+                                  name: 'quantity',
+                                  hintText: '10',
+                                  controller: quantityController[index] ??
+                                      TextEditingController(),
+                                  keyboardType: TextInputType.number,
+                                  // width: 60,
+                                  width: screenLayoutWidth * 0.15,
+                                  index: index,
+                                ),
+                              ]),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                index == 0
+                                    ? const Align(
+                                        alignment: Alignment.centerLeft, // 左寄せ
+                                        child: Text('単位'))
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 5),
+                                _buildTextField(
+                                  name: 'unit',
+                                  hintText: 'g',
+                                  controller: unitController[index] ??
+                                      TextEditingController(),
+                                  keyboardType: TextInputType.text,
+                                  //width: 60,
+                                  width: screenLayoutWidth * 0.15,
+                                  index: index,
+                                ),
+                              ]),
+                          SizedBox(width: screenLayoutWidth * 0.01),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                index == 0
+                                    ? const Align(
+                                        alignment: Alignment.centerLeft, // 左寄せ
+                                        child: Text('価格'))
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 5),
+                                _buildTextField(
+                                  name: 'price',
+                                  hintText: '400',
+                                  controller: priceController[index] ??
+                                      TextEditingController(),
+                                  keyboardType: TextInputType.number,
+                                  //width: 80,
+                                  width: screenLayoutWidth * 0.2,
+                                  index: index,
+                                ),
+                              ]),
+                        ]);
+                      }),
+                    ),
+                  ),
                 );
               },
             ),
@@ -301,87 +351,86 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
       _materialMap[i]['unit'] = unitController[i]?.text;
       _materialMap[i]['price'] = priceController[i]?.text;
     }
-    print(_materialMap);
 
     return FilledButton(
-      onPressed: isButtonDisabled
-          ? null // 一つも追加されていない場合はボタンを無効化
-          : () async {
-              try {
-                if (isUpdate) {
-                  final materials = MaterialModel(
-                    id: material.id, // ID
-                    name: materialController[0]?.text, // 材料名
-                    quantity: int.tryParse(quantityController[0]!.text), // 数量
-                    unit: unitController[0]?.text, // 単位
-                    price: int.tryParse(priceController[0]!.text), // 価格
-                    //createAt: DateTime.now(),
-                  );
-                  await MaterialRepository(currentUser!) // データ更新
-                      .updateMaterial(materials);
-                  // Toast
-                  Fluttertoast.showToast(
-                    timeInSecForIosWeb: 1,
-                    gravity: ToastGravity.CENTER,
-                    fontSize: 16,
-                    msg: '更新しました',
-                  ); //ダイアログ表示
-                } else {
-                  // 追加
+      //onPressed: isButtonDisabled
+      // ? null // 一つも追加されていない場合はボタンを無効化
+      // : () async {
+      onPressed: () async {
+        try {
+          if (isUpdate) {
+            final materials = MaterialModel(
+              id: material.id, // ID
+              name: materialController[0]?.text, // 材料名
+              quantity: int.tryParse(quantityController[0]!.text), // 数量
+              unit: unitController[0]?.text, // 単位
+              price: int.tryParse(priceController[0]!.text), // 価格
+              //createAt: DateTime.now(),
+            );
+            await MaterialRepository(currentUser!) // データ更新
+                .updateMaterial(materials);
+            // Toast
+            Fluttertoast.showToast(
+              timeInSecForIosWeb: 1,
+              gravity: ToastGravity.CENTER,
+              fontSize: 16,
+              msg: '更新しました',
+            ); //ダイアログ表示
+          } else {
+            // 追加
 
-                  final materials = _materialMap.map((e) {
-                    return MaterialModel(
-                      name: e['material'], // 材料名
-                      quantity: int.tryParse(e['quantity']), // 数量
-                      unit: e['unit'], // 単位
-                      price: int.tryParse(e['price']), // 価格
-                      //createAt: DateTime.now(),
-                    );
-                  }).toList();
+            final materials = _materialMap.map((e) {
+              return MaterialModel(
+                name: e['material'], // 材料名
+                quantity: int.tryParse(e['quantity']), // 数量
+                unit: e['unit'], // 単位
+                price: int.tryParse(e['price']), // 価格
+                //createAt: DateTime.now(),
+              );
+            }).toList();
 
-                  if (currentUser == null) {
-                    // ユーザー情報が取得できない場合
-                    _showErrorDialog('ユーザー情報が取得できませんでした。');
-                  }
+            if (currentUser == null) {
+              // ユーザー情報が取得できない場合
+              _showErrorDialog('ユーザー情報が取得できませんでした。');
+            }
 
-                  // 入力チェック
-                  if (!validateInputs()) {
-                    return;
-                  }
+            // 入力チェック
+            if (!validateInputs()) {
+              return;
+            }
 
-                  for (var i = 0; i < materials.length; i++) {
-                    // 材料データが空の場合は登録しない
-                    if (materials[i].name == null ||
-                        materials[i].quantity == null ||
-                        materials[i].unit == null ||
-                        materials[i].price == null) {
-                      continue;
-                    }
-                    await MaterialRepository(currentUser!) // データ登録
-                        .addMaterial(materials[i]);
-                  }
-
-                  Fluttertoast.showToast(
-                    // 画面下に一時的にメッセージ表示
-                    timeInSecForIosWeb: 1,
-                    gravity: ToastGravity.CENTER, // 位置
-                    fontSize: 16,
-                    msg: '登録しました',
-                  );
-                }
-
-                clearform();
-
-                if (mounted) {
-                  // 戻りたい画面が破棄されていないかチェック
-                  Navigator.pop(context);
-                }
-                // Toast
-              } catch (e) {
-                _showErrorDialog(
-                    '${isUpdate ? '更新' : '登録'}に失敗しました。再度お試しください。$e');
+            for (var i = 0; i < materials.length; i++) {
+              // 材料データが空の場合は登録しない
+              if (materials[i].name == null ||
+                  materials[i].quantity == null ||
+                  materials[i].unit == null ||
+                  materials[i].price == null) {
+                continue;
               }
-            },
+              await MaterialRepository(currentUser!) // データ登録
+                  .addMaterial(materials[i]);
+            }
+
+            Fluttertoast.showToast(
+              // 画面下に一時的にメッセージ表示
+              timeInSecForIosWeb: 1,
+              gravity: ToastGravity.CENTER, // 位置
+              fontSize: 16,
+              msg: '登録しました',
+            );
+          }
+
+          clearform();
+
+          if (mounted) {
+            // 戻りたい画面が破棄されていないかチェック
+            Navigator.pop(context);
+          }
+          // Toast
+        } catch (e) {
+          _showErrorDialog('${isUpdate ? '更新' : '登録'}に失敗しました。再度お試しください。$e');
+        }
+      },
       // ボタンのスタイル
       style: OutlinedButton.styleFrom(
         shape: RoundedRectangleBorder(
