@@ -23,7 +23,7 @@ class Menu {
   String? name;
   String? imageURL;
   String? imagePath;
-  int? quantity;
+  int? quantity = 1;
   String? tag;
   List<dynamic>? material;
   //List<Map<String, dynamic>>? material;
@@ -43,7 +43,7 @@ class Menu {
       name: data['name'] as String? ?? "noData",
       imageURL: data['imageURL'] as String? ?? "noData",
       imagePath: data['imagePath'] as String? ?? "noData",
-      quantity: data['quantity'] as int? ?? 0,
+      quantity: data['quantity'] as int? ?? 1,
       tag: data['tag'] as String? ?? "noData",
       material: (data['material'] as List<dynamic>?) ?? [], // nullの場合は空のリストを設定
       //material: (data['material'] as List<Map<String,dynamic>>?) ?? [], // nullの場合は空のリストを設定
