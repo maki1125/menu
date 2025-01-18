@@ -47,7 +47,7 @@ class _MainPageState extends ConsumerState<MainPage>
 
     //ページリストの初期化.menuを参照するため、初期化内で参照する。
      _pages = [
-    const MenuList(category: '全て'),
+    MenuList(category: '全て'),
     const MaterialListScreen(),
     DinnerList(),
     const MenuCreateScreen(),

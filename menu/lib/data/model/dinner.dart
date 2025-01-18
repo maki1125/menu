@@ -1,6 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Dinner {
+  DateTime? createAt;
+  List<String>? select;
+  int? price;
+  String? id;
+
+  //コンストラクタ。
   Dinner({
     this.createAt,
     this.select,
@@ -8,10 +14,7 @@ class Dinner {
     this.id
   });
 
-  DateTime? createAt;
-  List<String>? select;
-  int? price;
-  String? id;
+  
 
   //FirestoreからのデータからDinnerインスタンスを生成する
   factory Dinner.fromFirestore(Map<String, dynamic> data) {

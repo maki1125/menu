@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:menu/data/model/menu.dart';
+import 'package:menu/data/model/dinner.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';
@@ -13,8 +15,8 @@ import 'package:menu/common/common_providers.dart';
 class MenuList extends ConsumerWidget {
 
   //main_screen.dartからカテゴリーを受け取る
-  final String category;
-  const MenuList({required this.category}); // コンストラクタ
+  String category;
+  MenuList({required this.category}); // コンストラクタ
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -92,7 +94,9 @@ class MenuList extends ConsumerWidget {
                             MaterialPageRoute(builder: (context) => MainPage(menu: filteredMenus[index])),
                         );
                       },
-                      child: Row(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10.0),
+                      child:Row(
                         children: [
                           //テキストエリア===========================================================
                           Expanded(
@@ -252,6 +256,7 @@ class MenuList extends ConsumerWidget {
                           )
                         ],
                       ),
+                      ),
                     ),
                   );
                 
@@ -265,10 +270,38 @@ class MenuList extends ConsumerWidget {
                         final totalPrice = ref.watch(totalPriceNotifierProvider); //「今日の夕飯」タブの人前を変更した時に、再描写する。
                         return Text("${DateFormat('yyyy/MM/dd(E)','ja').format(DateTime.now()) }の夕食  合計${totalPrice}円");
                       }),
-                      
-                      OutlinedButton(//枠線ありボタン
-                        onPressed: () { /* ボタンがタップされた時の処理 */ },
+
+                      filteredMenus.isNotEmpty
+                      ? OutlinedButton(//枠線ありボタン
+                        onPressed: () { 
+                          //dinner作成
+                          Dinner dinner = Dinner();
+                          dinner.createAt = DateTime.now();
+                          dinner.price = ref.read(totalPriceNotifierProvider);
+                          dinner.select = filteredMenus.map((menu)=>menu.name!).toList();
+                          DinnerRepository(currentUser!).addDinner(dinner);//データベースにデータ追加
+                          
+                          //ページ遷移
+                          ref.read(pageProvider.notifier).state = 2;
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MainPage()),
+                          );
+                         },
                         child: const Text('今日の夕飯はこれで決まり！'),
+                      )
+                        : OutlinedButton(//枠線ありボタン
+                        onPressed: () { 
+                            category = '全て';
+                            //ページ遷移
+                          ref.read(pageProvider.notifier).state = 0;
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => MainPage()),
+                          );
+
+                         },
+                        child: const Text('夕飯を選択してね'),
                       ),
                     ],
                   )
