@@ -17,228 +17,218 @@ class MaterialCreateScreen extends ConsumerStatefulWidget {
 }
 
 class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
-  final materialController = TextEditingController();
-  final quantityController = TextEditingController();
-  final unitController = TextEditingController();
-  final priceController = TextEditingController();
-
-  final List<Map<String, dynamic>> _materialMap = []; // 材料リスト
+  var counter = 0; // テキストフィールドの数
+  Map<int, TextEditingController> materialController = {};
+  Map<int, TextEditingController> quantityController = {};
+  Map<int, TextEditingController> unitController = {};
+  Map<int, TextEditingController> priceController = {};
+  final List<Map<String, dynamic>> _materialMap = []; // 登録用のマップ
 
   @override
   void dispose() {
-    materialController.dispose();
-    quantityController.dispose();
-    unitController.dispose();
-    priceController.dispose();
+    for (var i = 0; i < materialController.length; i++) {
+      materialController[i]?.dispose();
+      quantityController[i]?.dispose();
+      unitController[i]?.dispose();
+      priceController[i]?.dispose();
+    }
+
     super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ウィジェットツリーがビルドされた後に状態を変更する
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // 状態変更をここで行う
-      //ref.read(pageProvider.notifier).state = initOtherPage;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     // 材料データ取得
     final materialMap = ref.watch(materialProvider);
-    final selectButton = ref.watch(selectButtonProvider); // ボタンの状態取得
+    final selectButton =
+        ref.watch(selectButtonProvider.notifier).state; // ボタンの状態取得
 
-    materialController.text = materialMap.name ?? '';
-    quantityController.text = materialMap.quantity.toString();
-    unitController.text = materialMap.unit ?? '';
-    priceController.text = materialMap.price.toString();
-
-    if (selectButton == 'Resist') {
-      // 登録ボタンが押された場合、フォームをクリア
-      clearform();
-    }
-
-    return 
-    /*
-    Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '材料登録',
-        ),
-        centerTitle: true,
-        elevation: 10.0,
-        backgroundColor: Colors.white,
-      ),
-      body: Material(
-        child: 
-        */
+    return
+        // Scaffold(
+        //   appBar: AppBar(
+        //     title: const Text(
+        //       '材料登録',
+        //     ),
+        //     centerTitle: true,
+        //     elevation: 10.0,
+        //     backgroundColor: Colors.white,
+        //   ),
+        // body: Material(
+        //   child:
         SafeArea(
-          // スマホのノッチ部分に対応
-          top: true,
-          child: Center(
-            child: Column(children: [
-              const SizedBox(height: 10),
-              _materialMap.isEmpty
-                  ? const SizedBox.shrink() // リストが空の場合は何も表示しない
-                  : ListView.builder(
-                      shrinkWrap: true, // 高さ自動調整
-                      physics: const NeverScrollableScrollPhysics(), // スクロール禁止
-                      itemCount: _materialMap.length, // リストの数
-                      itemBuilder: (context, index) {
-                        final material = _materialMap[index]; // 材料データ
+      // スマホのノッチ部分に対応
+      top: true,
+      child: Center(
+        child: Column(children: [
+          const SizedBox(height: 10),
+          //Expanded(
+          Flexible(
+            child: ListView.builder(
+              shrinkWrap: true, // 高さ自動調整
+              //physics: const NeverScrollableScrollPhysics(), // スクロール禁止
+              itemCount: counter + 1,
+              itemBuilder: (context, index) {
+                while (_materialMap.length <= index) {
+                  // マップの長さがインデックスより小さい場合エラー回避のため空のマップを作成
+                  _materialMap.add({
+                    'material': '',
+                    'quantity': '',
+                    'unit': '',
+                    'price': '',
+                  });
+                }
 
-                        return ListTile(
-                          title: Card(
-                            elevation: 0, // 影の設定
-                            margin: const EdgeInsets.all(0), // 余白
-                            color: Colors.transparent, // 背景透明
-                            child: ListTile(
-                              contentPadding: const EdgeInsets.symmetric(
-                                  //  内部余白
-                                  horizontal: 10.0),
-                              // リストの中身
-                              title: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .spaceBetween, // アイテムを左右に配置
-                                children: <Widget>[
-                                  SizedBox(
-                                    width: 100,
-                                    child: Text(
-                                      material['material'],
-                                      overflow: TextOverflow
-                                          .ellipsis, // テキストがはみ出た場合の処理
-                                      maxLines: 1, // 最大行数
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      material['quantity'],
-                                      overflow: TextOverflow
-                                          .ellipsis, // テキストがはみ出た場合の処理
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 50,
-                                    child: Text(
-                                      material['unit'],
-                                      overflow: TextOverflow
-                                          .ellipsis, // テキストがはみ出た場合の処理
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 70,
-                                    child: Text(
-                                      '${material['price']}円',
-                                      overflow: TextOverflow
-                                          .ellipsis, // テキストがはみ出た場合の処理
-                                      maxLines: 1,
-                                    ),
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: () {
-                                      setState(() {
-                                        _materialMap.removeAt(index); // リストから削除
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                if (selectButton != 'edit') {
+                  // edit テキストフィールドの初期値
+                  materialController[index] ??= TextEditingController(
+                    text: _materialMap[index]['material'],
+                  );
+                  quantityController[index] ??= TextEditingController(
+                    text: _materialMap[index]['quantity'],
+                  );
+                  unitController[index] ??= TextEditingController(
+                    text: _materialMap[index]['unit'],
+                  );
+                  priceController[index] ??= TextEditingController(
+                    text: _materialMap[index]['price'],
+                  );
+                } else {
+                  // 編集ボタンが押された場合、フォームに値をセット
+                  materialController[0] =
+                      TextEditingController(text: materialMap.name);
+                  quantityController[0] = TextEditingController(
+                      text: materialMap.quantity.toString());
+                  unitController[0] =
+                      TextEditingController(text: materialMap.unit);
+                  priceController[0] =
+                      TextEditingController(text: materialMap.price.toString());
+                }
+                return ListTile(
+                  title: Row(children: <Widget>[
+                    const SizedBox(width: 10),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start, // 左寄せ
+                        children: <Widget>[
+                          const Align(
+                              alignment: Alignment.centerLeft, // 左寄せ
+                              child: Text('材料')),
+                          const SizedBox(height: 5),
+                          _buildTextField(
+                              name: 'material',
+                              hintText: '牛肉',
+                              controller: materialController[index] ??
+                                  TextEditingController(), // エラー防止のため空のコントローラーをセット
+                              keyboardType: TextInputType.text,
+                              width: 140,
+                              index: index),
+                        ]),
+                    const SizedBox(width: 10),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('数量')),
+                          const SizedBox(height: 5),
+                          _buildTextField(
+                            name: 'quantity',
+                            hintText: '10',
+                            controller: quantityController[index] ??
+                                TextEditingController(),
+                            keyboardType: TextInputType.number,
+                            width: 60,
+                            index: index,
                           ),
-                        );
-                      },
-                    ),
-              Row(children: <Widget>[
-                const SizedBox(width: 10),
-                _buildTextField(
-                  labelText: '材料名',
-                  hintText: '牛肉',
-                  controller: materialController,
-                  keyboardType: TextInputType.text,
-                  width: 120,
-                ),
-                const SizedBox(width: 10),
-                _buildTextField(
-                  labelText: '数量',
-                  hintText: '10',
-                  controller: quantityController,
-                  keyboardType: TextInputType.number,
-                  width: 50,
-                ),
-                const SizedBox(width: 10),
-                _buildTextField(
-                  labelText: '単位',
-                  hintText: 'g',
-                  controller: unitController,
-                  keyboardType: TextInputType.text,
-                  width: 50,
-                ),
-                const SizedBox(width: 10),
-                _buildTextField(
-                  labelText: '価格',
-                  hintText: '400',
-                  controller: priceController,
-                  keyboardType: TextInputType.number,
-                  width: 70,
-                ),
-                const SizedBox(width: 10),
-                selectButton != 'Resist'
-                    ? const SizedBox.shrink()
-                    : IconButton(
-                        icon: const Icon(Icons.add),
-                        onPressed: () {
-                          materialController.text.isEmpty
-                              ? _showErrorDialog('材料名を入力してください')
-                              : quantityController.text.isEmpty
-                                  ? _showErrorDialog('数量を入力してください')
-                                  : unitController.text.isEmpty
-                                      ? _showErrorDialog('単位を入力してください')
-                                      : priceController.text.isEmpty
-                                          ? _showErrorDialog('価格を入力してください')
-                                          : setState(() {
-                                              _materialMap.add({
-                                                'material':
-                                                    materialController.text,
-                                                'quantity':
-                                                    quantityController.text,
-                                                'unit': unitController.text,
-                                                'price': priceController.text,
-                                              });
-                                            });
-                        },
-                      ),
-              ]),
-
-              const SizedBox(height: 20),
-              SizedBox(
-                width: 100,
-                //child: selectButton == 'Resist'
-                child:
-                    _actionButton(ref, selectButton, materialMap), // 登録、更新ボタン
-                //material.id == null ? _resisterButton() : _updateButton(ref),
-              ),
-              // 戻るボタン
-              TextButton(
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.blueAccent,
-                ),
-                onPressed: () {
-                  //ref.read(pageProvider.notifier).state = initOtherPage;
-                  Navigator.pop(context);
-                },
-                child: const Text('戻る'),
-              ),
-            ]),
+                        ]),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('単位')),
+                          const SizedBox(height: 5),
+                          _buildTextField(
+                            name: 'unit',
+                            hintText: 'g',
+                            controller: unitController[index] ??
+                                TextEditingController(),
+                            keyboardType: TextInputType.text,
+                            width: 60,
+                            index: index,
+                          ),
+                        ]),
+                    const SizedBox(width: 10),
+                    Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text('価格')),
+                          const SizedBox(height: 5),
+                          _buildTextField(
+                            name: 'price',
+                            hintText: '400',
+                            controller: priceController[index] ??
+                                TextEditingController(),
+                            keyboardType: TextInputType.number,
+                            width: 80,
+                            index: index,
+                          ),
+                        ]),
+                  ]),
+                );
+              },
+            ),
           ),
-        //),
+          const SizedBox(width: 10),
+          selectButton != 'Resist'
+              ? const SizedBox.shrink()
+              : IconButton(
+                  icon: const Icon(Icons.add),
+                  onPressed: () {
+                    setState(
+                      () {
+                        counter++;
+                        // テキストフィールドの数を増やす
+                        materialController[counter] = TextEditingController();
+                        quantityController[counter] = TextEditingController();
+                        unitController[counter] = TextEditingController();
+                        priceController[counter] = TextEditingController();
+                      },
+                    );
+                  },
+                ),
+          const SizedBox(height: 20),
+          SizedBox(
+            width: 100,
+            //child: selectButton == 'Resist'
+            child: _actionButton(
+                ref,
+                selectButton,
+                materialMap,
+                materialController,
+                quantityController,
+                unitController,
+                priceController), // 登録、更新ボタン
+            //material.id == null ? _resisterButton() : _updateButton(ref),
+          ),
+          // 戻るボタン
+          TextButton(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.blueAccent,
+            ),
+            onPressed: () {
+              //ref.read(pageProvider.notifier).state = initOtherPage;
+              Navigator.pop(context);
+            },
+            child: const Text('戻る'),
+          )
+        ]),
+      ),
+      //),
       //),
     );
+    // ),
   }
 
   // エラーダイアログの表示
@@ -264,20 +254,27 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   // テキストフィールドの作成
   Widget _buildTextField({
-    required String labelText,
+    dynamic name = '',
     final String hintText = '',
     required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     final double width = 130,
+    required int index,
   }) {
     return SizedBox(
       width: width,
       child: TextField(
+        onChanged: (text) {
+          // テキストフィールドの値が変更された場合
+          if (index < _materialMap.length) {
+            _materialMap[index][name] = text; // マップに値をセット
+          }
+        },
         controller: controller, // コントローラー
         keyboardType: keyboardType, // キーボードタイプ
         decoration: InputDecoration(
           // テキストフィールドの装飾
-          labelText: labelText,
+          // labelText: labelText,
           hintText: hintText,
           //floatingLabelAlignment: FloatingLabelAlignment.center,
           floatingLabelBehavior: FloatingLabelBehavior.always, // ラベルの位置
@@ -290,11 +287,21 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   }
 
   // 登録、更新ボタン
-  Widget _actionButton(WidgetRef ref, selectButton, material) {
+  Widget _actionButton(WidgetRef ref, selectButton, material,
+      materialController, quantityController, unitController, priceController) {
     final isUpdate = selectButton != 'Resist';
 
     // 登録できる段階かを判定
     final isButtonDisabled = !isUpdate && _materialMap.isEmpty;
+
+    // 登録用のマップに値をセット
+    for (var i = 0; i < materialController.length - 1; i++) {
+      _materialMap[i]['material'] = materialController[i]?.text;
+      _materialMap[i]['quantity'] = quantityController[i]?.text;
+      _materialMap[i]['unit'] = unitController[i]?.text;
+      _materialMap[i]['price'] = priceController[i]?.text;
+    }
+    print(_materialMap);
 
     return FilledButton(
       onPressed: isButtonDisabled
@@ -304,10 +311,10 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                 if (isUpdate) {
                   final materials = MaterialModel(
                     id: material.id, // ID
-                    name: materialController.text, // 材料名
-                    quantity: int.tryParse(quantityController.text), // 数量
-                    unit: unitController.text, // 単位
-                    price: int.tryParse(priceController.text), // 価格
+                    name: materialController[0]?.text, // 材料名
+                    quantity: int.tryParse(quantityController[0]!.text), // 数量
+                    unit: unitController[0]?.text, // 単位
+                    price: int.tryParse(priceController[0]!.text), // 価格
                     //createAt: DateTime.now(),
                   );
                   await MaterialRepository(currentUser!) // データ更新
@@ -321,6 +328,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   ); //ダイアログ表示
                 } else {
                   // 追加
+
                   final materials = _materialMap.map((e) {
                     return MaterialModel(
                       name: e['material'], // 材料名
@@ -330,11 +338,25 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                       //createAt: DateTime.now(),
                     );
                   }).toList();
+
                   if (currentUser == null) {
                     // ユーザー情報が取得できない場合
                     _showErrorDialog('ユーザー情報が取得できませんでした。');
                   }
+
+                  // 入力チェック
+                  if (!validateInputs()) {
+                    return;
+                  }
+
                   for (var i = 0; i < materials.length; i++) {
+                    // 材料データが空の場合は登録しない
+                    if (materials[i].name == null ||
+                        materials[i].quantity == null ||
+                        materials[i].unit == null ||
+                        materials[i].price == null) {
+                      continue;
+                    }
                     await MaterialRepository(currentUser!) // データ登録
                         .addMaterial(materials[i]);
                   }
@@ -373,9 +395,40 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   // フォームのクリア
   void clearform() {
-    materialController.clear();
-    quantityController.clear();
-    unitController.clear();
-    priceController.clear();
+    for (var controller in materialController.values) {
+      controller.clear();
+    }
+    for (var controller in quantityController.values) {
+      controller.clear();
+    }
+    for (var controller in unitController.values) {
+      controller.clear();
+    }
+    for (var controller in priceController.values) {
+      controller.clear();
+    }
+  }
+
+  bool validateInputs() {
+    for (var i = 0; i < _materialMap.length; i++) {
+      if (_materialMap[i]['material'] == null ||
+          _materialMap[i]['material'].isEmpty) {
+        _showErrorDialog('材料名を入力してください');
+        return false;
+      }
+      if (int.tryParse(_materialMap[i]['quantity'] ?? '') == null) {
+        _showErrorDialog('数量を正しく入力してください');
+        return false;
+      }
+      if (_materialMap[i]['unit'] == null || _materialMap[i]['unit'].isEmpty) {
+        _showErrorDialog('単位を入力してください');
+        return false;
+      }
+      if (int.tryParse(_materialMap[i]['price'] ?? '') == null) {
+        _showErrorDialog('価格を正しく入力してください');
+        return false;
+      }
+    }
+    return true;
   }
 }
