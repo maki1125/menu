@@ -35,6 +35,8 @@ class ImageRepository {
       
     }
   }
+
+  //画像を保存するときに一緒にデータも保存する。
   Future<void> addImage() async{
     final File? file = ref.read(selectedImageProvider);  // Riverpodで値取得
     if(file != null){
@@ -55,6 +57,29 @@ class ImageRepository {
     print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
   }
+
+    //画像を保存するときに一緒にデータも保存する。
+  Future<void> editImage() async{
+    final File? file = ref.read(selectedImageProvider);  // Riverpodで値取得
+    if(file != null){
+    final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
+    final String name = file!.path.split('/').last;
+    final String filename = '${timestamp}_$name';
+    final TaskSnapshot task = await FirebaseStorage.instance
+      .ref()
+      .child('users/${user.uid}/images')
+      .child(filename)
+      .putFile(file);
+    final String imageURL = await task.ref.getDownloadURL();
+    final String imagePath = task.ref.fullPath;// 画像削除時に使用。users/AC3iWb7RnqM4gCmeLOD9/images/1735480514815890_IMG_0111.jpeg
+    menu.imageURL = imageURL;
+    menu.imagePath = imagePath;
+    }
+    MenuRepository(user).editMenu(menu);
+    print(menu.imageURL);
+    ref.read(selectedImageProvider.notifier).state = null;
+  }
+
 
   //画像削除
   Future<void> deleteImage() async{

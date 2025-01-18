@@ -1,5 +1,5 @@
 //import 'dart:io'; //Fileを扱うため
-//import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
 //import 'package:menu/common/common_widget.dart';
@@ -8,13 +8,13 @@ import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
-//import 'package:menu/view/main_screen.dart';
+import 'package:menu/view/main_screen.dart';
 //import 'package:menu/data/repository/image_repository.dart';
 //import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
 //import 'package:menu/common/common_constants.dart';
 
-class MenuDetailScreen extends StatefulWidget {
+class MenuDetailScreen extends ConsumerStatefulWidget {
 
   Menu? menu;//遷移元listから選択されたmenuを受け取る。
   MenuDetailScreen({required this.menu});//コンストラクタで名前つきでデータを受け取る。
@@ -23,7 +23,7 @@ class MenuDetailScreen extends StatefulWidget {
   _MenuDetailScreenState createState() => _MenuDetailScreenState();
 }
 
-class _MenuDetailScreenState extends State<MenuDetailScreen> {
+class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
   late Menu menu;
 
   @override
@@ -120,7 +120,11 @@ class _MenuDetailScreenState extends State<MenuDetailScreen> {
             child: IconButton(
             icon: const Icon(Icons.edit),
             onPressed: () {
-              //_clearform();
+              ref.read(pageProvider.notifier).state = 6;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainPage(menu: menu)),
+                );
             },
             iconSize: 25,
           ),

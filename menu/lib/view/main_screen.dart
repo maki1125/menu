@@ -10,6 +10,7 @@ import 'package:menu/view/menu_create_screen.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/menu_detail_screen.dart';
+import 'package:menu/view/menu_edit_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view/dinner_list_screen.dart';
 //import 'package:menu/view/material_create_screen.dart';
@@ -52,6 +53,7 @@ class _MainPageState extends ConsumerState<MainPage>
     const MenuCreateScreen(),
     const MaterialCreateScreen(),
     MenuDetailScreen(menu: menu),
+    MenuEditScreen(menu: menu),
   ];
 
   }
@@ -64,6 +66,7 @@ class _MainPageState extends ConsumerState<MainPage>
    "メニュー登録",
    "材料登録",
   "メニュー詳細",
+  "メニュー編集",
 
   ];
 

@@ -13,17 +13,19 @@ import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/common/common_constants.dart';
 
-class MenuCreateScreen extends ConsumerStatefulWidget {
-  const MenuCreateScreen({Key? key}) : super(key: key); // Keyの引き渡し
-
+class MenuEditScreen extends ConsumerStatefulWidget {
+  Menu? menu;//遷移元listから選択されたmenuを受け取る。
+  MenuEditScreen({required this.menu});//コンストラクタで名前つきでデータを受け取る。
+  
   @override
   MenuCreateScreenState createState() => MenuCreateScreenState();
 }
 
-class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
+class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
 
   //入力項目の設定。初期値は"""
-  final TextEditingController _nameController = TextEditingController();
+/*
+  final TextEditingController _nameController = TextEditingController(text: _menu.name);
   final TextEditingController _quantityController = TextEditingController(text: "1");
   final TextEditingController _materialController = TextEditingController();
   final TextEditingController _numController = TextEditingController(text: "1");
@@ -31,6 +33,15 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _howToMakeController = TextEditingController();
   final TextEditingController _memoController = TextEditingController();
+  */
+  late TextEditingController _nameController ;
+  late TextEditingController _quantityController ;
+  late TextEditingController _materialController;
+  late TextEditingController _numController ;
+  late TextEditingController _unitController ;
+  late TextEditingController _priceController ;
+  late TextEditingController _howToMakeController ;
+  late TextEditingController _memoController ;
 
 /*
   //リソース解放。ウィジェット破棄後に、コントローラを破棄。
@@ -48,9 +59,10 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   }
 */
   //変数
-  final List<Map<String, dynamic>> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
+  List<dynamic> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
   late Menu _menu; //登録するデータをここに入れる
-  final List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
+  List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
+  //dropdownItems.insert(0, "カテゴリー無");
   bool _isLoading = false; // 登録処理のローディング状態を管理
   //MaterialModel? _result; //材料一覧から選択時に結果を入れる
   MaterialModel? selectedMaterial; // 材料一覧から選択時に再描写のために使用
@@ -60,10 +72,34 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   @override
   void initState() {
     super.initState();
-    _menu = Menu(); // インスタンスを初期化
+    if(widget.menu == null){
+      _menu = Menu(); // インスタンスを初期化
+      print(_menu.quantity);
     _menu.isFavorite = false; // 初期値を設定
+    print("menu受け取っていない");
+    }else{
+      _menu = widget.menu!; //遷移元から受け取ったmenuを受け取る。
+      print(_menu.name! + "!!");
+      _savedMaterials=_menu.material!;
+    }
+
+    dropdownItems.insert(0, "カテゴリー無"); //プルダウンの選択しに追加
+    
+    
     //_result = MaterialModel(); 
-    _numController.addListener(_calculatePrice);// コントローラのリスナーを追加
+   
+    _nameController = TextEditingController(text: _menu.name);
+  _quantityController = TextEditingController(text: _menu.quantity.toString());
+   _materialController = TextEditingController();
+  _numController = TextEditingController(text: "1");
+  _unitController = TextEditingController();
+  _priceController = TextEditingController();
+  _howToMakeController = TextEditingController(text: _menu.howToMake);
+  _memoController = TextEditingController(text: _menu.memo);
+
+   _numController.addListener(_calculatePrice);// コントローラのリスナーを追加
+
+    
     
   }
   // 計算ロジック
@@ -96,6 +132,8 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
     //画像のクリア
     ref.read(selectedImageProvider.notifier).state = null;
+    _menu.imagePath = "noData";
+    _menu.imageURL = "noData";
 
     //材料一覧から選択の結果のクリア
     selectedMaterial = null;
@@ -110,6 +148,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   @override
   Widget build(BuildContext context) {    
     print("menu_create");
+
     return 
    
       SingleChildScrollView(//スクロール可能とする
@@ -165,7 +204,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
           //画像選択ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           GestureDetector(
               onTap: () {
-                ImageRepository(currentUser!, _menu, ref).selectImage();//ここでselectecImageProviderを更新。
+                ImageRepository(currentUser!, _menu, ref).selectImage();
                 //.then((value) => print(menu.imageURL));
               }, // 領域をタップしたら画像選択ダイアログを表示
               child: Consumer( //画像選択変更時に、ここだけ再描写されるようにconsumer使用。
@@ -179,14 +218,24 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                       border: Border.all(color: Colors.grey), // 枠線
                       //borderRadius: BorderRadius.circular(10), // 角丸
                     ),
-                    child: selectedImage == null
+                    child: _menu.imageURL=="noData" //selectedImage == null
                     ? const Center(
                         child: Text(
                           '画像を選択',
                           style: TextStyle(color: Colors.grey),
                         ),
                       )
-                    : ClipRRect(
+                    : selectedImage == null
+                      ? ClipRRect(
+                          //borderRadius: BorderRadius.circular(10), // 選択画像の角丸
+                          child: Image.network(
+                            _menu.imageURL!,
+                            fit: BoxFit.cover, // 領域に合わせて表示
+                            width: 350,
+                            height: 200,
+                          ),
+                        )
+                      :ClipRRect(
                         //borderRadius: BorderRadius.circular(10), // 選択画像の角丸
                         child: Image.file(
                           selectedImage,
@@ -229,9 +278,13 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                     final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目
                     return DropdownButton<String>(
                       hint: const Text('カテゴリー無'), // ヒント表示
-                      value: dropdownItems.contains(selectedValue)
-                          ? selectedValue
-                          : null, // 選択値がリストに含まれていない場合は`null`
+                      value: _menu.tag != "noData"
+                      ? _menu.tag == "全て"
+                        ? "カテゴリー無"
+                        : _menu.tag
+                      : dropdownItems.contains(selectedValue)
+                        ? selectedValue
+                        : null, // 選択値がリストに含まれていない場合は`null`
                       items: dropdownItems.map((String item) {
                         return DropdownMenuItem<String>(
                           value: item,
@@ -240,6 +293,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                       }).toList(),
                       onChanged: (String? newValue) {
                         if (newValue != null) {
+                          _menu.tag = "noData";
                           ref.read(dropDownProvider.notifier).state = newValue; // 値を更新
                         }
                       },
@@ -482,11 +536,15 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
               //_menu.price //addMenu()で計算される
               //_menu.unitPrice = 0; //addMenu()で計算される
-
-              await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
+              ImageRepository(currentUser!, _menu, ref).deleteImage(); 
+              await ImageRepository(currentUser!, _menu, ref).editImage(); //画像とデータ保存
               print("メニューの画像とデータを保存しました。");
               
-              Navigator.pop(context);//元画面(メニュー一覧)に遷移
+              ref.read(pageProvider.notifier).state = 0;
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MainPage()),
+              );
 
               setState(() {
                 _isLoading = false; // ローディング終了
@@ -497,9 +555,9 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 	            //padding: EdgeInsets.zero, // 完全にパディングを削除
               //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
               minimumSize: const Size(50, 30), // 最小サイズを指定
-              backgroundColor:  Colors.orange,
+              backgroundColor:  const Color.fromARGB(255, 72, 255, 0),
             ),
-            child: const Text('登録',
+            child: const Text('編集',
               style: TextStyle(
               //fontSize: 12,
               color: Colors.white
@@ -610,3 +668,5 @@ Widget _buildTextField({
     ],
   );
 }
+
+
