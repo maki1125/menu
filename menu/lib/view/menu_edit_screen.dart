@@ -555,9 +555,9 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
 	            //padding: EdgeInsets.zero, // 完全にパディングを削除
               //padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
               minimumSize: const Size(50, 30), // 最小サイズを指定
-              backgroundColor:  const Color.fromARGB(255, 72, 255, 0),
+              backgroundColor:  const Color.fromARGB(255, 0, 17, 255),
             ),
-            child: const Text('編集',
+            child: const Text('変更',
               style: TextStyle(
               //fontSize: 12,
               color: Colors.white
