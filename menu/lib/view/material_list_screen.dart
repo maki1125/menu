@@ -32,7 +32,6 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("material_list");
     final materialList = ref.watch(materialListProvider); // 材料データ取得
     final filteredMaterials =
         ref.watch(filteredMaterialsProvider); // フィルタリングされた材料データ
@@ -162,8 +161,8 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
               ref.read(bottomBarProvider.notifier).state = 1; //ボトムバーの選択
               ref.read(pageProvider.notifier).state = 4; //表示ページ
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainPage()),
+                context,
+                MaterialPageRoute(builder: (context) => MainPage()),
               );
             },
             child: const Icon(Icons.add), // 追加アイコン

@@ -27,7 +27,7 @@ final filteredMaterialsProvider = Provider<List<MaterialModel>>((ref) {
     //final isMatch = material.name!.contains(text); // 材料名に指定された文字列が含まれているか
     // 材料名が完全一致するか
     final isMatch = material.name! == text;
-    print('isMatch: $isMatch');
+
     return isMatch;
   }).toList();
 
