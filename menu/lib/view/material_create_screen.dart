@@ -46,23 +46,12 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     final screenWidth = MediaQuery.of(context).size.width; // 画面幅取得
     // final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
 
-    return
-        // Scaffold(
-        //   appBar: AppBar(
-        //     title: const Text(
-        //       '材料登録',
-        //     ),
-        //     centerTitle: true,
-        //     elevation: 10.0,
-        //     backgroundColor: Colors.white,
-        //   ),
-        // body: Material(
-        //   child:
-        SafeArea(
+    return SafeArea(
       // スマホのノッチ部分に対応
       top: true,
       child: Center(
         child: Column(children: [
+          const Text('スワイプで削除'),
           const SizedBox(height: 10),
           //Expanded(
           Flexible(
