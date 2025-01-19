@@ -1,5 +1,6 @@
 import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
@@ -176,6 +177,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
             )
           ),
 
+          /*全項目クリアするアイコンの意味だが、削除と紛らわしいのでやめる。
           //クリアボタン
           Positioned(
             top: -10,
@@ -188,7 +190,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
             iconSize: 25,
           ),
           ),
-
+          */
 
           Column(
             children: [
@@ -204,6 +206,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
           //画像選択ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           GestureDetector(
               onTap: () {
+                print("画像選択します。");
                 ImageRepository(currentUser!, _menu, ref).selectImage();
                 //.then((value) => print(menu.imageURL));
               }, // 領域をタップしたら画像選択ダイアログを表示
@@ -225,8 +228,19 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
                           style: TextStyle(color: Colors.grey),
                         ),
                       )
-                    : selectedImage == null
-                      ? ClipRRect(
+                    : selectedImage == null //元画像の表示
+                      ? CachedNetworkImage(
+                        imageUrl: _menu.imageURL!.toString(), // ネットワーク画像のURL
+                        placeholder: (context, url) =>  Transform.scale(//sizedboxでは小さくならなかったのでscaleを使用。
+                          scale: 0.3, // 縮小率を指定
+                          child: const CircularProgressIndicator(strokeWidth: 20.0),
+                        ),
+                        
+                        errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                        fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
+                      )
+                      /*
+                      ClipRRect(
                           //borderRadius: BorderRadius.circular(10), // 選択画像の角丸
                           child: Image.network(
                             _menu.imageURL!,
@@ -235,7 +249,8 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
                             height: 200,
                           ),
                         )
-                      :ClipRRect(
+                        */
+                      :ClipRRect( //新しく選択した画像
                         //borderRadius: BorderRadius.circular(10), // 選択画像の角丸
                         child: Image.file(
                           selectedImage,
@@ -570,8 +585,8 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
         ),
         // ローディングインジケーター.
         Positioned(
-            top: MediaQuery.of(context).size.height / 2 - 50, // 高さの中央
-            right: MediaQuery.of(context).size.width / 2 - 50, // 幅の中央
+            top: MediaQuery.of(context).size.height / 2, // 高さの中央
+            right: MediaQuery.of(context).size.width / 2, // 幅の中央
             child:_isLoading
             ? const Center(
               child: CircularProgressIndicator(),

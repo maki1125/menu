@@ -1,12 +1,13 @@
+import 'dart:io'; //Fileを扱うため
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
+import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:intl/intl.dart';//日付のフォーマット
 import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/model/dinner.dart';
-//import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';
 //import 'package:menu/view/menu_detail_screen.dart';
@@ -217,11 +218,25 @@ class MenuList extends ConsumerWidget {
                                     height: 130, 
                                     child:filteredMenus[index].imageURL.toString() != 'noData'
                           
-                                    ? Image.network(//画像ある場合
+                                    ? 
+                                  CachedNetworkImage(
+                                    imageUrl: filteredMenus[index].imageURL.toString(), // ネットワーク画像のURL
+                                    
+                                    placeholder: (context, url) =>  Transform.scale(//sizedboxでは小さくならなかったのでscaleを使用。
+                                      scale: 0.3, // 縮小率を指定
+                                      child: const CircularProgressIndicator(strokeWidth: 15.0),
+                                    ),
+                                    
+                                    errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                                    fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
+                                  )
+                                    /*
+                                    Image.network(//画像ある場合
                                     filteredMenus[index].imageURL.toString(), // 画像のURLを指定
                                     fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
                                     //fit: BoxFit.fitHeight, 
                                   )
+                                  */
 
                                   :Image.asset( //画像ない場合
                                     'images/no_image.jpg',
@@ -319,10 +334,25 @@ class MenuList extends ConsumerWidget {
           bottom: 16, // 下からの距離
           right: 16,  // 右からの距離
           child: FloatingActionButton(
-            onPressed: () {
-              ref.read(pageProvider.notifier).state = 3;
+            onPressed: () async{
+              
+              //画面遷移時に前回選択した画像が一時フォルダに保存されていたら削除する。
+              final file = File('${Directory.systemTemp.path}/resized_image.jpg');
+                  // ファイルを削除
+                  if (await file.exists()) {
+                    await file.delete();
+                    print('ファイルが削除されました。');
+                  } else {
+                    print('ファイルは存在しません。');
+                  }
+                  ref.read(selectedImageProvider.notifier).state = null;
+
+              ref.read(pageProvider.notifier).state = 3;//表示ページの設定
               Navigator.push(
+                // ファイルのパスを指定
+                  
                   context,
+                  
                   MaterialPageRoute(builder: (context) => MainPage()),
               );
             },
