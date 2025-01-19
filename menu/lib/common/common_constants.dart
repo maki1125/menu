@@ -3,8 +3,8 @@
 
 final List<String> tabCategories = [
   '全て',
-  'お気に入り',
   '今日の夕食',
+  'お気に入り', 
   'メイン',
   '汁物',
   '麺類',
