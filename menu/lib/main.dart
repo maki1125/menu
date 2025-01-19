@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:menu/view/main_screen.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; //日本語設定
+import 'package:menu/view/main_screen.dart';
 //import 'package:menu/data/providers.dart';
 //import 'package:menu/kudo_test.dart';
 //import 'data/model/menu.dart';
@@ -28,11 +30,25 @@ class MyApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //return MaterialApp(home: KudoTest()
-    return const MaterialApp(
-        home:
-            //MainPage()
-            // 匿名ログイン処理ページへ
-            SignInAnony()
+
+    return MaterialApp(
+
+      //日本語設定
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: [
+        Locale('ja'), // 日本語
+        Locale('en'), // 英語
+      ],
+      locale: Locale('ja'), // アプリのデフォルト言語を日本語に設定
+      
+      home: 
+      //MainPage()
+      SignInAnony()
+        //return MaterialApp(home: MaterialCreateScreen()
         //Scaffold(
         //body:
         //CardListExample(),
