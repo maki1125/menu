@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,12 +14,11 @@ import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view/menu_edit_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
 import 'package:menu/view/dinner_list_screen.dart';
+import 'package:menu/view/login_screen.dart';
 //import 'package:menu/view/material_create_screen.dart';
 //import 'package:menu/view/login_screen.dart';
 
-
 class MainPage extends ConsumerStatefulWidget {
-
   Menu? menu;
   MainPage({Key? key, this.menu}) : super(key: key); //menuデータを受け取ることができるようにする。
 
@@ -27,15 +27,16 @@ class MainPage extends ConsumerStatefulWidget {
 }
 
 class _MainPageState extends ConsumerState<MainPage>
-    with SingleTickerProviderStateMixin { //アニメーション制御Tickerに必要。vsynsが使用できる。タブコントローラで使用。
-  
+    with SingleTickerProviderStateMixin {
+  //アニメーション制御Tickerに必要。vsynsが使用できる。タブコントローラで使用。
+
   int _bottomBarIndex = 0; //現在ボトムバーの選択
   int _pageIndex = 0; //現在のページ
   late TabController _tabController; //メニュー一覧の上部タブに使用
   late Menu? menu;
   late List<Widget> _pages;
 
- //初期処理
+  //初期処理
   @override
   void initState() {
     super.initState();
@@ -46,28 +47,28 @@ class _MainPageState extends ConsumerState<MainPage>
     menu = widget.menu;
 
     //ページリストの初期化.menuを参照するため、初期化内で参照する。
-     _pages = [
-    MenuList(category: '全て'),
-    const MaterialListScreen(),
-    DinnerList(),
-    const MenuCreateScreen(),
-    const MaterialCreateScreen(),
-    MenuDetailScreen(menu: menu),
-    MenuEditScreen(menu: menu),
-  ];
-
+    _pages = [
+      MenuList(category: '全て'),
+      const MaterialListScreen(),
+      DinnerList(),
+      const MenuCreateScreen(),
+      const MaterialCreateScreen(),
+      MenuDetailScreen(menu: menu),
+      MenuEditScreen(menu: menu),
+      UserAuthentication(),
+    ];
   }
-   
+
   //アプリバーの表示
   final List<String> _appBarTitles = [
-   "メニュー一覧",
-   "材料一覧",
-   "夕食の履歴",
-   "メニュー登録",
-   "材料登録",
-  "メニュー詳細",
-  "メニュー編集",
-
+    "メニュー一覧",
+    "材料一覧",
+    "夕食の履歴",
+    "メニュー登録",
+    "材料登録",
+    "メニュー詳細",
+    "メニュー編集",
+    "ログイン",
   ];
 
   //タッチしたアイコンの番号を現在のインデックスにセット
@@ -79,8 +80,6 @@ class _MainPageState extends ConsumerState<MainPage>
     //ref.read(pageProvider.notifier).state = 99;
   }
 
-
-
   //ウィジェット
   @override
   Widget build(BuildContext context) {
@@ -89,51 +88,53 @@ class _MainPageState extends ConsumerState<MainPage>
     //final otherPage = ref.read(pageProvider.notifier);
 
     return Scaffold(
-      
-      //appBar: AppBarComponentWidget(),
+      resizeToAvoidBottomInset:
+          _pageIndex == 7 ? false : true, //キーボード表示時に画面をリサイズしない、エラー対策
+      appBar: AppBarComponentWidget(title: _appBarTitles[_pageIndex]),
       //appBar: _currentIndex != 0 || otherPage.state != initOtherPage
-           //? AppBarComponentWidget()
-          // : null, //空のwidegt
+      //? AppBarComponentWidget()
+      // : null, //空のwidegt
 
-      appBar: AppBar(
-        title: Text(_appBarTitles[_pageIndex]),
-      ),
+      // appBar: AppBar(
+      //   title: Text(_appBarTitles[_pageIndex]),
+      // ),
 
       body: Column(
         children: [
-
           //タブバーの表示
           _pageIndex == 0
-          ? SafeArea(//時計、バッテリー表示を避ける
-            child: Material(//tabBbarの表示のためにMaterialで囲む。
-              color: Colors.white, // TabBar の背景色
-              child: TabBar(
-                controller: _tabController,
-                isScrollable: true, // タブをスクロール可能にする
-                tabs: tabCategories
-                    .map((category) => Tab(text: category))
-                    .toList(),
-                labelColor: Colors.black, // 選択中のタブの色
-                unselectedLabelColor: Colors.grey, // 選択されていないタブの色
-              ),
-            ),
-          )
-          : const SizedBox.shrink(), //空のwidegt
+              ? SafeArea(
+                  //時計、バッテリー表示を避ける
+                  child: Material(
+                    //tabBbarの表示のためにMaterialで囲む。
+                    color: Colors.white, // TabBar の背景色
+                    child: TabBar(
+                      controller: _tabController,
+                      isScrollable: true, // タブをスクロール可能にする
+                      tabs: tabCategories
+                          .map((category) => Tab(text: category))
+                          .toList(),
+                      labelColor: Colors.black, // 選択中のタブの色
+                      unselectedLabelColor: Colors.grey, // 選択されていないタブの色
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(), //空のwidegt
 
           //画面の表示
           Expanded(
             child: _pageIndex == 0
-            ? TabBarView(
-                controller: _tabController,
-                children: tabCategories.map((category) {
-                  return MenuList(category: category);
-                }).toList(),
-              )
-            : _pages[_pageIndex],
+                ? TabBarView(
+                    controller: _tabController,
+                    children: tabCategories.map((category) {
+                      return MenuList(category: category);
+                    }).toList(),
+                  )
+                : _pages[_pageIndex],
           )
         ],
       ),
-       /*
+      /*
        IndexedStack(
          index: _currentIndex,
          children:_pages, //indexのページを表示
@@ -177,7 +178,7 @@ class _MainPageState extends ConsumerState<MainPage>
               ],
             ),
 */
-      
+
       bottomNavigationBar: CustomBottomBar(
         currentIndex: _bottomBarIndex,
         onTap: _onItemTapped,

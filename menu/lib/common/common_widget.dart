@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:menu/view/login_screen.dart';
+//import 'package:menu/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 //import 'package:menu/data/providers.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
-
 
 class CustomBottomBar extends StatelessWidget {
   final int currentIndex;
@@ -44,7 +43,8 @@ class CustomBottomBar extends StatelessWidget {
 
 class AppBarComponentWidget extends ConsumerWidget
     implements PreferredSizeWidget {
-  AppBarComponentWidget({super.key});
+  final String title;
+  const AppBarComponentWidget({super.key, required this.title});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -52,14 +52,12 @@ class AppBarComponentWidget extends ConsumerWidget
 
     return AppBar(
       title: Text(
-        'Cook Dinner',
+        title,
         style: GoogleFonts.pacifico(),
       ),
       centerTitle: true,
       elevation: 10.0,
-      leading: //IconButton(
-          //icon: Icon(Icons.account_circle),
-          authState.when(
+      leading: authState.when(
         data: (user) {
           if (user != null && user.photoURL != null) {
             return IconButton(
@@ -68,33 +66,21 @@ class AppBarComponentWidget extends ConsumerWidget
                 radius: 16,
               ),
               onPressed: () {
-                ref.read(pageProvider.notifier).state = 1;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainPage(),
-                  ),
-                );
+                pageChange(context, ref, 7);
               },
             );
           } else {
             return IconButton(
               icon: const Icon(Icons.account_circle, size: 24),
               onPressed: () {
-                ref.read(pageProvider.notifier).state = 1;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MainPage(),
-                  ),
-                );
+                pageChange(context, ref, 7);
               },
             );
           }
         },
 
-        loading: () => CircularProgressIndicator(), // ローディング中
-        error: (error, stack) => Icon(Icons.error), // エラー時
+        loading: () => const CircularProgressIndicator(), // ローディング中
+        error: (error, stack) => const Icon(Icons.error), // エラー時
       ),
       //centerTitle: true,
       backgroundColor: Colors.white,
@@ -103,6 +89,16 @@ class AppBarComponentWidget extends ConsumerWidget
 
   @override
   Size get preferredSize => const Size.fromHeight(40);
+
+  void pageChange(context, ref, int index) {
+    ref.read(pageProvider.notifier).state = index;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MainPage(),
+      ),
+    );
+  }
 }
 
 /*
@@ -134,7 +130,9 @@ void showMessage(String message) {
   );
 }
 
+
 //表示の最大文字設定
 String maxText(String text, int num){
   return text.length > num ? '${text.substring(0, num)}...' : text;
 }
+
