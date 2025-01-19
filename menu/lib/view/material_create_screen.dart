@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:menu/common/common_constants.dart';
+//import 'package:menu/common/common_constants.dart';
 import 'package:menu/view_model/material_list_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
@@ -25,6 +25,7 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   final List<Map<String, dynamic>> _materialMap = []; // 登録用のマップ
 
   @override
+  // テキストフィールドのコントローラーの破棄
   void dispose() {
     for (var i = 0; i < materialController.length; i++) {
       materialController[i]?.dispose();
@@ -33,17 +34,16 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
       priceController[i]?.dispose();
     }
 
-    super.dispose();
+    super.dispose(); // 親クラスのdisposeを呼び出す
   }
 
   @override
   Widget build(BuildContext context) {
-    // 材料データ取得
-    final materialMap = ref.watch(materialProvider);
+    final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
     final selectButton =
         ref.watch(selectButtonProvider.notifier).state; // ボタンの状態取得
 
-    final screenWidth = MediaQuery.of(context).size.width; // 画面幅取得
+    final screenWidth = MediaQuery.of(context).size.width; // 端末の画面幅を取得
     // final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
 
     return SafeArea(
@@ -104,12 +104,13 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   direction: DismissDirection.startToEnd, // 右から左へスワイプ
                   background: Container(
                     color: Colors.red,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.symmetric(horizontal: 20), // 余白
+                    alignment: Alignment.centerLeft, // 左寄せ
                     child: const Icon(Icons.delete),
                   ),
 
                   onDismissed: (direction) {
+                    // スワイプで削除された場合の処理
                     setState(() {
                       counter--; // テキストフィールドの数を減らす
                       materialController.remove(index);
@@ -124,7 +125,8 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                       width: screenWidth * 0.9,
                       //height: screenHeight * 0.1,
                       child: LayoutBuilder(builder: (context, constraints) {
-                        final screenLayoutWidth = constraints.maxWidth;
+                        final screenLayoutWidth =
+                            constraints.maxWidth; // 親ウィジェットの幅を取得
                         return Row(children: <Widget>[
                           //const SizedBox(width: 10),
                           Column(
@@ -330,8 +332,8 @@ class _MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
       materialController, quantityController, unitController, priceController) {
     final isUpdate = selectButton != 'Resist';
 
-    // 登録できる段階かを判定
-    final isButtonDisabled = !isUpdate && _materialMap.isEmpty;
+    // // 登録できる段階かを判定
+    // final isButtonDisabled = !isUpdate && _materialMap.isEmpty;
 
     // 登録用のマップに値をセット
     for (var i = 0; i < materialController.length - 1; i++) {
