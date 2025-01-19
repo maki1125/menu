@@ -5,16 +5,15 @@ import 'package:menu/view_model/dinner_list_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/common/common_widget.dart';
-/**********************************************
- * メモ
- * dinnerList（カードの削除など）, selectDate（日付選択）, 
- * selectFilter（プルダウン選択）の値が変わるとき、再描写する。
- * 
- * dinnerTotalPrice(合計金額)もwatch（監視）しているのは、
- * 初回のページ描写時にbuild後に計算結果がわかるため、
- * そのタイミングで再描写することにより合計金額を表示するため。
- * 
- ***********************************************/
+
+ ///メモ
+ ///dinnerList（カードの削除など）, selectDate（日付選択）, 
+ /// selectFilter（プルダウン選択）の値が変わるとき、再描写する。
+ ///
+ ///dinnerTotalPrice(合計金額)もwatch（監視）しているのは、
+ ///初回のページ描写時にbuild後に計算結果がわかるため、
+ ///そのタイミングで再描写することにより合計金額を表示するため。
+
 
 
 // 夕食の履歴画面

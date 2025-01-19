@@ -137,6 +137,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
             )
           ),
 
+          /*全項目クリアするアイコンの意味だが、削除と紛らわしいのでやめる。
           //クリアボタン
           Positioned(
             top: -10,
@@ -149,7 +150,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
             iconSize: 25,
           ),
           ),
-
+          */
 
           Column(
             children: [
@@ -164,8 +165,9 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
 
           //画像選択ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           GestureDetector(
-              onTap: () {
-                ImageRepository(currentUser!, _menu, ref).selectImage();//ここでselectecImageProviderを更新。
+              onTap: () async{
+                print("画像選択します。");
+                await ImageRepository(currentUser!, _menu, ref).selectImage();//ここでselectecImageProviderを更新。
                 //.then((value) => print(menu.imageURL));
               }, // 領域をタップしたら画像選択ダイアログを表示
               child: Consumer( //画像選択変更時に、ここだけ再描写されるようにconsumer使用。
@@ -512,8 +514,8 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
         ),
         // ローディングインジケーター.
         Positioned(
-            top: MediaQuery.of(context).size.height / 2 - 50, // 高さの中央
-            right: MediaQuery.of(context).size.width / 2 - 50, // 幅の中央
+            top: MediaQuery.of(context).size.height / 2 , // 高さの中央
+            right: MediaQuery.of(context).size.width / 2 , // 幅の中央
             child:_isLoading
             ? const Center(
               child: CircularProgressIndicator(),

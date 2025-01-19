@@ -1,7 +1,9 @@
-//import 'dart:io'; //Fileを扱うため
+import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
+import 'package:menu/common/common_widget.dart';
 //import 'package:menu/common/common_widget.dart';
 import 'package:menu/data/model/menu.dart';
 //import 'package:menu/data/model/material.dart';
@@ -9,8 +11,8 @@ import 'package:menu/data/repository/menu_repository.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/main_screen.dart';
-//import 'package:menu/data/repository/image_repository.dart';
-//import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/data/repository/image_repository.dart';
+import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
 //import 'package:menu/common/common_constants.dart';
 
@@ -90,6 +92,7 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                       ),
                       TextButton(
                         onPressed: () {
+                          ImageRepository(currentUser!, menu, ref).deleteImage(); 
                           Navigator.of(context).pop(true); // 「はい」を選択
                         },
                         child: const Text('はい'),
@@ -119,7 +122,19 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
             right: 0,
             child: IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
+            onPressed: () async{
+
+              //画面遷移時に前回選択した画像が一時フォルダに保存されていたら削除する。
+              final file = File('${Directory.systemTemp.path}/resized_image.jpg');
+                  // ファイルを削除
+                  if (await file.exists()) {
+                    await file.delete();
+                    print('ファイルが削除されました。');
+                  } else {
+                    print('ファイルは存在しません。');
+                  }
+                  ref.read(selectedImageProvider.notifier).state = null;
+
               ref.read(pageProvider.notifier).state = 6;
                 Navigator.push(
                   context,
@@ -136,7 +151,7 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
             children: [
               //料理名ーーーーーーーーー
                   Text(
-                    menu.name!,
+                    maxText(menu.name!, 9),
                     style: const TextStyle(
                       //color: Colors.red,
                       fontSize: 30,
@@ -155,13 +170,25 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                       //borderRadius: BorderRadius.circular(10), // 角丸
                     ),
                     child: menu.imageURL == "noData"
-                    ? const Center(
-                        child: Text(
-                          'noImage',
-                          style: TextStyle(color: Colors.grey),
-                        ),
+                    ? Image.asset( //画像ない場合
+                        'images/no_image.jpg',
+                        //height: 100,
+                        //width: 50,
+                        fit: BoxFit.cover,
                       )
-                    : ClipRRect(
+                    : CachedNetworkImage(
+                        imageUrl: menu.imageURL!.toString(), // ネットワーク画像のURL
+                        
+                        placeholder: (context, url) =>  Transform.scale(//sizedboxでは小さくならなかったのでscaleを使用。
+                          scale: 0.3, // 縮小率を指定
+                          child: const CircularProgressIndicator(strokeWidth: 20.0),
+                        ),
+                        
+                        errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                        fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
+                      )),
+                    /*
+                    ClipRRect(
                         //borderRadius: BorderRadius.circular(10), // 選択画像の角丸
                         child: Image.network(
                           menu.imageURL!,
@@ -171,6 +198,7 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                         ),
                       ),
               ),
+              */
               const SizedBox(height: 10,),
 
 

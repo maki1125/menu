@@ -51,6 +51,7 @@ dependencies:
   # path_provider: ^2.0.11
   image_picker: ^0.8.8 #画像の選択
   table_calendar: ^3.0.9
+  image: ^4.0.15 #画像リサイズ
 
 
 dev_dependencies:
