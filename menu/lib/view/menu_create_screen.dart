@@ -482,6 +482,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.memo = _memoController.text;
               //_menu.id //addMenu()で保存される
               _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
+              _menu.dinnerDateBuf = DateTime.now(); //新規作成の時は登録日にする。
               //_menu.price //addMenu()で計算される
               //_menu.unitPrice = 0; //addMenu()で計算される
 

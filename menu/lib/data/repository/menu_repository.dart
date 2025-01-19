@@ -24,6 +24,7 @@ class MenuRepository {
           .toList());
   }
 
+  
   //データ追加
   Future<void> addMenu(Menu menu) async{
     print("menu.price");
@@ -63,6 +64,40 @@ class MenuRepository {
     .update(_menuToMap(menu));
   }
 
+  //データ編集(ID指定)
+  Future<void> editMenuIdDinnerDate(String menuId) async{
+
+    //ドキュメント取得
+    final docSnapshot = await FirebaseFirestore.instance
+    .collection('users/${user.uid}/menus')
+    .doc(menuId) // メニューのIDを指定
+    .get();
+
+    if (docSnapshot.exists) {
+      //Menuに変換
+      final menuData = docSnapshot.data() as Map<String, dynamic>;
+      print(menuData["dinnerDateBuf"].toDate());
+      final menu = Menu.fromFirestore(menuData);
+
+      //バッファに戻す
+      print(menu.dinnerDateBuf);
+      menu.dinnerDate = menu.dinnerDateBuf; 
+
+      //データ更新
+      FirebaseFirestore.instance
+      .collection('users/${user.uid}/menus')
+      .doc(menuId)
+      .update(_menuToMap(menu));
+      print("データ更新しました。");
+
+
+      print("Menu name: ${menu.name}");
+    } else {
+      print("Menu document does not exist.");
+    }
+
+  }
+
 /*
   List<Menu> _queryToMenuList(QuerySnapshot query){
     return query.docs.map((doc){
@@ -90,9 +125,11 @@ class MenuRepository {
       'isDinner': menu.isDinner,
       'id': menu.id,
       'dinnerDate': menu.dinnerDate,
+      'dinnerDateBuf': menu.dinnerDateBuf,
       'price': menu.price,
       'unitPrice': menu.unitPrice,
     };
   }
+
 
 }
