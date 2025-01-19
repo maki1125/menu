@@ -2,6 +2,7 @@ import 'dart:io'; //Fileを扱うため
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
+import 'package:menu/data/repository/menu_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
@@ -73,6 +74,19 @@ class MenuList extends ConsumerWidget {
               );
             }
             
+            if (filteredMenus.isEmpty && category!='今日の夕食') {// データがない場合
+              return Padding(
+                padding: EdgeInsets.only(top: 8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,//中央よせ
+                children: [
+                  const Text('データがありません',)
+                ],
+              )
+              );
+              
+            }else{
+
             return ListView.builder(
               //padding: EdgeInsets.zero, // 隙間を無くす
               itemCount: filteredMenus.length+1,//+1は「今日の夕飯」タブの最後の「合計金額」テキストのため。
@@ -294,8 +308,16 @@ class MenuList extends ConsumerWidget {
                           dinner.createAt = DateTime.now();
                           dinner.price = ref.read(totalPriceNotifierProvider);
                           dinner.select = filteredMenus.map((menu)=>menu.name!).toList();
+                          dinner.selectID = filteredMenus.map((menu)=>menu.id!).toList();
                           DinnerRepository(currentUser!).addDinner(dinner);//データベースにデータ追加
                           
+                          //最近食べた日の項目更新
+                          filteredMenus.forEach((menu){
+                            menu.dinnerDateBuf = menu.dinnerDate;//バッファに保存してから
+                            menu.dinnerDate = DateTime.now();//更新
+                            MenuRepository(currentUser!).editMenu(menu);
+                          });
+
                           //ページ遷移
                           ref.read(pageProvider.notifier).state = 2;
                           Navigator.push(
@@ -324,10 +346,12 @@ class MenuList extends ConsumerWidget {
                 }
               }
             );
+                      }
           }, 
           error: (e, stackTrace) => Center(child: Text('Error: $e')), 
           loading: () => const Center(child: CircularProgressIndicator()),
           ),
+  
 
         // フローティングボタンを配置
         Positioned(

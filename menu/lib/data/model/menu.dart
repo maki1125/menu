@@ -15,6 +15,7 @@ class Menu {
     this.isDinner,
     this.id,
     this.dinnerDate,
+    this.dinnerDateBuf,//夕食の履歴の削除時に元に戻すため。
     this.price,
     this.unitPrice,
   });
@@ -33,6 +34,7 @@ class Menu {
   bool? isDinner;
   String? id;
   DateTime? dinnerDate;
+  DateTime? dinnerDateBuf;
   int? price;
   int? unitPrice;
 
@@ -52,7 +54,8 @@ class Menu {
       isFavorite: data['isFavorite'] as bool? ?? false,
       isDinner: data['isDinner'] as bool? ?? false,
       id: data['id'] as String? ?? "noData",
-      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate(),  //nullの可能性あり
+      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate() ?? DateTime.now(),
       price: data['price'] as int? ?? 0,
       unitPrice: data['unitPrice'] as int? ?? 0,
     );

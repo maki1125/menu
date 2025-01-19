@@ -56,6 +56,7 @@ class DinnerRepository {
       return Dinner(
         createAt: (doc.get('createAt') as Timestamp).toDate(),
         select: doc.get('select'),
+        selectID: doc.get('selectID'),
         price: doc.get('price'),
         id: doc.id,
       );
@@ -66,6 +67,7 @@ class DinnerRepository {
     return{
       'createAt': dinner.createAt,
       'select': dinner.select,
+      'selectID': dinner.selectID,
       'price': dinner.price,
       'id': dinner.id,
     };

@@ -55,6 +55,7 @@ void dinnerButton(menu) {
   } else {
     menu.isDinner = true;
   }
+  print(_currentUser!.uid);
   MenuRepository(_currentUser!).editMenu(menu);
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/view_model/dinner_list_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/common/common_providers.dart';
@@ -144,8 +145,8 @@ class _DinnerListState extends State<DinnerList> {
                         : selectDate == null //フィルターは選択されているが、日付選択していない。
                           ? dinners
                             : (selectFilter == "月") //月フィルター
-                              ? dinners.where((dinner) => dinner.createAt!.month == selectDate!.month).toList()                  
-                              : dinners.where((dinner){
+                              ? dinners.where((dinner) => dinner.createAt!.year == selectDate.year && dinner.createAt!.month == selectDate.month).toList()                  
+                              : dinners.where((dinner){//週フィルター
                               return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(Duration(days: 1)));
                               }).toList();
 
@@ -215,7 +216,15 @@ class _DinnerListState extends State<DinnerList> {
                                               icon: const Icon(Icons.delete),
                                               onPressed: () async {
                                                 try {
-                                                  await DinnerRepository(currentUser!).deleteDinner(dinner); // 夕食データ削除
+
+                                                  //最近食べた日の更新（バッファに戻す）
+                                                  dinner.selectID!.forEach((id){
+                                                    print(id);
+                                                    MenuRepository(currentUser!).editMenuIdDinnerDate(id);
+                                                  });
+                                                  
+                                                  // 夕食データ削除
+                                                  await DinnerRepository(currentUser!).deleteDinner(dinner); 
                                                 } catch (e) {
                                                   showMessage(
                                                       '削除に失敗しました。再度お試しください。$e');
