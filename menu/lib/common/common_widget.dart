@@ -132,6 +132,9 @@ void showMessage(String message) {
     //backgroundColor: Colors.black, // 背景色
     //textColor: Colors.white, // 文字色
   );
+}
 
-  
+//表示の最大文字設定
+String maxText(String text, int num){
+  return text.length > num ? '${text.substring(0, num)}...' : text;
 }

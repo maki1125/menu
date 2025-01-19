@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_datetime_picker_plus/flutter_datetime_picker_plus.dart';
+import 'package:intl/intl.dart';
 import 'package:menu/view_model/dinner_list_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
-//import 'package:menu/data/providers.dart';
 import 'package:menu/common/common_providers.dart';
-import 'package:intl/intl.dart';
 import 'package:menu/common/common_widget.dart';
+/**********************************************
+ * メモ
+ * dinnerList（カードの削除など）, selectDate（日付選択）, 
+ * selectFilter（プルダウン選択）の値が変わるとき、再描写する。
+ * 
+ * dinnerTotalPrice(合計金額)もwatch（監視）しているのは、
+ * 初回のページ描写時にbuild後に計算結果がわかるため、
+ * そのタイミングで再描写することにより合計金額を表示するため。
+ * 
+ ***********************************************/
+
 
 // 夕食の履歴画面
 class DinnerList extends StatefulWidget {
@@ -15,192 +24,250 @@ class DinnerList extends StatefulWidget {
 }
 
 class _DinnerListState extends State<DinnerList> {
+
+  //再描写で更新されたくない変数
+  List<DateTime> selectWeek = []; //フィルタで選択された週.
+  
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Consumer(
-        builder: (context, ref, child) {
-          final selectedDate = ref.watch(dinnerDateNotifierProvider); // 日付
-          final dinnerDateNotifier =
-              ref.read(dinnerDateNotifierProvider.notifier); // 日付の更新
-          final dinnerList = ref.watch(dinnerListProvider); // 夕食リスト
-          var isSelected = ref.watch(isSelectedValueProvider);
-          final selectWeek = ref.watch(selectWeekProvider); // 選択された週
-          print('select $selectWeek');
-          final dinnerTotalPrice =
-              ref.watch(dinnerTotalPriceProvider); // 夕食合計金額
+    print("dinner_list");
+    
+    return Consumer(
+      builder: (context, ref, child) {
+        final selectDate = ref.watch(selectedDateProvider); // 選択した日付
+        final dinnerList = ref.watch(dinnerListProvider); // 夕食リスト  
+        int dinnerTotalPrice = ref.watch(dinnerTotalPriceProvider); // 夕食合計金額
+        final String selectFilter = ref.read(dropDownProvider); // プルダウンの選択項目  
+        
+        return Column(
+          mainAxisSize: MainAxisSize.min, // 画面いっぱいに表示
+          children:[
 
-          return Column(
-            mainAxisSize: MainAxisSize.min, // 画面いっぱいに表示
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround, // 中央寄せ
-                children: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      ref.read(isAllViewProvider.notifier).state = true; // 全て表示
-                    },
-                    child: const Text(
-                      '全て',
-                      style: TextStyle(
-                        fontSize: 16,
-                      ),
+            //フィルターの設定・金額表示ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround, // 中央寄せ
+              children: [
+                //全てボタン==========================================================
+                TextButton(
+                  onPressed: () {
+                    ref.read(dropDownProvider.notifier).state = "noSelect"; //プルダウンの選択を初期化
+                    ref.read(selectedDateProvider.notifier).state = null; //選択日付を初期化
+
+                  },
+                  child: const Text(
+                    '全て',
+                    style: TextStyle(
+                      fontSize: 16,
                     ),
                   ),
-                  _dropDownFileter(ref, isSelected), // 週選択の時だけ表示
-                  TextButton(
-                    onPressed: () {
-                      DatePicker.showDatePicker(context,
-                          showTitleActions: true, // アクションボタン表示
-                          minTime: DateTime(2025, 1, 1), // 最小日付
-                          maxTime: DateTime(2026, 12, 31), onChanged: (date) {
-                        // 最大日付
-                        //print('change $date');
-                      }, onConfirm: (date) {
-                        dinnerDateNotifier.update(date); // 日付の更新
-                        ref.read(isAllViewProvider.notifier).state =
-                            false; // 日付指定表示
-                      },
-                          currentTime: DateTime.now(),
-                          locale: LocaleType.jp); // 現在日時
-                    },
-                    child: Text(
-                      selectedDate,
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
+                ),
+
+                //フィルタープルダウンの表示================================================
+                _dropDownFileter(ref), 
+                
+                //合計の表示=============================================================
+                Text(
+                  style: const TextStyle(
+                    fontSize: 18,
+                    //fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                      style: const TextStyle(
-                        fontSize: 16,
-                      ),
-                      dinnerTotalPrice.when(
-                        // 合計金額
-                        data: (totalPrice) {
-                          return '合計：$totalPrice円';
-                        },
-                        loading: () => '合計：0円',
-                        error: (error, stackTrace) => '合計：0円',
-                      )),
-                ],
-              ),
-              Expanded(
-                // 画面いっぱいに表示
-                child: SingleChildScrollView(
-                  // スクロール可能
-                  child: Column(children: <Widget>[
-                    (isSelected == 'week')
-                        ? Text(
-                            '${_dateFormat(selectWeek[0])} ～ ${_dateFormat(selectWeek[6])}',
-                            style: const TextStyle(fontSize: 18)) // 週の表示
-                        : const SizedBox.shrink(),
-                    dinnerList.when(
-                      // データ取得状態による表示切り替え
-                      data: (dinners) {
-                        final filteredDinners =
-                            ref.watch(filteredDinnersProvider); // フィルター後のデータ
+                  "合計：$dinnerTotalPrice円"
+                ),
+              ],
+            ),
 
-                        if (filteredDinners.isEmpty) {
-                          // データがない場合
-                          return const Text('データがありません');
-                        }
+            //フィルター選択・カード表示ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+            Expanded(// 画面いっぱいに表示
+              child: SingleChildScrollView(// スクロール可能
+                child: Column(
+                  children: [
 
-                        return ListView.builder(
-                          // リスト表示
-                          shrinkWrap: true, // サイズ制約を設定
-                          physics:
-                              const NeverScrollableScrollPhysics(), //スクロールが動作する
-                          itemCount: filteredDinners.length,
-                          itemBuilder: (context, index) {
-                            final dinner = filteredDinners[index]; // 夕食データ
+                    //選択週の表示＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+                    (selectFilter != "noSelect")//フィルタ選択あり
+                    ? Row(
+                      children: [
 
-                            return ListTile(
-                              title: Card(
-                                elevation: 2.0, // 影の設定
-                                margin: const EdgeInsets.all(0), // 余白
-                                shape: RoundedRectangleBorder(
-                                  // カードの形状
-                                  side: const BorderSide(
-                                      color: Colors.blue, width: 1.0), // 枠線
-                                  borderRadius:
-                                      BorderRadius.circular(10.0), // 角丸
-                                ),
-                                child: ListTile(
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10.0),
-                                  title: Text(
-                                      '${dinner.createAt!.year.toString()} / ${dinner.createAt!.month.toString()} / ${dinner.createAt!.day.toString()}'),
-                                  subtitle: Text(
-                                    '${dinner.select?[0]}, ${dinner.select?[1]}, ${dinner.select?[2]}',
-                                    overflow:
-                                        TextOverflow.ellipsis, // テキストがはみ出た場合の処理
-                                    maxLines: 1,
-                                  ),
-                                  trailing: Row(
-                                    mainAxisSize: MainAxisSize.min, // 最小サイズ
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.end, // 右寄せ
-                                    children: [
-                                      Text('${dinner.price.toString()}円',
-                                          style: const TextStyle(fontSize: 14)),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        onPressed: () async {
-                                          try {
-                                            await DinnerRepository(currentUser!)
-                                                .deleteDinner(
-                                                    dinner); // 夕食データ削除
-                                          } catch (e) {
-                                            showMessage(
-                                                '削除に失敗しました。再度お試しください。$e');
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
+                        //日付選択*************************************
+                        TextButton(
+                          onPressed: () async{
+                            DateTime? pickDate;
+                            pickDate = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(), // 初期表示日
+                            firstDate: DateTime(2000), // 選択可能な最小日付
+                            lastDate: DateTime(2100), // 選択可能な最大日付
+                            locale: const Locale('ja'), // カレンダーを日本語表示
+                            );
+
+                            if(pickDate != null){//日付選択されなかったときは今日の日付を設定
+                              selectWeek = calWeek(pickDate); //選択日の１週間リスト
+                              ref.read(selectedDateProvider.notifier).state = pickDate;//選択日をプロバイダに設定
+                            }
+                          },
+                          child: const Text(
+                            "日付選択",
+                            style: TextStyle(
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+
+                        //選択されたフィルタの表示**********************************
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                selectDate == null //日付選択がまだの状態
+                                ? "日付選択して下さい"
+                                : selectFilter == "月" //フィルタ選択が月の場合
+                                  ? '${selectDate.year}年${selectDate.month}月'
+                                  : '${dateFormat(selectWeek[0])} ～ ${dateFormat(selectWeek[6])}', //フィルタ選択が週の場合
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  //fontWeight: FontWeight.bold
                                 ),
                               ),
+                            ]
+                          ) ,// 週の表示 
+                        )
+                      ],
+                    )
+                    : const SizedBox.shrink(),//フィルタない場合
+
+                    //カードの設定＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+                    dinnerList.when(
+                      data: (dinners) {
+
+                        //フィルター処理
+                        final filteredDinners = (selectFilter == "noSelect")//フィルタ選択ない状態
+                        ? dinners
+                        : selectDate == null //フィルターは選択されているが、日付選択していない。
+                          ? dinners
+                            : (selectFilter == "月") //月フィルター
+                              ? dinners.where((dinner) => dinner.createAt!.month == selectDate!.month).toList()                  
+                              : dinners.where((dinner){
+                              return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(Duration(days: 1)));
+                              }).toList();
+
+                        //build完了後に合計金額のプロバイダーを更新する
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          ref.read(dinnerTotalPriceProvider.notifier).state = filteredDinners.fold(0,(total, dinner) => total + dinner.price!);
+                          });
+                    
+                      if (filteredDinners.isEmpty) {// データがない場合
+                        return const Text('データがありません');
+                      }else{
+                      
+                      return ListView.builder(
+                        //padding: EdgeInsets.zero, // 隙間を無くす
+                        shrinkWrap: true, // サイズ制約を設定
+                        physics: const NeverScrollableScrollPhysics(), //スクロールが動作する.これがないと跳ね返される。
+                        itemCount: filteredDinners.length,
+                        itemBuilder: (context, index) {
+                          final dinner = filteredDinners[index]; // 夕食データ
+
+                          //カードの表示＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+                          return Card(
+                              color: dinner.createAt!.weekday == 6 //土曜日
+                              ? const Color.fromARGB(255, 225, 246, 255)
+                              : dinner.createAt!.weekday == 7 //日曜日
+                                ? const Color.fromARGB(255, 255, 229, 242)
+                                : Colors.white,
+                              elevation: 1.0, // 影の設定
+                              //margin: const EdgeInsets.all(0), // 余白
+                              shape: RoundedRectangleBorder(// カードの形状
+                                //side: const BorderSide(
+                                    //color: Colors.blue, width: 1.0), // 枠線
+                                borderRadius:
+                                    BorderRadius.circular(10.0), // 角丸
+                              ),
+                              child: SizedBox(
+                                height: 70,
+                                child: Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(4),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,//等間隔 （両端空間なし）
+                                      children: [
+                                        Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,// 中央寄せ
+                                          crossAxisAlignment: CrossAxisAlignment.start,//左寄せ
+                                          children: [
+                                            Text(
+                                              DateFormat('yyyy/MM/dd(E)','ja').format(dinner.createAt!),
+                                              style: TextStyle(fontSize: 13),
+                                              ),
+                                            Text(
+                                              maxText(dinner.select!.join(", "), 25),
+                                              style: TextStyle(fontSize: 15,
+                                              //fontWeight: FontWeight.bold
+                                              ),
+                                              overflow:TextOverflow.ellipsis, // テキストがはみ出た場合の処理
+                                              maxLines: 1,
+                                            ),
+                                          ],
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text('${dinner.price.toString()}円',
+                                              style: const TextStyle(fontSize: 14)),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete),
+                                              onPressed: () async {
+                                                try {
+                                                  await DinnerRepository(currentUser!).deleteDinner(dinner); // 夕食データ削除
+                                                } catch (e) {
+                                                  showMessage(
+                                                      '削除に失敗しました。再度お試しください。$e');
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    )
+                                  )
+                                )
+                              )
                             );
                           },
                         );
-                      },
-                      loading: () =>
-                          const CircularProgressIndicator(), // ローディング
-                      error: (error, stackTrace) => Text(error.toString()),
-                    ),
-                  ]),
-                ),
+                      }
+                    },
+                      
+                    loading: () =>
+                        const CircularProgressIndicator(), // ローディング
+                    error: (error, stackTrace) => Text(error.toString()),
+                  ),
+                ]),
               ),
-            ],
-          );
-        },
-      ),
-    );
-  }
+            ),
+          ],
+        );
+      },
+  );
+}
 
   // フィルターのドロップダウン
-  Widget _dropDownFileter(ref, isSelected) {
+  Widget _dropDownFileter(ref) {
+    final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目    
+    final List<String> dropdownItems = ["月", "週"]; //タグのプルダウンの項目
     return DropdownButton(
-      items: const [
-        DropdownMenuItem(
-          value: 'month',
-          child: Text('月'),
-        ),
-        DropdownMenuItem(
-          value: 'week',
-          child: Text('週'),
-        ),
-      ],
-      value: isSelected,
+      hint: const Text('フィルタ'),
+      value: dropdownItems.contains(selectedValue)
+            ? selectedValue
+            : null, // 選択値がリストに含まれていない場合は`null`
+      alignment: Alignment.center,
+      items: dropdownItems.map((String item) {
+              return DropdownMenuItem<String>(
+                value: item,
+                child: Text(item), // 表示内容
+              );
+            }).toList(),
       onChanged: (value) {
-        ref.read(isSelectedValueProvider.notifier).state = value;
+        ref.read(dropDownProvider.notifier).state = value; // 値を更新
       },
     );
-  }
-
-  // 日付フォーマット
-  String _dateFormat(date) {
-    return DateFormat('yyyy-MM-dd').format(date);
   }
 }

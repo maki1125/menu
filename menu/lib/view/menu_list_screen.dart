@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
-import 'package:menu/view/menu_detail_screen.dart';
+//import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart';//日付のフォーマット
 import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/model/dinner.dart';
 //import 'package:cached_network_image/cached_network_image.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';
-import 'package:menu/view/menu_detail_screen.dart';
+//import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/common/common_providers.dart';
 
 class MenuList extends ConsumerWidget {
@@ -33,7 +33,7 @@ class MenuList extends ConsumerWidget {
           data: (menus){
 
             //タグのフィルター。メニューリストをフィルター分だけにする。
-            final filteredMenus = category == '全て'
+            final filteredMenus = (category == '全て')
                 ? menus
                 :category == '今日の夕食'
                 ? menus.where((menu) => menu.isDinner == true).toList()
@@ -73,7 +73,7 @@ class MenuList extends ConsumerWidget {
             }
             
             return ListView.builder(
-              padding: EdgeInsets.zero, // 隙間を無くす
+              //padding: EdgeInsets.zero, // 隙間を無くす
               itemCount: filteredMenus.length+1,//+1は「今日の夕飯」タブの最後の「合計金額」テキストのため。
               itemBuilder: (context, index){
                 //print("card_"+index.toString());
@@ -94,7 +94,7 @@ class MenuList extends ConsumerWidget {
                             MaterialPageRoute(builder: (context) => MainPage(menu: filteredMenus[index])),
                         );
                       },
-                      child: Padding(
+                      child: Padding( //カード内の左側に隙間を設ける
                         padding: EdgeInsets.only(left: 10.0),
                       child:Row(
                         children: [
