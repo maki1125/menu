@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
 import 'package:menu/view/main_screen.dart';
+import 'package:menu/common/common_providers.dart';
 
 // 認証サービス
 class AuthService {
@@ -36,6 +37,16 @@ class AuthService {
       ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
       await _auth.signInWithEmailAndPassword(
           email: email, password: password); // サインイン処理
+      if (context.mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('ログインしました'))); // メッセージ表示
+        //ページ遷移
+        changePage(
+          context,
+          ref,
+          0,
+        );
+      }
     } on FirebaseAuthException catch (e) {
       switch (e.code) {
         case 'user-not-found':
@@ -65,11 +76,35 @@ class AuthService {
       String password, WidgetRef ref) async {
     try {
       ref.watch(errorMessageProvider.notifier).state = ''; // エラーメッセージをクリア
-      // サインアップ処理
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      // // サインアップ処理
+      // UserCredential userCredential = await _auth
+      //     .createUserWithEmailAndPassword(email: email, password: password);
+      // if (_auth.currentUser == null ||
+      //     !(_auth.currentUser?.isAnonymous ?? false)) {
+      //   return;
+      // }
+
+      // メール認証情報を作成
+      UserCredential? linkedUserCredential;
+      if (_auth.currentUser?.isAnonymous ?? false) {
+        AuthCredential credential =
+            EmailAuthProvider.credential(email: email, password: password);
+
+        // メール認証情報を匿名ユーザーにリンク
+        linkedUserCredential =
+            await _auth.currentUser!.linkWithCredential(credential);
+
+        print('linkedUser: ${linkedUserCredential.user?.uid}');
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+                  "リンク成功: UID=${linkedUserCredential.user?.uid}, Email=${linkedUserCredential.user?.email}")));
+        }
+      }
+
       // 確認メール送信
-      await userCredential.user!.sendEmailVerification();
+      await linkedUserCredential?.user?.sendEmailVerification();
       if (context.mounted) {
         ScaffoldMessenger.of(context) // メッセージ表示
             .showSnackBar(const SnackBar(content: Text('確認メールを送信しました')));
@@ -81,10 +116,10 @@ class AuthService {
           errorMessage = AuthErrorMessages.weakPassword;
         case 'email-already-in-use':
           errorMessage = AuthErrorMessages.emailAlreadyInUse;
-        case 'invalid-email':
-          errorMessage = AuthErrorMessages.invalidEmail;
-        case 'oeration-not-allowed':
-          errorMessage = AuthErrorMessages.operationNotAllowed;
+        case 'invalid-credential':
+          errorMessage = AuthErrorMessages.invalidCredential;
+        case 'requires-recent-login':
+          errorMessage = AuthErrorMessages.requiresRecentLogin;
         default:
           errorMessage = AuthErrorMessages.unknownError;
           debugPrint('その他：$e.code');
@@ -136,34 +171,46 @@ class AuthService {
     try {
       // エラーメッセージをクリア
       ref.watch(errorMessageProvider.notifier).state = '';
-      // googleサインインを実行
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-      if (googleUser == null) {
-        return null; // Googleサインインがキャンセルされた場合
+      // Googleサインインを実行
+      final credential = await gooleSingIn();
+      print('ユーザー情報 $_auth.currentUser?.providerData.isNotEmpty');
+      // Googleサインインの認証情報を匿名ユーザーにリンク
+
+      await _auth.signInWithCredential(credential);
+      // } else {
+      //   await _auth.currentUser!.linkWithCredential(credential);
+      // }
+      //サインイン後、ユーザー情報を取得
+      // UserCredential userCredential =
+      //     await FirebaseAuth.instance.signInWithCredential(credential);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Googleアカウントにログインしました'))); // メッセージ表示
+        //ページ遷移
+        changePage(
+          context,
+          ref,
+          0,
+        );
       }
-
-      // Googleサインインの認証情報を取得
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      // Googleサインインの認証情報をFirebaseに渡す
-      final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // サインイン後、ユーザー情報を取得
-      UserCredential userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-      return userCredential; // ユーザー情報を返す
     } on FirebaseAuthException catch (e) {
       // エラーハンドリング
       switch (e.code) {
-        case 'account-exists-with-different-credential':
+        case 'credential-already-in-use':
           errorMessage = AuthErrorMessages.accountExistCrediential;
+          print('このGoogleアカウントは既に使用されています。サインインを試みます。');
+          final credential = await gooleSingIn();
+          final userCredential =
+              await FirebaseAuth.instance.signInWithCredential(credential);
+          print('Googleアカウントでサインインしました: ${userCredential.user?.uid}');
         case 'invalid-credential':
           errorMessage = AuthErrorMessages.invalidCredential;
+        case 'requiers-recent-login':
+          errorMessage = AuthErrorMessages.requiresRecentLogin;
+        default:
+          errorMessage = AuthErrorMessages.unknownError;
+          print('その他：$e.code');
       }
       ref.read(errorMessageProvider.notifier).state = errorMessage;
       if (context.mounted) {
@@ -172,6 +219,26 @@ class AuthService {
       }
       return null; // エラーが発生した場合も null を返す
     }
+  }
+
+  Future gooleSingIn() async {
+    // googleサインインを実行
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    if (googleUser == null) {
+      return null; // Googleサインインがキャンセルされた場合
+    }
+
+    // Googleサインインの認証情報を取得
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
+
+    // Googleサインインの認証情報をFirebaseに渡す
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    return credential;
   }
 
   // 匿名認証
@@ -206,6 +273,22 @@ class AuthService {
         ? UserModel.fromFirebaseUser(firebaseuser)
         : null;
   }
+
+  // ページ遷移
+  void changePage(
+    BuildContext context,
+    WidgetRef ref,
+    int index,
+  ) {
+    ref.read(pageProvider.notifier).state = index;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        // 画面遷移
+        builder: (context) => MainPage(),
+      ),
+    );
+  }
 }
 
 class SignInAnony extends ConsumerStatefulWidget {
@@ -239,11 +322,19 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
               child: CircularProgressIndicator()); // ローディング中のウィジェット
         }
         if (snapshot.hasData) {
-          // ユーザー情報がある場合
+          final user = snapshot.data;
+          if (user?.isAnonymous ?? false) {
+            print("匿名ユーザーです");
+            // 匿名ログイン中の場合の処理を記述
+          } else {
+            print("通常ユーザーです");
+            // 通常のログイン状態の処理を記述
+          }
+
+          // MainPage に遷移
           return MainPage();
         }
-        _signInAnonymously(); // 匿名ログイン処理
-
+        _signInAnonymously(); // 匿名ログイン処理を呼び出し
         return MainPage();
       },
     );
