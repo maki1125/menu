@@ -8,6 +8,7 @@ import 'package:menu/view_model/login_screen_view_model.dart';
 //import 'package:menu/data/providers.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/view/login_forgotpassword_screen.dart';
+import 'package:menu/view/main_screen.dart';
 
 class UserAuthentication extends ConsumerStatefulWidget {
   UserAuthentication({super.key});
@@ -47,63 +48,69 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
     final authState = ref.watch(authStateChangesProvider); // ユーザー情報取得
 
     return Material(
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min, // 中央揃え
-          children: <Widget>[
-            const SizedBox(height: 20),
-            authState.when(
-              data: (user) {
-                if (user != null && user.photoURL != null) {
-                  // ユーザーが存在し、写真URLがある場合
-                  return CircleAvatar(
-                    backgroundImage: NetworkImage(user.photoURL!), // 写真URLを表示
-                    radius: 32,
-                  );
-                } else {
-                  return const Icon(Icons.account_circle,
-                      size: 64); // ユーザーが存在しない場合はアイコンを表示
-                }
-              },
-              loading: () => const CircularProgressIndicator(),
-              error: (error, stackTrace) => const Text('error'),
-            ),
-            const SizedBox(height: 20),
-            TabBar(controller: _tabController, tabs: const [
-              Tab(text: 'ログイン'),
-              Tab(text: '新規登録'),
+      child: authState.when(
+        data: (user) {
+          if (user?.isAnonymous == false) {
+            //print('user: $user');
+            return _buildLoggedInView(context, user, authService);
+          } else {
+            //print('user: $user');
+            return _buildAnonymousView(
+                context, authService, emailController, passwordController, ref);
+          }
+        },
+        loading: () => const CircularProgressIndicator(),
+        error: (error, stackTrace) => const Text('error'),
+      ),
+    );
+  }
+
+  Widget _buildLoggedInView(context, user, authService) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          user.photoURL != null
+              ? CircleAvatar(
+                  backgroundImage: NetworkImage(user.photoURL),
+                  radius: 32,
+                )
+              : const Icon(Icons.account_circle, size: 64),
+          const SizedBox(height: 20),
+          const Text('こんにちは'),
+          const SizedBox(height: 20),
+          IconButton(
+            onPressed: () async {
+              await authService.signOut();
+            },
+            icon: const Icon(Icons.logout),
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAnonymousView(
+      context, authService, emailController, passwordController, ref) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          TabBar(controller: _tabController, tabs: const [
+            Tab(text: 'ログイン'),
+            Tab(text: '新規登録'),
+          ]),
+          const SizedBox(height: 20),
+          Expanded(
+            child: TabBarView(controller: _tabController, children: <Widget>[
+              _buildLoginTab(context, emailController, passwordController,
+                  authService, ref),
+              _buildSignUpTab(context, emailController, passwordController,
+                  authService, ref),
             ]),
-            const SizedBox(height: 20),
-            Expanded(
-              child: TabBarView(controller: _tabController, children: <Widget>[
-                _buildLoginTab(context, emailController, passwordController,
-                    authService, ref),
-                _buildSignUpTab(context, emailController, passwordController,
-                    authService, ref),
-              ]),
-            ),
-            const SizedBox(height: 20),
-            authState.when(
-              data: (user) {
-                if (user != null) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 32.0),
-                    child: IconButton(
-                      onPressed: () async {
-                        await authService.signOut(); // ログアウト
-                      },
-                      icon: const Icon(Icons.logout),
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
-              loading: () => const CircularProgressIndicator(),
-              error: (error, stack) => Text('Error: $error'),
-            )
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

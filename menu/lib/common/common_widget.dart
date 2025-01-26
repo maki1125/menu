@@ -41,8 +41,10 @@ class CustomBottomBar extends StatelessWidget {
   }
 }
 
+//AppBar
 class AppBarComponentWidget extends ConsumerWidget
     implements PreferredSizeWidget {
+  //AppBarの高さを指定するためのWidget
   final String title;
   const AppBarComponentWidget({super.key, required this.title});
 
@@ -53,42 +55,41 @@ class AppBarComponentWidget extends ConsumerWidget
     return AppBar(
       title: Text(
         title,
-        style: GoogleFonts.pacifico(),
+        style: GoogleFonts.pacifico(), //Googleフォントを使用
       ),
-      centerTitle: true,
-      elevation: 10.0,
-      leading: authState.when(
-        data: (user) {
-          if (user != null && user.photoURL != null) {
-            return IconButton(
-              icon: CircleAvatar(
-                backgroundImage: NetworkImage(user.photoURL!),
-                radius: 16,
-              ),
-              onPressed: () {
-                pageChange(context, ref, 7);
-              },
-            );
-          } else {
-            return IconButton(
-              icon: const Icon(Icons.account_circle, size: 24),
-              onPressed: () {
-                pageChange(context, ref, 7);
-              },
-            );
-          }
-        },
+      centerTitle: true, //タイトルを中央に配置
+      elevation: 10.0, //影の設定
+      actions: <Widget>[
+        authState.when(
+          data: (user) {
+            if (user?.isAnonymous == false) {
+              return IconButton(
+                icon: const Icon(Icons.account_circle, size: 32),
+                onPressed: () {
+                  pageChange(context, ref, 7);
+                },
+              );
+            } else {
+              return IconButton(
+                icon: const Icon(Icons.no_accounts, size: 32), // ユーザーが存在しない場合
+                onPressed: () {
+                  pageChange(context, ref, 7);
+                },
+              );
+            }
+          },
 
-        loading: () => const CircularProgressIndicator(), // ローディング中
-        error: (error, stack) => const Icon(Icons.error), // エラー時
-      ),
+          loading: () => const CircularProgressIndicator(), // ローディング中
+          error: (error, stack) => const Icon(Icons.error), // エラー時
+        ),
+      ],
       //centerTitle: true,
       backgroundColor: Colors.white,
     );
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(40);
+  Size get preferredSize => const Size.fromHeight(50); //AppBarの高さを指定
 
   void pageChange(context, ref, int index) {
     ref.read(pageProvider.notifier).state = index;
@@ -130,9 +131,7 @@ void showMessage(String message) {
   );
 }
 
-
 //表示の最大文字設定
-String maxText(String text, int num){
+String maxText(String text, int num) {
   return text.length > num ? '${text.substring(0, num)}...' : text;
 }
-

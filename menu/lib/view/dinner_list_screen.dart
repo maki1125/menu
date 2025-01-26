@@ -6,6 +6,8 @@ import 'package:menu/view_model/dinner_list_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/common/common_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/data/model/user.dart';
 
  ///メモ
  ///dinnerList（カードの削除など）, selectDate（日付選択）, 
@@ -220,7 +222,7 @@ class _DinnerListState extends State<DinnerList> {
                                                   //最近食べた日の更新（バッファに戻す）
                                                   dinner.selectID!.forEach((id){
                                                     print(id);
-                                                    MenuRepository(currentUser!).editMenuIdDinnerDate(id);
+                                                    MenuRepository().editMenuIdDinnerDate(id);
                                                   });
                                                   
                                                   // 夕食データ削除

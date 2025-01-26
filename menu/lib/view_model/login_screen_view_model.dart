@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/repository/o_user_repository.dart';
+import 'package:menu/common/common_providers.dart';
 
 // 現在ログインユーザー
-UserModel? currentUser = UserRepository().getCurrentUser();
+//UserModel? currentUser = UserRepository().getCurrentUser();
 
 final userProvider = StateProvider<UserModel?>((ref) => currentUser);
 
@@ -50,4 +51,12 @@ class AuthErrorMessages {
   static const anonymousAuthDisabled = 'このプロジェクトでは匿名認証が有効になっていません';
   static const accountExistCrediential = '異なる認証情報を持つアカウントが存在します';
   static const invalidCredential = '無効な認証情報です';
+  static const credentialAlreadyInUse = 'その認証情報は既に使用されています';
+  static const requiresRecentLogin = '再度ログインしてください';
 }
+
+final currentUserProvider = Provider<UserModel?>((ref) {
+  // 現在のユーザー情報を取得して返す（例: FirebaseAuth などから取得）
+  return UserRepository().getCurrentUser();
+  
+});
