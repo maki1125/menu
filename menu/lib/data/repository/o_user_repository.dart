@@ -4,6 +4,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
 
@@ -174,10 +176,25 @@ class AuthService {
 
       // Googleサインインを実行
       final credential = await gooleSingIn();
-      print('ユーザー情報 $_auth.currentUser?.providerData.isNotEmpty');
+      //print('ユーザー情報 $_auth.currentUser?.providerData.isNotEmpty');
       // Googleサインインの認証情報を匿名ユーザーにリンク
 
-      await _auth.signInWithCredential(credential);
+    
+        try{
+        await _auth.currentUser!.linkWithCredential(credential);
+        
+        }on FirebaseAuthException catch (e) {
+          print("エラーです。");
+          
+          await _auth.signInWithCredential(credential);
+          
+          
+          
+        }
+
+      
+      //
+
       // } else {
       //   await _auth.currentUser!.linkWithCredential(credential);
       // }
@@ -317,6 +334,13 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(), // ユーザー情報を取得
       builder: (context, snapshot) {
+
+        // ビルド後にmenuRepositoryインスタンスをリセット
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ref.invalidate(menuListProvider);// メニューリストのプロバイダーを無効化して再評価
+          MenuRepository.resetInstance(); // インスタンスのリセット
+        });
+
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
               child: CircularProgressIndicator()); // ローディング中のウィジェット
@@ -325,9 +349,11 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
           final user = snapshot.data;
           if (user?.isAnonymous ?? false) {
             print("匿名ユーザーです");
+            print(user!.uid);
             // 匿名ログイン中の場合の処理を記述
           } else {
             print("通常ユーザーです");
+            print(user!.uid);
             // 通常のログイン状態の処理を記述
           }
 
@@ -340,3 +366,5 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
     );
   }
 }
+
+

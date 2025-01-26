@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/user.dart';
-//import 'package:menu/data/repository/user_repository.dart';
+import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/repository/o_user_repository.dart';
 import 'package:menu/common/common_providers.dart';
 
@@ -54,3 +54,9 @@ class AuthErrorMessages {
   static const credentialAlreadyInUse = 'その認証情報は既に使用されています';
   static const requiresRecentLogin = '再度ログインしてください';
 }
+
+final currentUserProvider = Provider<UserModel?>((ref) {
+  // 現在のユーザー情報を取得して返す（例: FirebaseAuth などから取得）
+  return UserRepository().getCurrentUser();
+  
+});

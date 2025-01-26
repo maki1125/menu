@@ -1,5 +1,7 @@
 import 'dart:io'; //Fileを扱うため
 import 'package:image_picker/image_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/data/model/user.dart';
 import 'package:image/image.dart' as img; //画像のリサイズ
 import 'dart:typed_data'; // Uint8List を使用するためにインポート
 //import 'package:file_picker/file_picker.dart';
@@ -64,7 +66,7 @@ class ImageRepository {
     menu.imagePath = imagePath;
     file!.delete(); //一時ファイルに保存したデータを削除する。
     }
-    MenuRepository(user).addMenu(menu);
+    MenuRepository().addMenu(menu);
     print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
     
@@ -87,7 +89,7 @@ class ImageRepository {
     menu.imageURL = imageURL;
     menu.imagePath = imagePath;
     }
-    MenuRepository(user).editMenu(menu);
+    MenuRepository().editMenu(menu);
     print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
   }
@@ -95,9 +97,11 @@ class ImageRepository {
 
   //画像削除
   Future<void> deleteImage() async{
+    if(menu.imagePath != "noData"){
      FirebaseStorage.instance
       .ref(menu.imagePath)
       .delete();
+    }
   }
 
 }

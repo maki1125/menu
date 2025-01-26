@@ -15,6 +15,8 @@ import 'package:menu/data/repository/image_repository.dart';
 import 'package:menu/view_model/menu_list_view_model.dart';
 import 'package:menu/common/common_providers.dart';
 //import 'package:menu/common/common_constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/data/model/user.dart';
 
 class MenuDetailScreen extends ConsumerStatefulWidget {
 
@@ -91,8 +93,8 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                         child: const Text('いいえ'),
                       ),
                       TextButton(
-                        onPressed: () {
-                          ImageRepository(currentUser!, menu, ref).deleteImage(); 
+                        onPressed: () async{
+                          await ImageRepository(currentUser!, menu, ref).deleteImage(); 
                           Navigator.of(context).pop(true); // 「はい」を選択
                         },
                         child: const Text('はい'),
@@ -104,7 +106,9 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
 
               if (result == true) {
                 // 「はい」が選択された場合の処理
-                MenuRepository(currentUser!).deleteMenu(menu); //メニュー削除
+                print("delete");
+                print(currentUser!.uid);
+                MenuRepository().deleteMenu(menu); //メニュー削除
                 Navigator.pop(context);//元画面(メニュー一覧)に遷移
               } else {
                 // 「いいえ」が選択された場合、何もしない

@@ -5,14 +5,24 @@ import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/view/menu_create_screen.dart';
+import 'package:menu/view_model/login_screen_view_model.dart';
 import 'package:menu/common/common_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/data/model/user.dart';
 
 //ログインユーザ
-final _currentUser = UserRepository().getCurrentUser();
+//final _currentUser = UserRepository().getCurrentUser();
+
+//メニューリポジトリをプロバイダーで管理
+final menuRepositoryProvider = Provider<MenuRepository>((ref) {
+  final currentUser = ref.watch(currentUserProvider); // 現在のユーザーを取得
+  return MenuRepository();
+});
 
 //メニューリスト
 final menuListProvider = StreamProvider<List<Menu>>((ref) {
-  return MenuRepository(currentUser!).getMenuList();
+  //final menuRepository = ref.watch(menuRepositoryProvider);
+  return MenuRepository().getMenuList();
 });
 
 /*
@@ -37,14 +47,14 @@ final totalPriceProvider = Provider<List<int>>((ref) {
 */
 
 //お気に入りボタン
-void favoriteButton(menu) {
-  if (menu.isFavorite) {
-    menu.isFavorite = false;
-  } else {
-    menu.isFavorite = true;
-  }
+void favoriteButton(WidgetRef ref, Menu menu) {
+  // isFavorite の状態をトグル
+  menu.isFavorite = !menu.isFavorite!;
+
   if(menu.id != null){//新規登録の場合は、idがまだないため。
-  MenuRepository(_currentUser!).editMenu(menu);
+  final menuRepository = ref.read(menuRepositoryProvider);
+  menuRepository.editMenu(menu);
+
   }
 }
 
@@ -55,8 +65,8 @@ void dinnerButton(menu) {
   } else {
     menu.isDinner = true;
   }
-  print(_currentUser!.uid);
-  MenuRepository(_currentUser!).editMenu(menu);
+  print(currentUser!.uid);
+  MenuRepository().editMenu(menu);
 }
 
 //？人前を管理
@@ -98,7 +108,7 @@ final StateProvider<String> dropDownProvider = StateProvider<String>((ref) {
   return '全て';
 });
 
-//保存する材料リストのプロバイダー
+
 
 
 

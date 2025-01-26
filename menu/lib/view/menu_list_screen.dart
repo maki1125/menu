@@ -13,6 +13,8 @@ import 'package:menu/data/model/dinner.dart';
 import 'package:menu/view/main_screen.dart';
 //import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/common/common_providers.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/data/model/user.dart';
 
 class MenuList extends ConsumerWidget {
 
@@ -268,7 +270,7 @@ class MenuList extends ConsumerWidget {
                                   right: 0,
                                   child: IconButton(
                                     onPressed: () {
-                                      favoriteButton(filteredMenus[index]);
+                                      favoriteButton(ref, filteredMenus[index]);
                                     },
                                     // 表示アイコン
                                     icon: Icon(Icons.favorite),
@@ -315,7 +317,7 @@ class MenuList extends ConsumerWidget {
                           filteredMenus.forEach((menu){
                             menu.dinnerDateBuf = menu.dinnerDate;//バッファに保存してから
                             menu.dinnerDate = DateTime.now();//更新
-                            MenuRepository(currentUser!).editMenu(menu);
+                            MenuRepository().editMenu(menu);
                           });
 
                           //ページ遷移

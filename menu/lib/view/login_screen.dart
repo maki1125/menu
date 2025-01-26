@@ -51,10 +51,10 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
       child: authState.when(
         data: (user) {
           if (user?.isAnonymous == false) {
-            print('user: $user');
+            //print('user: $user');
             return _buildLoggedInView(context, user, authService);
           } else {
-            print('user: $user');
+            //print('user: $user');
             return _buildAnonymousView(
                 context, authService, emailController, passwordController, ref);
           }
