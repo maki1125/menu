@@ -131,7 +131,37 @@ void showMessage(String message) {
   );
 }
 
+// showMessageと同じ
+void toast(String message){
+  Fluttertoast.showToast(
+    timeInSecForIosWeb: 1,
+    gravity: ToastGravity.CENTER,
+    fontSize: 16,
+    msg: message,
+  ); //
+}
 //表示の最大文字設定
 String maxText(String text, int num) {
   return text.length > num ? '${text.substring(0, num)}...' : text;
 }
+
+// エラーダイアログの表示
+  void showErrorDialog(BuildContext context,String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('error'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('閉じる'),
+            ),
+          ],
+        );
+      },
+    );
+  }

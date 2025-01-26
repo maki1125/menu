@@ -1,26 +1,97 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/data/model/user.dart';
 
 class MaterialRepository {
-  MaterialRepository(this.user);
-  final UserModel user;
+
+  static MaterialRepository? _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
+  final User user; //Firebaseのauthの型
+  final db = FirebaseFirestore.instance;
+  List<MaterialModel> materialList = []; //
+  int count = 0;
+
+  //MaterialRepository(this.user);
+  //final UserModel user;
+  // プライベートコンストラクタ
+  MaterialRepository._(this.user);
+
+  // ファクトリコンストラクタ
+  factory MaterialRepository() {
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    _instance ??= MaterialRepository._(firebaseUser!); //??=はnullの場合、代入のいみ。
+    
+    // 既存インスタンスの `userId` が異なる場合
+    if (_instance!.user.uid != firebaseUser!.uid) {
+      throw Exception("MaterialRepository is already initialized with a different user.");
+    }
+
+    return _instance!;
+  }
+
+  // インスタンスをリセットするメソッド
+  static void resetInstance() {
+    _instance = null;
+  }
 
   //データ取得
   Stream<List<MaterialModel>> getMaterialList() {
     return FirebaseFirestore.instance
         .collection('users/${user.uid}/materials')
-        .orderBy('name')
+        .orderBy('name', descending: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) =>
+        .map((snapshot){
+          print("count:${count}");
+          count += 1;
+
+          // 変更された部分だけを取得
+      for (final change in snapshot.docChanges) {
+        final material = MaterialModel.fromFirestore(change.doc.data() as Map<String, dynamic>);
+        
+        switch (change.type) {
+          //追加ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+          case DocumentChangeType.added:
+            print("add_material:${material.id}");
+            if ((material.id == "noData" && !materialList.any((m) => ( "noData"== material.id)))//データ追加された時にまだidがついていない場合がある。
+              || !materialList.any((m) => (m.id == material.id))){//すでにリストにある場合は追加しない。初回に2回addしてしまうため。
+              materialList.insert(0, material);
+            }
+            break;
+
+          //修正（既存アイテムを更新）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+          case DocumentChangeType.modified:
+          print("modify_material:${material.id}");
+            final index = materialList.indexWhere((m) => (m.id == material.id || m.id == "noData"));
+            if (index != -1) {
+              materialList[index] = material;
+            }
+            break;
+
+          //削除ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+          case DocumentChangeType.removed:
+            print("remove_material:${material.id}");
+            materialList.removeWhere((m) => m.id == material.id);
+            break;
+        }
+      }
+      return materialList;
+
+/*
+          return snapshot.docs.map((doc){
+            print(doc.id);
             //Material.fromFirestore(doc.data() as Map<String, dynamic>))
-            MaterialModel.fromFirestore(doc.data())).toList());
+            return MaterialModel.fromFirestore(doc.data());
+        }
+        ).toList();
+*/
+
+        }
+            );
   }
 
   //データ追加
   Future<void> addMaterial(MaterialModel material) async {
-    DocumentReference docRef = await FirebaseFirestore.instance
+    DocumentReference docRef = await db
         .collection('users/${user.uid}/materials')
         .add(_materialToMap(material));
 
@@ -29,7 +100,7 @@ class MaterialRepository {
 
   //データ削除
   Future<void> deleteMaterial(MaterialModel material) async {
-    FirebaseFirestore.instance
+    db
         .collection('users/${user.uid}/materials')
         .doc(material.id)
         .delete();
@@ -37,7 +108,8 @@ class MaterialRepository {
 
   // データ更新
   Future<void> updateMaterial(MaterialModel material) async {
-    await FirebaseFirestore.instance
+    print("データ更新します。");
+    await db
         .collection('users/${user.uid}/materials')
         .doc(material.id)
         .update(_materialToMap(material));

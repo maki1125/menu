@@ -95,22 +95,22 @@ class MenuRepository {
 
   //データ削除
   Future<void> deleteMenu(Menu menu) async{
-    db
+    await db
     .collection('users/${user.uid}/menus')
     .doc(menu.id)
     .delete();
   }
 
-  //データ編集
-  Future<void> editMenu(Menu menu) async{
-    db
+  //データ更新
+  Future<void> updateMenu(Menu menu) async{
+    await db
     .collection('users/${user.uid}/menus')
     .doc(menu.id)
     .update(_menuToMap(menu));
   }
 
   //データ編集(ID指定)
-  Future<void> editMenuIdDinnerDate(String menuId) async{
+  Future<void> updateMenuIdDinnerDate(String menuId) async{
 
     //ドキュメント取得
     final docSnapshot = await db

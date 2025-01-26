@@ -6,6 +6,7 @@ import 'package:menu/common/common_widget.dart';
 import 'package:menu/common/common_constants.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/data/model/menu.dart';
+import 'package:menu/data/model/material.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view/menu_create_screen.dart';
 //import 'package:menu/view/menu_create_screen.dart';
@@ -13,14 +14,17 @@ import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view/menu_edit_screen.dart';
 import 'package:menu/view/material_list_screen.dart';
+import 'package:menu/view/material_edit_screen.dart';
 import 'package:menu/view/dinner_list_screen.dart';
 import 'package:menu/view/login_screen.dart';
 //import 'package:menu/view/material_create_screen.dart';
 //import 'package:menu/view/login_screen.dart';
 
 class MainPage extends ConsumerStatefulWidget {
-  Menu? menu;
-  MainPage({Key? key, this.menu}) : super(key: key); //menuデータを受け取ることができるようにする。
+
+  Menu? menu; //menuを受け取れるようにする。
+  MaterialModel? material; //materialを受け取れるようにする。
+  MainPage({Key? key, this.menu, this.material}) : super(key: key); //menuデータを受け取ることができるようにする。
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -34,6 +38,7 @@ class _MainPageState extends ConsumerState<MainPage>
   int _pageIndex = 0; //現在のページ
   late TabController _tabController; //メニュー一覧の上部タブに使用
   late Menu? menu;
+  late MaterialModel? material;
   late List<Widget> _pages;
 
   //初期処理
@@ -44,7 +49,8 @@ class _MainPageState extends ConsumerState<MainPage>
     _bottomBarIndex = ref.read(bottomBarProvider.notifier).state;
     _pageIndex = ref.read(pageProvider.notifier).state;
 
-    menu = widget.menu;
+    menu = widget.menu; //statefulWidgetで受け取ったmenuをstateの中で使えるようにする。
+    material = widget.material;
 
     //ページリストの初期化.menuを参照するため、初期化内で参照する。
     _pages = [
@@ -56,6 +62,7 @@ class _MainPageState extends ConsumerState<MainPage>
       MenuDetailScreen(menu: menu),
       MenuEditScreen(menu: menu),
       UserAuthentication(),
+      MaterialUpdateScreen(material: material),
     ];
   }
 
@@ -69,6 +76,7 @@ class _MainPageState extends ConsumerState<MainPage>
     "メニュー詳細",
     "メニュー編集",
     "ユーザー",
+    "材料編集",
   ];
 
   //タッチしたアイコンの番号を現在のインデックスにセット

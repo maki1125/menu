@@ -53,7 +53,7 @@ void favoriteButton(WidgetRef ref, Menu menu) {
 
   if(menu.id != null){//新規登録の場合は、idがまだないため。
   final menuRepository = ref.read(menuRepositoryProvider);
-  menuRepository.editMenu(menu);
+  menuRepository.updateMenu(menu);
 
   }
 }
@@ -66,7 +66,7 @@ void dinnerButton(menu) {
     menu.isDinner = true;
   }
   print(currentUser!.uid);
-  MenuRepository().editMenu(menu);
+  MenuRepository().updateMenu(menu);
 }
 
 //？人前を管理

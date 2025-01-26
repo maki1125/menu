@@ -317,7 +317,7 @@ class MenuList extends ConsumerWidget {
                           filteredMenus.forEach((menu){
                             menu.dinnerDateBuf = menu.dinnerDate;//バッファに保存してから
                             menu.dinnerDate = DateTime.now();//更新
-                            MenuRepository().editMenu(menu);
+                            MenuRepository().updateMenu(menu);
                           });
 
                           //ページ遷移
