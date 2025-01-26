@@ -22,10 +22,10 @@ import 'package:menu/data/model/user.dart';
 // 夕食の履歴画面
 class DinnerList extends StatefulWidget {
   @override
-  _DinnerListState createState() => _DinnerListState();
+  DinnerListState createState() => DinnerListState();
 }
 
-class _DinnerListState extends State<DinnerList> {
+class DinnerListState extends State<DinnerList> {
 
   //再描写で更新されたくない変数
   List<DateTime> selectWeek = []; //フィルタで選択された週.
@@ -181,8 +181,7 @@ class _DinnerListState extends State<DinnerList> {
                               shape: RoundedRectangleBorder(// カードの形状
                                 //side: const BorderSide(
                                     //color: Colors.blue, width: 1.0), // 枠線
-                                borderRadius:
-                                    BorderRadius.circular(10.0), // 角丸
+                                borderRadius:BorderRadius.circular(10.0), // 角丸
                               ),
                               child: SizedBox(
                                 height: 70,
@@ -222,7 +221,7 @@ class _DinnerListState extends State<DinnerList> {
                                                   //最近食べた日の更新（バッファに戻す）
                                                   dinner.selectID!.forEach((id){
                                                     print(id);
-                                                    MenuRepository().editMenuIdDinnerDate(id);
+                                                    MenuRepository().updateMenuIdDinnerDate(id);
                                                   });
                                                   
                                                   // 夕食データ削除

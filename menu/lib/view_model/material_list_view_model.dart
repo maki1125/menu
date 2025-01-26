@@ -7,7 +7,7 @@ import 'package:menu/common/common_providers.dart';
 
 // 材料データ取得
 final materialListProvider = StreamProvider<List<MaterialModel>>((ref) {
-  return MaterialRepository(currentUser!).getMaterialList();
+  return MaterialRepository().getMaterialList();
 });
 
 // 検索テキストを管理するプロバイダー

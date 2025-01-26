@@ -40,12 +40,11 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
         SingleChildScrollView(// スクロール可能なウィジェット
           
           child: Column(
-            children: <Widget>[
+            children: [
               materialList.when(
-                // AsyncValueからデータを取るために必要
-                // データ取得状態による表示切り替え
                 data: (materials) {
-                  if (materials.isEmpty) {
+
+                  if (materials.isEmpty) {//データがない場合
                     return const Center(
                       child: Text(
                         '材料が登録されていません',
@@ -68,17 +67,17 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                         itemBuilder: (context, index) {
                           final material = filteredMaterials[index]; // 材料データ
 
-                          return ListTile(
-                            title: Card(
-                              elevation: 2.0,
-                              margin: const EdgeInsets.all(0), // 余白
+                          return Card(
+                              color: Colors.white,
+                              elevation: 1.0,
+                              //margin: const EdgeInsets.all(0), // 余白
                               shape: RoundedRectangleBorder(
-                                // カードの形状
-                                side: const BorderSide(
-                                    color: Colors.blue, width: 1.0), // 枠線
+                                //side: const BorderSide(
+                                    //color: Colors.blue, width: 1.0), // 枠線
                                 borderRadius: BorderRadius.circular(10.0), // 角丸
                               ),
-                              child: Stack(
+                              
+                              child: Stack(//タップ可能領域とアイコンを切り分けるためにstack使用
                                 children: [
 
                                   //テキスト領域（タップ可能領域）ーーーーーーーーーーーーーーーーーーー
@@ -91,11 +90,48 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                       },
                                       child:  ListTile(
                                         contentPadding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                        title: Text(
+                                        title: Row(
+                                          children: [
+                                            Container(
+                                              width: 150,
+                                              child: Text(
+                                                material.name ?? '',
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                //style: TextStyle(fontSize: 16), // フォントサイズの調整
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 70,
+                                              child: Text(
+                                                material.quantity.toString() +  material.unit!,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                //style: TextStyle(fontSize: 16), // フォントサイズの調整
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 70,
+                                              child: Text(
+                                                material.price.toString() +  "円",
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                //style: TextStyle(fontSize: 16), // フォントサイズの調整
+                                              ),
+                                            ),
+                                            
+                                          ],
+                                        )
+
+                                        /*
+                                        Text(
                                           '${material.name ?? ''}   ${material.quantity?.toString()}${material.unit}   ${material.price?.toString()}円',
                                           overflow: TextOverflow.ellipsis, // テキストがはみ出た場合の処理
                                           maxLines: 1,
                                         ),
+                                        */
+
+
                                       ),
                                     )
                                   ),
@@ -117,12 +153,12 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                               ref.read(materialProvider.notifier).state = material;
 
                                               //ページ遷移
-                                              ref.read(pageProvider.notifier).state = 4;
+                                              ref.read(pageProvider.notifier).state = 8;
                                               Navigator.push(
                                                 context,
                                                 MaterialPageRoute(
                                                   // 画面遷移
-                                                  builder: (context) => MainPage(),
+                                                  builder: (context) => MainPage(material: material,),
                                                 ),
                                               );
                                             },
@@ -132,7 +168,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                           IconButton(
                                             icon: const Icon(Icons.delete),
                                             onPressed: () {
-                                              MaterialRepository(currentUser!).deleteMaterial(material);
+                                              MaterialRepository().deleteMaterial(material);
                                             },
                                           ),
                                         ],
@@ -141,7 +177,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                   )
                                 ]
                               )
-                            ),
+                            
                           );
                         },
                       ),

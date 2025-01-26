@@ -89,7 +89,7 @@ class ImageRepository {
     menu.imageURL = imageURL;
     menu.imagePath = imagePath;
     }
-    MenuRepository().editMenu(menu);
+    MenuRepository().updateMenu(menu);
     print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
   }

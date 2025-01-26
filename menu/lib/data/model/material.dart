@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class MaterialModel {
+class MaterialModel {//flutter/material.dartと名前が被るため、MaterialModelとする。
   MaterialModel(
       {this.createAt,
       this.name,
@@ -23,7 +23,7 @@ class MaterialModel {
       name: data['name'] as String? ?? '',
       quantity: data['quantity'] as int? ?? 0,
       unit: data['unit'] as String? ?? '',
-      id: data['id'] as String? ?? '',
+      id: data['id'] as String? ?? 'noData',
       createAt: (data['createAt'] as Timestamp).toDate(),
     );
   }
