@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:menu/data/model/material.dart';
-import 'package:menu/data/model/user.dart';
 
 class MaterialRepository {
 

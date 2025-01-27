@@ -22,7 +22,6 @@ class MenuRepository {
     if (_instance!.user.uid != firebaseUser!.uid) {
       throw Exception("MenuRepository is already initialized with a different user.");
     }
-
     return _instance!;
   }
 

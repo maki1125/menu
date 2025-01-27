@@ -225,7 +225,7 @@ class DinnerListState extends State<DinnerList> {
                                                   });
                                                   
                                                   // 夕食データ削除
-                                                  await DinnerRepository(currentUser!).deleteDinner(dinner); 
+                                                  await DinnerRepository().deleteDinner(dinner); 
                                                 } catch (e) {
                                                   showMessage(
                                                       '削除に失敗しました。再度お試しください。$e');

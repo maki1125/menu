@@ -22,7 +22,7 @@ class Dinner {
   factory Dinner.fromFirestore(Map<String, dynamic> data) {
     return Dinner(
       price: data['price'] as int,
-      id: data['id'] as String? ?? '',
+      id: data['id'] as String? ?? 'noData',
       select: (data['select'] as List<dynamic>?)
           ?.map((item) => item as String)
           .toList() ?? [], // nullの場合は空のリストを設定

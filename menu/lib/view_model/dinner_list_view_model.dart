@@ -2,12 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/data/model/dinner.dart';
 import 'package:intl/intl.dart';
-import 'package:menu/common/common_providers.dart';
 
 //プロバイダーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 // 夕食リストの非同期プロバイダ
 final dinnerListProvider = StreamProvider<List<Dinner>>((ref) {
-  return DinnerRepository(currentUser!).getDinnerList();
+  return DinnerRepository().getDinnerList();
 });
 
 
