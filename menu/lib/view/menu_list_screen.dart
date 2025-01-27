@@ -311,7 +311,7 @@ class MenuList extends ConsumerWidget {
                           dinner.price = ref.read(totalPriceNotifierProvider);
                           dinner.select = filteredMenus.map((menu)=>menu.name!).toList();
                           dinner.selectID = filteredMenus.map((menu)=>menu.id!).toList();
-                          DinnerRepository(currentUser!).addDinner(dinner);//データベースにデータ追加
+                          DinnerRepository().addDinner(dinner);//データベースにデータ追加
                           
                           //最近食べた日の項目更新
                           filteredMenus.forEach((menu){

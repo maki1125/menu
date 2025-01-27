@@ -1,27 +1,12 @@
 import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/menu.dart';
-//import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
-import 'package:menu/data/repository/user_repository.dart';
-import 'package:menu/view/menu_create_screen.dart';
-import 'package:menu/view_model/login_screen_view_model.dart';
 import 'package:menu/common/common_providers.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:menu/data/model/user.dart';
 
-//ログインユーザ
-//final _currentUser = UserRepository().getCurrentUser();
-
-//メニューリポジトリをプロバイダーで管理
-final menuRepositoryProvider = Provider<MenuRepository>((ref) {
-  final currentUser = ref.watch(currentUserProvider); // 現在のユーザーを取得
-  return MenuRepository();
-});
 
 //メニューリスト
 final menuListProvider = StreamProvider<List<Menu>>((ref) {
-  //final menuRepository = ref.watch(menuRepositoryProvider);
   return MenuRepository().getMenuList();
 });
 
@@ -52,8 +37,7 @@ void favoriteButton(WidgetRef ref, Menu menu) {
   menu.isFavorite = !menu.isFavorite!;
 
   if(menu.id != null){//新規登録の場合は、idがまだないため。
-  final menuRepository = ref.read(menuRepositoryProvider);
-  menuRepository.updateMenu(menu);
+  MenuRepository().updateMenu(menu);
 
   }
 }
