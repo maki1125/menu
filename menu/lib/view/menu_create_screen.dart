@@ -69,9 +69,11 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   // 計算ロジック
   void _calculatePrice() {
     setState(() {
-      // 入力値が空、または不正な場合は0として扱う
-      int quantity = int.tryParse(_numController.text) ?? 1;
-      calculatedPrice = selectedMaterial!.price! * quantity;
+      
+      if(selectedMaterial != null){
+        int quantity = int.tryParse(_numController.text) ?? 1;
+        calculatedPrice = selectedMaterial!.price! * quantity;
+      }
     });
   }
 
@@ -326,6 +328,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
             //材料入力のエリア
             
             selectedMaterial == null
+            //材料入力
             ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -366,6 +369,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                 ),
               ],
             )
+            //材料一覧から選択
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
