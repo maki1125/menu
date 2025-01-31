@@ -5,6 +5,7 @@ import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:menu/common/common_providers.dart';
+import 'package:menu/common/common_widget.dart';
 
 class MaterialCreateScreen extends ConsumerStatefulWidget {
   const MaterialCreateScreen({super.key});
@@ -22,8 +23,11 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   Map<int, TextEditingController> priceController = {};
 
   final List<Map<String, dynamic>> _materialMap = []; //登録するデータ
-  var counter = 0; // テキストフィールドの数
-
+  int counter = 0; // テキストフィールドの数
+  int? _focusedIndex = 0;// 現在フォーカスされている index を管理
+  List<FocusNode> focusNodes = [];// FocusNode をリストで管理
+  bool dialogFlg = false; //単位計算のダイアログの表示中のフラグ
+  
   @override
   // テキストフィールドのコントローラーの破棄
   void dispose() {
@@ -33,8 +37,32 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
       unitController[i]?.dispose();
       priceController[i]?.dispose();
     }
+    for (var node in focusNodes) {
+    node.dispose();
+  }
     super.dispose(); // 親クラスのdisposeを呼び出す
   }
+
+@override
+  void initState() {
+  super.initState();
+
+ //テキストフィールドのフォーカスの準備
+  for (int i = 0; i < 10; i++) { 
+    focusNodes.add(FocusNode());
+  }
+
+  // 各 FocusNode にリスナーを追加
+  for (int i = 0; i < 10; i++) {
+    focusNodes[i].addListener(() {
+      if (focusNodes[i].hasFocus) {
+        setState(() {
+          _focusedIndex = i;
+        });  
+      }
+    });
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -47,35 +75,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         const Text('右スワイプで削除'),
         const SizedBox(height: 10),
         //題目ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-          Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              width: screenWidth *0.39,
-              child:const Text("材料",
-              textAlign: TextAlign.center, // テキストを中央揃え),
-              )
-            ),
-            SizedBox(
-              width: screenWidth * 0.19,
-              child: const Text("数量",
-              textAlign: TextAlign.center
-              ),
-            ),
-            SizedBox(
-              width: screenWidth * 0.19,
-              child: const Text("単位",
-              textAlign: TextAlign.center
-              ),
-            ),
-            SizedBox(
-              width: screenWidth * 0.19,
-              child: const Text("価格",
-              textAlign: TextAlign.center
-              ),
-            ),
-          ]
-        ),
+        _title(screenWidth),
 
         //入力エリアーーーーーーーーーーーーーーーーーーーーーーーーーー
         ListView.builder(
@@ -83,6 +83,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           //physics: const NeverScrollableScrollPhysics(), // スクロール禁止
           itemCount: counter + 1, //初期表示テキストエリア表示のための+1
           itemBuilder: (context, index) {
+
             while (_materialMap.length <= index) {
 
               // マップの長さがインデックスより小さい場合エラー回避のため空のマップを作成
@@ -92,21 +93,14 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                 'unit': '',
                 'price': '',
               });
+
             }
 
             //テキストフィールドの初期値
-            materialController[index] ??= TextEditingController(
-              text: _materialMap[index]['material'],
-            );
-            quantityController[index] ??= TextEditingController(
-              text: _materialMap[index]['quantity'],
-            );
-            unitController[index] ??= TextEditingController(
-              text: _materialMap[index]['unit'],
-            );
-            priceController[index] ??= TextEditingController(
-              text: _materialMap[index]['price'],
-            );
+            materialController[index] ??= TextEditingController(text: _materialMap[index]['material'],);
+            quantityController[index] ??= TextEditingController(text: _materialMap[index]['quantity'],);
+            unitController[index] ??= TextEditingController(text: _materialMap[index]['unit'],);
+            priceController[index] ??= TextEditingController(text: _materialMap[index]['price'],);
 
             // スワイプで削除
             return Dismissible(
@@ -129,53 +123,20 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   unitController.remove(index);
                   priceController.remove(index);
                   _materialMap.removeAt(index);
+                  focusNodes.removeAt(index);
                 });
               },
 
               child: SizedBox(
                 child: Column(
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _buildTextField(
-                          name: 'material',
-                          hintText: '牛肉',
-                          controller: materialController[index] ??
-                              TextEditingController(), // エラー防止のため空のコントローラーをセット
-                          keyboardType: TextInputType.text,
-                          width: screenWidth * 0.39,
-                          index: index,
-                        ),
-                        _buildTextField(
-                          name: 'quantity',
-                          hintText: '10',
-                          controller: quantityController[index] ??
-                              TextEditingController(),
-                          keyboardType: TextInputType.number,
-                          width: screenWidth * 0.19,
-                          index: index,
-                        ),
-                        _buildTextField(
-                          name: 'unit',
-                          hintText: 'g',
-                          controller: unitController[index] ??
-                              TextEditingController(),
-                          keyboardType: TextInputType.text,
-                          width: screenWidth * 0.19,
-                          index: index,
-                        ),
-                        _buildTextField(
-                          name: 'price',
-                          hintText: '400',
-                          controller: priceController[index] ??
-                              TextEditingController(),
-                          keyboardType: TextInputType.number,
-                          width: screenWidth * 0.19,
-                          index: index,
-                        ),
-                      ]
+
+                    //フォーカスされたテキストフィールドの背景色を水色にするためにcontainerで囲む。
+                    Container(
+                    color: (_focusedIndex == index) ? Colors.blue.withOpacity(0.2) : Colors.transparent,
+                    child: _textField(index, screenWidth),
                     ),
+                    
                     const SizedBox(height: 10,)
                   ]
                 )
@@ -185,21 +146,50 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         ),
         const SizedBox(width: 10),
 
-        //追加アイコンーーーーーーーーーーーーーーーーーーーーーー
-        IconButton(
-          icon: const Icon(Icons.add),
-          onPressed: () {
-            setState(
-              () {
-                counter++;
-                // テキストフィールドの数を増やす
-                materialController[counter] = TextEditingController();
-                quantityController[counter] = TextEditingController();
-                unitController[counter] = TextEditingController();
-                priceController[counter] = TextEditingController();
+        //追加・計算ボタン
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                
+            //追加アイコンーーーーーーーーーーーーーーーーーーーーーー
+            IconButton(
+              icon: const Icon(Icons.add),
+              onPressed: () {
+                if(counter == 8){
+                  showMessage("最大９個までです！"); 
+                }else{
+                setState(
+                  () {
+                    counter++;
+                    // テキストフィールドの数を増やす
+                    materialController[counter] = TextEditingController();
+                    quantityController[counter] = TextEditingController();
+                    unitController[counter] = TextEditingController();
+                    priceController[counter] = TextEditingController();
+                  },
+                );
+                }
               },
-            );
-          },
+            ),
+
+            //単位あたり計算ボタンーーーーーーーーーーーーーーーーーーーーーーー
+            OutlinedButton(//枠線ありボタン
+              onPressed: () async{ 
+                await _showUnitCalDialog(context);
+               },
+
+              style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
+              minimumSize: const Size(50, 20), // 最小サイズを指定
+              backgroundColor:  Colors.blue,
+              ),
+              child: const Text('数量あたりの価格計算',
+                style: TextStyle(
+                fontSize: 12,
+                color: Colors.white),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
 
@@ -230,6 +220,103 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     );
   }
 
+
+//各ウィジェットの設定ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
+ //テキストフィールドのタイトル表示
+  Widget _title(double screenWidth){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        SizedBox(
+          width: screenWidth *0.39,
+          child:const Text("材料",
+          textAlign: TextAlign.center, // テキストを中央揃え),
+          )
+        ),
+        SizedBox(
+          width: screenWidth * 0.19,
+          child: const Text("数量",
+          textAlign: TextAlign.center
+          ),
+        ),
+        SizedBox(
+          width: screenWidth * 0.19,
+          child: const Text("単位",
+          textAlign: TextAlign.center
+          ),
+        ),
+        SizedBox(
+          width: screenWidth * 0.19,
+          child: const Text("価格",
+          textAlign: TextAlign.center
+          ),
+        ),
+      ]
+    );
+  }
+  
+  //テキストフィールド１行分
+  Widget _textField(int index, double screenWidth){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        dialogFlg
+        ? _buildTextField(//ダイアログの中
+          name: 'material',
+          hintText: '牛肉',
+          controller: materialController[index] ??
+              TextEditingController(), // エラー防止のため空のコントローラーをセット
+          keyboardType: TextInputType.text,
+          width: screenWidth * 0.39,
+          index: index,
+
+        )
+        : _buildTextField(
+          name: 'material',
+          hintText: '牛肉',
+          controller: materialController[index] ??
+              TextEditingController(), // エラー防止のため空のコントローラーをセット
+          keyboardType: TextInputType.text,
+          width: screenWidth * 0.39,
+          index: index,
+          focusNode: focusNodes[index],//1つ目のテキストフィールドのみにフォーカスを設定。全てに設定するとカーソルが全てに表示されてしまうため。
+
+        ),
+        _buildTextField(
+          name: 'quantity',
+          hintText: '10',
+          controller: quantityController[index] ??
+              TextEditingController(),
+          keyboardType: TextInputType.number,
+          width: screenWidth * 0.19,
+          index: index,
+          //focusNode: focusNodes[index],
+        ),
+        _buildTextField(
+          name: 'unit',
+          hintText: 'g',
+          controller: unitController[index] ??
+              TextEditingController(),
+          keyboardType: TextInputType.text,
+          width: screenWidth * 0.19,
+          index: index,
+          //focusNode: focusNodes[index],
+        ),
+        _buildTextField(
+          name: 'price',
+          hintText: '400',
+          controller: priceController[index] ??
+              TextEditingController(),
+          keyboardType: TextInputType.number,
+          width: screenWidth * 0.19,
+          index: index,
+          //focusNode: focusNodes[index],
+        ),
+      ]
+    );
+  }
+  
   // エラーダイアログの表示
   void _showErrorDialog(String message) {
     showDialog(
@@ -251,15 +338,16 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     );
   }
 
-  // テキストフィールドの設定
+  // テキストフィールド1つ分の設定
   Widget _buildTextField({
+    required int index,
+    required TextEditingController controller,
+    FocusNode? focusNode,
     dynamic name = '',
     final String hintText = '',
-    required TextEditingController controller,
     TextInputType keyboardType = TextInputType.text,
     final double width = 130,
-    required int index,
-  }) {
+  }){
     return SizedBox(
       height: 35,
       width: width,
@@ -272,6 +360,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         },
         textAlign: TextAlign.center, //hintTextの左右を中央揃え
         controller: controller, // コントローラー
+        focusNode: focusNode,
         keyboardType: keyboardType, // キーボードタイプ
         decoration: InputDecoration(
           // テキストフィールドの装飾
@@ -362,7 +451,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      child: Text('登録'),
+      child: const Text('登録'),
     );
   }
 
@@ -382,6 +471,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     }
   }
 
+//バリデーションチェック
   bool validateInputs() {
     for (var i = 0; i < _materialMap.length; i++) {
       if (_materialMap[i]['material'] == null ||
@@ -404,4 +494,168 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     }
     return true;
   }
+
+  //単位あたりの計算ダイアログ表示
+  Future<void> _showUnitCalDialog(BuildContext context) {
+    dialogFlg = true;
+
+    TextEditingController numController = TextEditingController(); // 入力を管理するコントローラ
+    int? focusPrice = int.tryParse(priceController[_focusedIndex]!.text);
+    int? focusQuantity = int.tryParse(quantityController[_focusedIndex]!.text);
+    int dispPrice = 0;
+    double screenWidth = MediaQuery.of(context).size.width; 
+    int? input;
+
+    // フォーカスを外す
+    //focusNodes[_focusedIndex!].unfocus();
+    
+    //表示計算価格の初期表示の計算
+    if (focusPrice == null || focusQuantity == null  || focusQuantity == 0 ) {
+      dispPrice = 0; // 無効な値の場合は 0 にする
+    } else {
+      numController.text = "1";
+      dispPrice = focusPrice ~/ focusQuantity ;
+    }
+  
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(//showDialog内だけにsetStateによって再描写させたいため。
+          builder: (context, setState){
+
+        return Dialog(
+          insetPadding: const EdgeInsets.symmetric(horizontal: 5),//画面全体から少し小さいダイアログを表示したいため
+          child: Container(
+            constraints: BoxConstraints.expand(width: screenWidth, height: 300), // 横幅いっぱい
+            child: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text("数量変更時の価格計算", style: TextStyle(fontSize: 18)),
+                ),
+                _title(screenWidth),//テキストフィールドのタイトル表示
+                const Row(
+                  children: [
+                    Text("変更前",
+                    style: TextStyle(color: Colors.blue, fontSize: 10, ),)
+                  ],
+                ),
+                _textField(_focusedIndex!,screenWidth),//テキストフィールド１行分の表示
+                const Text("↓"),
+                const Row(
+                  children: [
+                    Text("変更後",
+                    style: TextStyle(color: Colors.red, fontSize: 10, ),)
+                  ],
+                ),
+
+                //変更後の表示１行分
+                Container(//フォーカスされたテキストフィールドの背景色を水色にするためにcontainerで囲む。
+                color:  Colors.blue.withOpacity(0.2),
+                child: Row(//変更後の材料名の表示
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: screenWidth *0.39,
+                        child: Text(materialController[_focusedIndex]!.text.toString(),
+                          textAlign: TextAlign.center, // テキストを中央揃え),
+                        )
+                      ),
+
+                      SizedBox(//変更後の数量を入力するテキストフィールド
+                        height: 35,
+                        width: screenWidth *0.19,
+                        child: TextField(
+                          onChanged: (text) {
+                            setState(() {// テキストフィールドの値が変更された場合
+                              input = int.tryParse(text);
+                              focusPrice = int.tryParse(priceController[_focusedIndex]!.text);
+                              focusQuantity = int.tryParse(quantityController[_focusedIndex]!.text);
+
+                              if (focusPrice == null || focusQuantity == null || input == null || focusQuantity == 0 || input == 0) {
+                                dispPrice = 0; // 無効な値の場合は 0 にする
+                              } else {
+                                dispPrice = focusPrice! ~/ (focusQuantity! / input!);
+                              }
+                            });
+                          },
+                          textAlign: TextAlign.center, //hintTextの左右を中央揃え
+                          controller: numController, // コントローラー
+                          keyboardType: TextInputType.number, // キーボードタイプ
+                          decoration: const InputDecoration(
+                            // テキストフィールドの装飾
+                            // labelText: labelText,
+                            hintText: "1",
+                            //floatingLabelAlignment: FloatingLabelAlignment.center,
+                            floatingLabelBehavior: FloatingLabelBehavior.always, // ラベルの位置
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 3, vertical: 5), //hintTextの垂直方向を中央に揃える。
+                            hintStyle: TextStyle(
+                                color: Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(//変更後の単位の表示
+                        width: screenWidth * 0.19,
+                        child: Text(unitController[_focusedIndex]!.text,
+                        textAlign: TextAlign.center
+                        ),
+                      ),
+                      SizedBox(//変更後の価格の表示。リアルタイム表示。
+                        width: screenWidth * 0.19,
+                        child: Text("$dispPrice",
+                        textAlign: TextAlign.center
+                        ),
+                      ),
+                    ]
+                  ),
+                ),
+                const SizedBox(height: 10,),
+
+                //やめる・決定ボタン
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+
+                    //やめるボタン
+                    ElevatedButton(
+                      onPressed: (){
+                        dialogFlg = false;
+                        Navigator.pop(context);
+
+                        },
+                        child: const Text("やめる"),
+                    ),
+                    const SizedBox(width: 20,),
+
+                    //決定ボタン
+                    ElevatedButton(
+                      onPressed: (){
+                        if(priceController[_focusedIndex]!.text == ""){
+                          showMessage("変更前を入力してください。");
+                        }else{
+                          if(input == null){
+                            showMessage("変更後の数量を入力してください");
+                          }else{
+                          quantityController[_focusedIndex]!.text = numController.text;
+                          priceController[_focusedIndex]!.text = dispPrice.toString();
+                          dialogFlg = false;
+                          Navigator.pop(context);    
+                          }
+                        }
+                      },
+                      child: const Text("決定"),
+                    ),
+                  ],
+                )              
+              ],
+            ),
+          ),
+        );
+      });
+    },
+  );
+}
 }
