@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:menu/view/main_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; //日本語設定
-import 'package:menu/view/main_screen.dart';
-import 'package:menu/view/login_screen.dart';
-//import 'package:menu/data/providers.dart';
-//import 'package:menu/kudo_test.dart';
-//import 'data/model/menu.dart';
-//import 'data/model/user.dart';
-//import 'data/repository/menu_repository.dart';
-import 'data/repository/o_user_repository.dart';
-//import 'package:menu/view/material_create_screen.dart';
-//import 'view/main_screen.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
+import 'package:menu/login/view/login_screen.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
