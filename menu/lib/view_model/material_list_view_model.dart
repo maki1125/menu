@@ -40,7 +40,7 @@ final filteredMaterialsProvider = Provider<List<MaterialModel>>((ref) {
 });
 
 // 編集中の材料データ
-final materialProvider = StateProvider<MaterialModel>((ref) => MaterialModel());
+//final materialProvider = StateProvider<MaterialModel>((ref) => MaterialModel());
 
 // ボタンの状態管理(edit（編集） or Resist（新規作成？）)
 final selectButtonProvider = StateProvider<String>((ref) => '');

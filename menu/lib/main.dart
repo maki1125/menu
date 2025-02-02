@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:menu/view/main_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart'; //日本語設定
 import 'package:menu/view/main_screen.dart';
+import 'package:menu/view/login_screen.dart';
 //import 'package:menu/data/providers.dart';
 //import 'package:menu/kudo_test.dart';
 //import 'data/model/menu.dart';
@@ -19,19 +20,19 @@ void main() async {
   await Firebase.initializeApp();
   await initializeDateFormatting('ja');
   runApp(
-    ProviderScope(child: MyApp()),
+    const ProviderScope(child: MyApp()),
   );
 }
 
 class MyApp extends ConsumerWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     //return MaterialApp(home: KudoTest()
 
-    return MaterialApp(
+    return const MaterialApp(
 
       //日本語設定
       localizationsDelegates: [
@@ -46,14 +47,7 @@ class MyApp extends ConsumerWidget {
       locale: Locale('ja'), // アプリのデフォルト言語を日本語に設定
       
       home: 
-      //MainPage()
-      SignInAnony()
-        //return MaterialApp(home: MaterialCreateScreen()
-        //Scaffold(
-        //body:
-        //CardListExample(),
-
-        //)
-        );
+       SignInAnony()
+    );
   }
 }

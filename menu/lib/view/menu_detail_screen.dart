@@ -283,7 +283,7 @@ class _MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
             Text(
-              menu.price.toString()+" 円",
+              "合計："+ menu.price.toString()+" 円",
               ),
               const SizedBox(width: 20,),
               ],

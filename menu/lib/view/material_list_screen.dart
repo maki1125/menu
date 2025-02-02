@@ -149,8 +149,8 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                           IconButton(
                                             icon: const Icon(Icons.edit), 
                                             onPressed: () {
-                                              ref.read(selectButtonProvider.notifier).state = 'edit'; // ボタンの状態を更新
-                                              ref.read(materialProvider.notifier).state = material;
+                                              //ref.read(selectButtonProvider.notifier).state = 'edit'; // ボタンの状態を更新
+                                              //ref.read(materialProvider.notifier).state = material;
 
                                               //ページ遷移
                                               ref.read(pageProvider.notifier).state = 8;
@@ -227,14 +227,18 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
         decoration: InputDecoration(
           // テキストフィールドの装飾
           prefixIcon: const Icon(Icons.search),
+          
           suffixIcon: IconButton(
             // フィルターや並び替えの機能が追加できる
             icon: const Icon(
               Icons.sort,
               size: 20,
             ),
-            onPressed: () {},
+            onPressed: () {
+              
+            },
           ),
+
           hintText: '材料名',
           border: InputBorder.none, // 枠線を非表示
           hintStyle: const TextStyle(

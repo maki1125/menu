@@ -69,7 +69,7 @@ class MaterialUpdateScreenstate extends ConsumerState<MaterialUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
+    //final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
     final screenWidth = MediaQuery.of(context).size.width; // 端末の画面幅を取得
     //final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
 
@@ -203,7 +203,7 @@ class MaterialUpdateScreenstate extends ConsumerState<MaterialUpdateScreen> {
           width: 100,
           child: _actionButton(
             ref,
-            materialMap,
+            _materialMap,
             materialController,
             quantityController,
             unitController,
@@ -518,7 +518,7 @@ class MaterialUpdateScreenstate extends ConsumerState<MaterialUpdateScreen> {
     int? focusQuantity = int.tryParse(quantityController[_focusedIndex]!.text);
     int dispPrice = 0;
     double screenWidth = MediaQuery.of(context).size.width; 
-    int? input;
+    int? input=1;
 
     // フォーカスを外す
     //focusNodes[_focusedIndex!].unfocus();

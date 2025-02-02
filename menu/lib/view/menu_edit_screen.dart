@@ -158,7 +158,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
 
           //お気に入りボタン
           Positioned(
-            top: -10,
+            top: -5,
             right: 0,
             child: IconButton(
               onPressed: () {
@@ -194,6 +194,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
 
           Column(
             children: [
+              SizedBox(height: 5,),
 
           //料理名ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           _buildTextField(
@@ -263,59 +264,6 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
                 })
               ),
   
-            const SizedBox(height: 10,),
-
-            //分量ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-            Row(
-              children: [
-                _titleText(title: '    分量   '),
-                Row(
-                  children: [
-                    _buildTextField(
-                      hintText: '1',
-                      controller: _quantityController,
-                      keyboardType: TextInputType.number,
-                      setWidth: 50,
-                    ),
-                    const Text(" 人前"),
-                  ],
-                ),
-                const SizedBox(height: 10,),
-              ],
-            ),
-
-            //タグ選択ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-            Row(
-              children: [
-                _titleText(title: '    タグ   '),
-                Consumer( //タグ変更時に再描写のエリアを制限するためconsumer使用。
-                  builder: (context, ref, child) {
-                    final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目
-                    return DropdownButton<String>(
-                      hint: const Text('カテゴリー無'), // ヒント表示
-                      value: _menu.tag != "noData"
-                      ? _menu.tag == "全て"
-                        ? "カテゴリー無"
-                        : _menu.tag
-                      : dropdownItems.contains(selectedValue)
-                        ? selectedValue
-                        : null, // 選択値がリストに含まれていない場合は`null`
-                      items: dropdownItems.map((String item) {
-                        return DropdownMenuItem<String>(
-                          value: item,
-                          child: Text(item), // 表示内容
-                        );
-                      }).toList(),
-                      onChanged: (String? newValue) {
-                        if (newValue != null) {
-                          _menu.tag = "noData";
-                          ref.read(dropDownProvider.notifier).state = newValue; // 値を更新
-                        }
-                      },
-                    );
-                  },
-                ),
-              ]),
             const SizedBox(height: 10,),
 
             //材料ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
@@ -494,6 +442,60 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
               child: const Text('+材料一覧から選択'),
             ),
             const SizedBox(height: 10,),
+
+                        //分量ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+            Row(
+              children: [
+                _titleText(title: '    分量   '),
+                Row(
+                  children: [
+                    _buildTextField(
+                      hintText: '1',
+                      controller: _quantityController,
+                      keyboardType: TextInputType.number,
+                      setWidth: 50,
+                    ),
+                    const Text(" 人前"),
+                  ],
+                ),
+                const SizedBox(height: 10,),
+              ],
+            ),
+
+            //タグ選択ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+            Row(
+              children: [
+                _titleText(title: '    タグ   '),
+                Consumer( //タグ変更時に再描写のエリアを制限するためconsumer使用。
+                  builder: (context, ref, child) {
+                    final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目
+                    return DropdownButton<String>(
+                      hint: const Text('カテゴリー無'), // ヒント表示
+                      value: _menu.tag != "noData"
+                      ? _menu.tag == "全て"
+                        ? "カテゴリー無"
+                        : _menu.tag
+                      : dropdownItems.contains(selectedValue)
+                        ? selectedValue
+                        : null, // 選択値がリストに含まれていない場合は`null`
+                      items: dropdownItems.map((String item) {
+                        return DropdownMenuItem<String>(
+                          value: item,
+                          child: Text(item), // 表示内容
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          _menu.tag = "noData";
+                          ref.read(dropDownProvider.notifier).state = newValue; // 値を更新
+                        }
+                      },
+                    );
+                  },
+                ),
+              ]),
+            const SizedBox(height: 10,),
+            
             //メモ------------------------------------------------------
             Row(//Rowで囲まないと材料が左揃えにならないため。
               children: [
@@ -555,11 +557,7 @@ class MenuCreateScreenState extends ConsumerState<MenuEditScreen> {
               await ImageRepository(currentUser!, _menu, ref).editImage(); //画像とデータ保存
               print("メニューの画像とデータを保存しました。");
               
-              ref.read(pageProvider.notifier).state = 0;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MainPage()),
-              );
+              resetPageChange(context, ref, 0, 0);
 
               setState(() {
                 _isLoading = false; // ローディング終了
