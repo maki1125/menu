@@ -14,7 +14,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:menu/view_model/menu_view_model.dart';
 import 'package:menu/view_model/material_view_model.dart';
 import 'package:menu/view_model/dinner_view_model.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 

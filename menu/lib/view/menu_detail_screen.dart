@@ -5,9 +5,9 @@ import 'package:cached_network_image/cached_network_image.dart'; //画像キャ�
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
 //import 'package:menu/common/common_widget.dart';
-import 'package:menu/data/model/menu.dart';
+import 'package:menu/menu/data/model/menu.dart';
 //import 'package:menu/data/model/material.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/main_screen.dart';

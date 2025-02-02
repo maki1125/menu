@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/common/common_constants.dart';
 import 'package:menu/common/common_providers.dart';
-import 'package:menu/data/model/menu.dart';
+import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/data/model/material.dart';
 import 'package:menu/view/material_create_screen.dart';
 import 'package:menu/view/menu_create_screen.dart';

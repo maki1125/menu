@@ -9,9 +9,9 @@ import 'dart:typed_data'; // Uint8List を使用するためにインポート
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:menu/data/model/menu.dart';
+import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/data/model/user.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/view_model/menu_view_model.dart';
 
 

@@ -1,7 +1,7 @@
 import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/data/model/menu.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/model/menu.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/common/common_providers.dart';
 
 
