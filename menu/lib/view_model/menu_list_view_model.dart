@@ -10,27 +10,6 @@ final menuListProvider = StreamProvider<List<Menu>>((ref) {
   return MenuRepository().getMenuList();
 });
 
-/*
-//合計金額
-final totalPriceProvider = Provider<List<int>>((ref) {
-  final menuListAsyncValue = ref.watch(menuListProvider);
-
-  // 合計金額を計算
-  return menuListAsyncValue.when(
-    data: (menus) {
-      return menus.map((menu) {
-        // 各メニューのmaterialを使って合計金額を計算
-        return menu.material!.fold(0, (materialSum, material) {
-          return materialSum + (material['price'] as int) * (material['quantity'] as int);
-        });
-      }).toList();
-    },
-    loading: () => [], // ローディング中は空のリストを返す
-    error: (e, stack) => [], // エラー時も空のリストを返す
-  );
-});
-*/
-
 //お気に入りボタン
 void favoriteButton(WidgetRef ref, Menu menu) {
   // isFavorite の状態をトグル

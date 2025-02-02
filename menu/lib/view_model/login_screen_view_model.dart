@@ -1,39 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/data/model/user.dart';
-import 'package:menu/data/repository/user_repository.dart';
 import 'package:menu/data/repository/o_user_repository.dart';
-import 'package:menu/common/common_providers.dart';
 
-// 現在ログインユーザー
-//UserModel? currentUser = UserRepository().getCurrentUser();
-
-final userProvider = StateProvider<UserModel?>((ref) => currentUser);
-
-// final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-//   return FirebaseAuth.instance;
-// });
-
-// 認証サービス ログイン処理を行う
+// AuthServiceを一つのインスタンスとして扱うため、プロバイダー管理。
 final authServiceProvider = Provider<AuthService>((ref) {
-  //AuthServiceを継承
-  //return AuthService(ref.watch(firebaseAuthProvider));
-  return AuthService(FirebaseAuth.instance);
+  return AuthService();
 });
 
-// 認証状態のプロバイダ
-// 継続的な変化を監視
-// ログイン状態を取得
+// ユーザーの認証状態（ログイン・ログアウト）をリアルタイムで監視するストリームを管理
 final authStateChangesProvider = StreamProvider<User?>((ref) {
-  //return ref.watch(firebaseAuthProvider).authStateChanges();
   return FirebaseAuth.instance.authStateChanges();
 });
 
 // エラーメッセージプロバイダー エラーメッセージを監視
 final errorMessageProvider = StateProvider<String>((ref) => '');
-
-// 匿名ログインが完了状態を監視 true:ログイン完了 false:未ログイン
-final anonymousProvider = StateProvider<bool>((ref) => false);
 
 // パスワードリセットのメール送信状況を監視  true:送信完了 false:未送信
 final sendPasswordResetEmailProvider = StateProvider<bool>((ref) => false);
@@ -55,8 +35,3 @@ class AuthErrorMessages {
   static const requiresRecentLogin = '再度ログインしてください';
 }
 
-final currentUserProvider = Provider<UserModel?>((ref) {
-  // 現在のユーザー情報を取得して返す（例: FirebaseAuth などから取得）
-  return UserRepository().getCurrentUser();
-  
-});

@@ -16,7 +16,7 @@ import 'package:menu/view_model/menu_list_view_model.dart';
 
 
 class ImageRepository {
-  final UserModel user;
+  final User user;
   final Menu menu;
   final WidgetRef ref;
 

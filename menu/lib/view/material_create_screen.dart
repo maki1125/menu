@@ -66,7 +66,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
+    //final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
     final screenWidth = MediaQuery.of(context).size.width; // 端末の画面幅を取得
     //final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
 
@@ -97,10 +97,11 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
             }
 
             //テキストフィールドの初期値
-            materialController[index] ??= TextEditingController(text: _materialMap[index]['material'],);
-            quantityController[index] ??= TextEditingController(text: _materialMap[index]['quantity'],);
-            unitController[index] ??= TextEditingController(text: _materialMap[index]['unit'],);
-            priceController[index] ??= TextEditingController(text: _materialMap[index]['price'],);
+
+            materialController[index] = TextEditingController(text: _materialMap[index]['material'],);
+            quantityController[index] = TextEditingController(text: _materialMap[index]['quantity'],);
+            unitController[index] = TextEditingController(text: _materialMap[index]['unit'],);
+            priceController[index] = TextEditingController(text: _materialMap[index]['price'],);
 
             // スワイプで削除
             return Dismissible(
@@ -198,11 +199,11 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           width: 100,
           child: _actionButton(
             ref,
-            materialMap,
-            materialController,
-            quantityController,
-            unitController,
-            priceController
+            //_materialMap,
+            //materialController,
+            //quantityController,
+            //unitController,
+            //priceController
           ), 
         ),
 
@@ -265,8 +266,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         ? _buildTextField(//ダイアログの中
           name: 'material',
           hintText: '牛肉',
-          controller: materialController[index] ??
-              TextEditingController(), // エラー防止のため空のコントローラーをセット
+          controller: materialController[index]!, //?? TextEditingController(), // エラー防止のため空のコントローラーをセット
           keyboardType: TextInputType.text,
           width: screenWidth * 0.39,
           index: index,
@@ -275,8 +275,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         : _buildTextField(
           name: 'material',
           hintText: '牛肉',
-          controller: materialController[index] ??
-              TextEditingController(), // エラー防止のため空のコントローラーをセット
+          controller: materialController[index]!, //?? TextEditingController(), // エラー防止のため空のコントローラーをセット
           keyboardType: TextInputType.text,
           width: screenWidth * 0.39,
           index: index,
@@ -286,8 +285,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         _buildTextField(
           name: 'quantity',
           hintText: '10',
-          controller: quantityController[index] ??
-              TextEditingController(),
+          controller: quantityController[index]!, // ?? TextEditingController(),
           keyboardType: TextInputType.number,
           width: screenWidth * 0.19,
           index: index,
@@ -296,8 +294,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         _buildTextField(
           name: 'unit',
           hintText: 'g',
-          controller: unitController[index] ??
-              TextEditingController(),
+          controller: unitController[index]!, //?? TextEditingController(),
           keyboardType: TextInputType.text,
           width: screenWidth * 0.19,
           index: index,
@@ -306,8 +303,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         _buildTextField(
           name: 'price',
           hintText: '400',
-          controller: priceController[index] ??
-              TextEditingController(),
+          controller: priceController[index]!, //?? TextEditingController(),
           keyboardType: TextInputType.number,
           width: screenWidth * 0.19,
           index: index,
@@ -379,8 +375,8 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   }
 
   // 登録ボタン
-  Widget _actionButton(WidgetRef ref, material,
-    materialController, quantityController, unitController, priceController) {
+  Widget _actionButton(WidgetRef ref){//, material,
+    //materialController, quantityController, unitController, priceController) {
 
     // 登録用のマップに値をセット
     for (var i = 0; i < materialController.length - 1; i++) {
@@ -504,7 +500,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     int? focusQuantity = int.tryParse(quantityController[_focusedIndex]!.text);
     int dispPrice = 0;
     double screenWidth = MediaQuery.of(context).size.width; 
-    int? input;
+    int? input=1;
 
     // フォーカスを外す
     //focusNodes[_focusedIndex!].unfocus();
@@ -641,6 +637,8 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                           }else{
                           quantityController[_focusedIndex]!.text = numController.text;
                           priceController[_focusedIndex]!.text = dispPrice.toString();
+                          _materialMap[_focusedIndex!]['quantity'] = numController.text;
+                          _materialMap[_focusedIndex!]['price'] = dispPrice.toString();
                           dialogFlg = false;
                           Navigator.pop(context);    
                           }

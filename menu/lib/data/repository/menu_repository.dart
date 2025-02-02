@@ -16,11 +16,12 @@ class MenuRepository {
   // ファクトリコンストラクタ
   factory MenuRepository() {
     final firebaseUser = FirebaseAuth.instance.currentUser;
-    _instance ??= MenuRepository._(firebaseUser!); //??=はnullの場合、代入のいみ。
-    
-    // 既存インスタンスの `userId` が異なる場合
+    if(firebaseUser != null){
+      _instance ??= MenuRepository._(firebaseUser!); //??=はnullの場合、代入のいみ。
+      // 既存インスタンスの `userId` が異なる場合
     if (_instance!.user.uid != firebaseUser!.uid) {
       throw Exception("MenuRepository is already initialized with a different user.");
+    }
     }
     return _instance!;
   }

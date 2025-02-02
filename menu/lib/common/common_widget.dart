@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:menu/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/view_model/login_screen_view_model.dart';
@@ -62,6 +63,8 @@ class AppBarComponentWidget extends ConsumerWidget
       actions: <Widget>[
         authState.when(
           data: (user) {
+            FirebaseAuth.instance.currentUser?.reload();
+          final user = FirebaseAuth.instance.currentUser;
             if (user?.isAnonymous == false) {
               return IconButton(
                 icon: const Icon(Icons.account_circle, size: 32),
@@ -91,33 +94,8 @@ class AppBarComponentWidget extends ConsumerWidget
   @override
   Size get preferredSize => const Size.fromHeight(50); //AppBarの高さを指定
 
-  void pageChange(context, ref, int index) {
-    ref.read(pageProvider.notifier).state = index;
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MainPage(),
-      ),
-    );
-  }
+  
 }
-
-/*
-Widget iconButton(context, ref, icon) {
-  return IconButton(
-    icon: icon,
-    onPressed: () {
-      ref.read(pageProvider.notifier).state = 1;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => UserAuthentication(),
-        ),
-      );
-    },
-  );
-}
-*/
 
 //ポップアップメッセージ(メッセージのみ)
 void showMessage(String message) {
@@ -146,22 +124,45 @@ String maxText(String text, int num) {
 }
 
 // エラーダイアログの表示
-  void showErrorDialog(BuildContext context,String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('error'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('閉じる'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+void showErrorDialog(BuildContext context,String message) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('error'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('閉じる'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
+//履歴を削除してページ遷移
+void resetPageChange(BuildContext context, WidgetRef ref, int dispPage, int bottomBar){
+  ref.read(pageProvider.notifier).state = dispPage;
+  ref.read(bottomBarProvider.notifier).state = bottomBar;
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(
+      builder: (context) => MainPage(),),
+    (Route<dynamic> route) => false, // すべての履歴を削除
+  );
+}
+
+//ページ遷移
+void pageChange(context, ref, int index) {
+  ref.read(pageProvider.notifier).state = index;
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => MainPage(),
+    ),
+  );
+}
