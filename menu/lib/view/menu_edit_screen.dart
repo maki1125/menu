@@ -10,7 +10,7 @@ import 'package:menu/data/model/material.dart';
 //import 'package:menu/view/menu_list_screen.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/data/repository/image_repository.dart';
-import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/view_model/menu_view_model.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/common/common_constants.dart';
 

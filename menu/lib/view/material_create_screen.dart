@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:menu/view_model/material_list_view_model.dart';
+import 'package:menu/view_model/material_view_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/material_repository.dart';
 import 'package:menu/data/model/material.dart';

@@ -12,7 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/model/user.dart';
 import 'package:menu/data/repository/menu_repository.dart';
-import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/view_model/menu_view_model.dart';
 
 
 class ImageRepository {
