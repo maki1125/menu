@@ -2,12 +2,12 @@ import 'dart:io'; //Fileを扱うため
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:menu/view/menu_detail_screen.dart';
 import 'package:menu/view_model/menu_view_model.dart';
 import 'package:intl/intl.dart';//日付のフォーマット
-import 'package:menu/data/model/menu.dart';
+import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/data/model/dinner.dart';
 //import 'package:menu/view/menu_create_screen.dart';
 import 'package:menu/view/main_screen.dart';

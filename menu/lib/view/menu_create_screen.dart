@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 //import 'package:flutter/services.dart'; //数字入力のため
 import 'package:flutter/material.dart';
 import 'package:menu/common/common_widget.dart';
-import 'package:menu/data/model/menu.dart';
+import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/data/model/material.dart';
 //import 'package:menu/data/model/user.dart';
 //import 'package:menu/view/menu_list_screen.dart';

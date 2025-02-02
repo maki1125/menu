@@ -6,7 +6,7 @@ import 'package:menu/view_model/login_view_model.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/view_model/menu_view_model.dart';
-import 'package:menu/data/repository/menu_repository.dart';
+import 'package:menu/menu/data/repository/menu_repository.dart';
 
 
 
