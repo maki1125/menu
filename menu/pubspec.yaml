@@ -52,6 +52,7 @@ dependencies:
   image_picker: ^0.8.8 #画像の選択
   table_calendar: ^3.0.9
   image: ^4.0.15 #画像リサイズ
+  flutter_launcher_icons: ^0.13.1
 
 
 dev_dependencies:
@@ -108,3 +109,12 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+flutter_icons: 
+  image_path_android: assets/launcher_icon/icon_android.png
+  adaptive_icon_background: '#000000' #iconの背景色
+  adaptive_icon_foreground: assets/launcher_icon/icon_ios.png
+  image_path_ios: assets/launcher_icon/icon_ios.png
+  android: true
+  adaptive_icon_padding: true
+  min_sdk_android: 30 #Androidの最小SDKバージョン
+  ios: true  
