@@ -4,7 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 //import 'package:menu/view/login_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/view_model/login_view_model.dart';
 //import 'package:menu/data/providers.dart';
 import 'package:menu/view/main_screen.dart';
 import 'package:menu/common/common_providers.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 // import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:menu/data/repository/o_user_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/view_model/login_view_model.dart';
 
 // パスワードリセット画面
 class ForgotPasswordPage extends StatefulWidget {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:menu/view_model/login_screen_view_model.dart';
+import 'package:menu/view_model/login_view_model.dart';
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/view/main_screen.dart';
-import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/view_model/menu_view_model.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 
 

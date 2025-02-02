@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:menu/data/repository/menu_repository.dart';
-import 'package:menu/view_model/dinner_list_view_model.dart';
+import 'package:menu/view_model/dinner_view_model.dart';
 import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/common/common_widget.dart';

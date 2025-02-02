@@ -5,7 +5,7 @@ import 'package:menu/data/repository/dinner_repository.dart';
 import 'package:menu/data/repository/menu_repository.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 //import 'package:menu/view/menu_detail_screen.dart';
-import 'package:menu/view_model/menu_list_view_model.dart';
+import 'package:menu/view_model/menu_view_model.dart';
 import 'package:intl/intl.dart';//日付のフォーマット
 import 'package:menu/data/model/menu.dart';
 import 'package:menu/data/model/dinner.dart';
