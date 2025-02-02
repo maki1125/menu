@@ -1,7 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:menu/menu/data/model/menu.dart';
 import 'dart:async';
+
+import 'package:menu/menu/data/model/menu.dart';
 
 class MenuRepository {
 
