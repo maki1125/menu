@@ -1,27 +1,48 @@
 {
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "firebase-debug.log",
-        "firebase-debug.*.log",
-        "*.local"
-      ],
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint"
-      ]
+    "functions": [
+        {
+            "source": "functions",
+            "codebase": "default",
+            "ignore": [
+                "node_modules",
+                ".git",
+                "firebase-debug.log",
+                "firebase-debug.*.log",
+                "*.local"
+            ],
+            "predeploy": [
+                "npm --prefix \"$RESOURCE_DIR\" run lint"
+            ]
+        }
+    ],
+    "emulators": {
+        "functions": {
+            "port": 5001
+        },
+        "ui": {
+            "enabled": true
+        },
+        "singleProjectMode": true
+    },
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "menu-82775",
+                    "appId": "1:652180432500:android:fb0dedfa03e27714f39321",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "menu-82775",
+                    "configurations": {
+                        "android": "1:652180432500:android:fb0dedfa03e27714f39321",
+                        "ios": "1:652180432500:ios:d5b234c42c16d7fff39321",
+                        "web": "1:652180432500:web:42394eae0e51554af39321"
+                    }
+                }
+            }
+        }
     }
-  ],
-  "emulators": {
-    "functions": {
-      "port": 5001
-    },
-    "ui": {
-      "enabled": true
-    },
-    "singleProjectMode": true
-  }
 }
