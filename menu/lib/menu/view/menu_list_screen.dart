@@ -13,17 +13,29 @@ import 'package:menu/dinner/data/model/dinner.dart';
 import 'package:menu/dinner/data/repository/dinner_repository.dart';
 
 
-class MenuList extends ConsumerWidget {
+class MenuList extends ConsumerStatefulWidget {
 
   //main_screen.dartからカテゴリーを受け取る
-  String category;
-  MenuList({required this.category}); // コンストラクタ
+  final String category;
+  const MenuList({super.key, required this.category}); // コンストラクタ
+@override
+  MenuListState createState() => MenuListState();
+}
+class MenuListState extends ConsumerState<MenuList> {
+  late String category;
+  int nameMaxLength = 10; //料理名のmax表示
+
+  //初期化処理
+  @override
+  void initState() {
+    super.initState();
+    category = widget.category;
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {  
     print("menu_list");
-
-    int nameMaxLength = 10; //料理名のmax表示
+    
     final menuListAsyncValue = ref.watch(menuListProvider); //メニューリストを監視して、変更されれば再描写する。
     
     return Stack( //フローボタンのためにstack使用。
@@ -74,12 +86,12 @@ class MenuList extends ConsumerWidget {
             }
             
             if (filteredMenus.isEmpty && category!='今日の夕食') {// データがない場合
-              return Padding(
+              return const Padding(
                 padding: EdgeInsets.only(top: 8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,//中央よせ
                 children: [
-                  const Text('データがありません',)
+                 Text('データがありません',)
                 ],
               )
               );
@@ -109,7 +121,7 @@ class MenuList extends ConsumerWidget {
                         );
                       },
                       child: Padding( //カード内の左側に隙間を設ける
-                        padding: EdgeInsets.only(left: 10.0),
+                        padding: const EdgeInsets.only(left: 10.0),
                       child:Row(
                         children: [
                           //テキストエリア===========================================================
@@ -166,7 +178,8 @@ class MenuList extends ConsumerWidget {
                                       ),
                                       
                                       //「人前」の表示
-                                      Consumer(builder: (BuildContext context, WidgetRef ref, child){
+                                      category == '今日の夕食'
+                                      ? Consumer(builder: (BuildContext context, WidgetRef ref, child){
                                         final dispQuantity = ref.watch(quantityProvider(index));//何人前
                                         return Row(
                                         mainAxisSize: MainAxisSize.min, // ウィジェットが必要な最小限のスペースを占有
@@ -211,7 +224,21 @@ class MenuList extends ConsumerWidget {
                                           : const SizedBox(width: 30,),
                                           ], 
                                         );
-                                      }),
+                                      })
+                                      : Padding(
+                                        padding: const EdgeInsets.only(right:10), // すべての辺に16のスペース
+                                        //人前、値段の表示
+                                        child:  Column(
+                                            children: [
+                                              const Text("1人前 ",
+                                            style: TextStyle(fontSize: 13, height:0, ),
+                                            ),
+                                            Text("${filteredMenus[index].unitPrice}円  ",
+                                            style: const TextStyle(fontSize: 13, height:0, ),
+                                            )
+                                            ],
+                                          ),
+                                      )
                                     ],
                                   )
                                 ],

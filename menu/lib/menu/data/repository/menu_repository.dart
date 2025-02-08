@@ -75,17 +75,17 @@ class MenuRepository {
   //データ追加
   Future<void> addMenu(Menu menu) async{
 
-    //1人前の値段(unitPrice)の計算
-    if(menu.price == null && menu.material!.isNotEmpty){
+    //値段(price)と１人前の値段(unitPrice)の計算
+    //if(menu.price == null && menu.materials!.isNotEmpty){
 
       //材料の値段を足し合わせてメニューの値段を計算
-      menu.price = menu.material!.fold(0, (materialSum, material) {
-        return materialSum! + (material['price'] as int); 
-      });
+      //menu.price = menu.materials!.fold(0, (materialSum, material) {
+        //return materialSum! + (material['price'] as int); 
+      //});
 
       //メニューの値段を何人前で割って何人前を計算
-      menu.unitPrice = menu.price! ~/ menu.quantity!;
-    }
+      //menu.unitPrice = menu.price! ~/ menu.quantity!;
+    //}
 
     DocumentReference docRef = await db
     .collection('users/${user.uid}/menus')
@@ -104,6 +104,19 @@ class MenuRepository {
 
   //データ更新
   Future<void> updateMenu(Menu menu) async{
+
+    //1人前の値段(unitPrice)の計算
+    if(menu.price == null && menu.materials!.isNotEmpty){
+
+      //材料の値段を足し合わせてメニューの値段を計算
+      menu.price = menu.materials!.fold(0, (materialSum, material) {
+        return materialSum! + (material['price'] as int); 
+      });
+
+      //メニューの値段を何人前で割って何人前を計算
+      menu.unitPrice = menu.price! ~/ menu.quantity!;
+    }
+
     await db
     .collection('users/${user.uid}/menus')
     .doc(menu.id)
@@ -150,7 +163,7 @@ class MenuRepository {
       'imagePath': menu.imagePath,
       'quantity': menu.quantity,
       'tag': menu.tag,
-      'material': menu.material,
+      'materials': menu.materials,
       'howToMake': menu.howToMake,
       'memo': menu.memo,
       'isFavorite': menu.isFavorite,

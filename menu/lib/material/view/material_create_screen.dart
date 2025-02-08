@@ -7,10 +7,17 @@ import 'package:menu/common/common_widget.dart';
 import 'package:menu/material/data/repository/material_repository.dart';
 import 'package:menu/material/data/model/material.dart';
 
+///メモ
+///新規登録と編集の見分け方.以下のように見分けることでプロバイダー不要となる。
+///　新規登録：widget.material == null editFlg=false
+///  編集：widget.material != null editFlg=true
 
 
 class MaterialCreateScreen extends ConsumerStatefulWidget {
-  const MaterialCreateScreen({super.key});
+
+  final MaterialModel? material; //遷移元から選択されたmaterialを受け取る。
+  const MaterialCreateScreen({super.key, required this.material});
+  //const MaterialCreateScreen({super.key});
 
   @override
   MaterialCreateScreenstate createState() => MaterialCreateScreenstate();
@@ -29,7 +36,9 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   int? _focusedIndex = 0;// 現在フォーカスされている index を管理
   List<FocusNode> focusNodes = [];// FocusNode をリストで管理
   bool dialogFlg = false; //単位計算のダイアログの表示中のフラグ
-  
+  MaterialModel? _editMaterial; //編集するデータを受け取る。新規登録の場合はnullとなる。
+  bool editFlg = false; //編集か機種更新か判断するフラグ
+
   @override
   // テキストフィールドのコントローラーの破棄
   void dispose() {
@@ -46,8 +55,16 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   }
 
 @override
-  void initState() {
+void initState() {
   super.initState();
+
+  //遷移元から受け取ったmaterialを受け取る
+  if(widget.material != null){//編集時のみの処理
+    _editMaterial = widget.material!; 
+    editFlg = true;
+    print("editFlg:${editFlg}");
+  }
+  
 
  //テキストフィールドのフォーカスの準備
   for (int i = 0; i < 10; i++) { 
@@ -68,11 +85,12 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    //final materialMap = ref.watch(materialProvider); // 編集中の材料データ取得
+
     final screenWidth = MediaQuery.of(context).size.width; // 端末の画面幅を取得
     //final screenHeight = MediaQuery.of(context).size.height; // 画面高さ取得
 
-    return Center(
+    return SingleChildScrollView(//スクロール可能とする
+      child: Center(
       child: Column(children: [
         const Text('右スワイプで削除'),
         const SizedBox(height: 10),
@@ -82,24 +100,31 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
         //入力エリアーーーーーーーーーーーーーーーーーーーーーーーーーー
         ListView.builder(
           shrinkWrap: true, // 高さ自動調整
-          //physics: const NeverScrollableScrollPhysics(), // スクロール禁止
+          physics: const NeverScrollableScrollPhysics(), // スクロール禁止。singlechildscrollviewとの競合を避けるため。
           itemCount: counter + 1, //初期表示テキストエリア表示のための+1
           itemBuilder: (context, index) {
 
             while (_materialMap.length <= index) {
 
               // マップの長さがインデックスより小さい場合エラー回避のため空のマップを作成
+             if(editFlg){
+              _materialMap.add({
+                'material': _editMaterial!.name,
+                'quantity': _editMaterial!.quantity.toString(),
+                'unit': _editMaterial!.unit,
+                'price': _editMaterial!.price.toString(),
+              });
+             }else{
               _materialMap.add({
                 'material': '',
                 'quantity': '',
                 'unit': '',
                 'price': '',
               });
-
+             }
             }
 
             //テキストフィールドの初期値
-
             materialController[index] = TextEditingController(text: _materialMap[index]['material'],);
             quantityController[index] = TextEditingController(text: _materialMap[index]['quantity'],);
             unitController[index] = TextEditingController(text: _materialMap[index]['unit'],);
@@ -155,9 +180,11 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
             children: [
                 
             //追加アイコンーーーーーーーーーーーーーーーーーーーーーー
-            IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
+            editFlg//新規登録だけ追加ボタンを機能させる
+            ? const SizedBox.shrink()
+            :
+            OutlinedButton(//枠線ありボタン
+              onPressed: (){ 
                 if(counter == 8){
                   showMessage("最大９個までです！"); 
                 }else{
@@ -172,10 +199,25 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   },
                 );
                 }
-              },
+               },
+
+              style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
+              minimumSize: const Size(50, 20), // 最小サイズを指定
+              backgroundColor:  const Color.fromARGB(255, 255, 119, 0),
+              ),
+              child: const Text('行追加',
+                style: TextStyle(
+                fontSize: 12,
+                color: Colors.white),
+              ),
             ),
 
             //単位あたり計算ボタンーーーーーーーーーーーーーーーーーーーーーーー
+            Padding(
+
+  padding: EdgeInsets.only(left: 10.0),
+  child:
             OutlinedButton(//枠線ありボタン
               onPressed: () async{ 
                 await _showUnitCalDialog(context);
@@ -186,12 +228,13 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
               minimumSize: const Size(50, 20), // 最小サイズを指定
               backgroundColor:  Colors.blue,
               ),
-              child: const Text('数量あたりの価格計算',
+              child: const Text('選択行の価格計算',
                 style: TextStyle(
                 fontSize: 12,
                 color: Colors.white),
               ),
             ),
+            )
           ],
         ),
         const SizedBox(height: 10),
@@ -201,11 +244,11 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           width: 100,
           child: _actionButton(
             ref,
-            //_materialMap,
-            //materialController,
-            //quantityController,
-            //unitController,
-            //priceController
+            _materialMap,
+            materialController,
+            quantityController,
+            unitController,
+            priceController
           ), 
         ),
 
@@ -220,6 +263,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           child: const Text('戻る'),
         )
       ]),
+    )
     );
   }
 
@@ -377,8 +421,8 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
   }
 
   // 登録ボタン
-  Widget _actionButton(WidgetRef ref){//, material,
-    //materialController, quantityController, unitController, priceController) {
+  Widget _actionButton(WidgetRef ref, material,
+    materialController, quantityController, unitController, priceController) {
 
     // 登録用のマップに値をセット
     for (var i = 0; i < materialController.length - 1; i++) {
@@ -391,6 +435,15 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
     return FilledButton(
       onPressed: () async {
         try {
+          
+          if(editFlg){//編集の場合のみ
+           //データ更新するMaterialModelの準備
+          _editMaterial!.name = materialController[0].text;
+          _editMaterial!.quantity = int.tryParse(quantityController[0].text);
+          _editMaterial!.unit = unitController[0].text;
+          _editMaterial!.price = int.tryParse(priceController[0].text);
+          }
+
           final materials = _materialMap.map((e) {
             return MaterialModel(
               name: e['material'], // 材料名
@@ -419,8 +472,10 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                 materials[i].price == null) {
               continue;
             }
-            await MaterialRepository() // データ登録
-                .addMaterial(materials[i]);
+            print("editFlg:${editFlg}, ${materials.length}");
+             editFlg
+            ? await MaterialRepository().updateMaterial(_editMaterial!) //編集データの更新
+            : await MaterialRepository().addMaterial(materials[i]);// 新規データの登録
           }
 
           Fluttertoast.showToast(
@@ -428,7 +483,9 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
             timeInSecForIosWeb: 1,
             gravity: ToastGravity.CENTER, // 位置
             fontSize: 16,
-            msg: '登録しました',
+            msg: editFlg
+            ? '更新しました'
+            : '登録しました'
           );
           
           clearform();
@@ -449,7 +506,10 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
           borderRadius: BorderRadius.circular(4),
         ),
       ),
-      child: const Text('登録'),
+      child: Text(editFlg
+        ? '更新'
+        :'登録'
+      ),
     );
   }
 

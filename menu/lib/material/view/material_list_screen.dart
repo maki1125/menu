@@ -5,6 +5,7 @@ import 'package:menu/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/material/data/repository/material_repository.dart';
 import 'package:menu/material/view_model/material_view_model.dart';
+import 'package:menu/material/data/model/material.dart';
 
 
 class MaterialListScreen extends ConsumerStatefulWidget {
@@ -95,7 +96,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                             Container(
                                               width: 150,
                                               child: Text(
-                                                material.name ?? '',
+                                                material["name"] ?? '',
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
                                                 //style: TextStyle(fontSize: 16), // フォントサイズの調整
@@ -104,7 +105,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                             Container(
                                               width: 70,
                                               child: Text(
-                                                material.quantity.toString() +  material.unit!,
+                                                material["quantity"].toString() +  material["unit"],
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
                                                 //style: TextStyle(fontSize: 16), // フォントサイズの調整
@@ -113,7 +114,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                             Container(
                                               width: 70,
                                               child: Text(
-                                                material.price.toString() +  "円",
+                                                material["price"].toString() +  "円",
                                                 overflow: TextOverflow.ellipsis,
                                                 maxLines: 1,
                                                 //style: TextStyle(fontSize: 16), // フォントサイズの調整
@@ -158,7 +159,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                                 context,
                                                 MaterialPageRoute(
                                                   // 画面遷移
-                                                  builder: (context) => MainPage(material: material,),
+                                                  builder: (context) => MainPage(material: MaterialModel.fromFirestore(material),),
                                                 ),
                                               );
                                             },
@@ -168,7 +169,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                                           IconButton(
                                             icon: const Icon(Icons.delete),
                                             onPressed: () {
-                                              MaterialRepository().deleteMaterial(material);
+                                              MaterialRepository().deleteMaterial(MaterialModel.fromFirestore(material));
                                             },
                                           ),
                                         ],
@@ -198,7 +199,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
           right: 16,
           child: FloatingActionButton(
             onPressed: () {
-              ref.read(selectButtonProvider.notifier).state = 'Resist'; // ボタンの状態を更新
+              //ref.read(selectButtonProvider.notifier).state = 'Resist'; // ボタンの状態を更新
               ref.read(bottomBarProvider.notifier).state = 1; //ボトムバーの選択
               ref.read(pageProvider.notifier).state = 4; //表示ページ
               Navigator.push(

@@ -8,7 +8,8 @@ class MaterialRepository {
   static MaterialRepository? _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
   final User user; //Firebaseのauthの型
   final db = FirebaseFirestore.instance;
-  List<MaterialModel> materialList = []; //
+  //List<MaterialModel> materialList = []; //
+  List<Map<String, dynamic>> materialList = []; //
   int count = 0;
 
   //MaterialRepository(this.user);
@@ -35,7 +36,8 @@ class MaterialRepository {
   }
 
   //データ取得
-  Stream<List<MaterialModel>> getMaterialList() {
+  //Stream<List<MaterialModel>> getMaterialList() {
+  Stream<List<Map<String, dynamic>>> getMaterialList() {
     return FirebaseFirestore.instance
         .collection('users/${user.uid}/materials')
         .orderBy('name', descending: true)
@@ -53,24 +55,24 @@ class MaterialRepository {
           case DocumentChangeType.added:
             print("add_material:${material.id}");
             if ((material.id == "noData" && !materialList.any((m) => ( "noData"== material.id)))//データ追加された時にまだidがついていない場合がある。
-              || !materialList.any((m) => (m.id == material.id))){//すでにリストにある場合は追加しない。初回に2回addしてしまうため。
-              materialList.insert(0, material);
+              || !materialList.any((m) => (m["id"] == material.id))){//すでにリストにある場合は追加しない。初回に2回addしてしまうため。
+              materialList.insert(0, material.toMap());
             }
             break;
 
           //修正（既存アイテムを更新）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.modified:
           print("modify_material:${material.id}");
-            final index = materialList.indexWhere((m) => (m.id == material.id || m.id == "noData"));
+            final index = materialList.indexWhere((m) => (m["id"] == material.id || m["id"] == "noData"));
             if (index != -1) {
-              materialList[index] = material;
+              materialList[index] = material.toMap();
             }
             break;
 
           //削除ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.removed:
             print("remove_material:${material.id}");
-            materialList.removeWhere((m) => m.id == material.id);
+            materialList.removeWhere((m) => m["id"] == material.id);
             break;
         }
       }
