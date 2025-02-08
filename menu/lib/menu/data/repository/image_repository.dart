@@ -30,16 +30,21 @@ class ImageRepository {
     if(result != null){
       //final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
       final File file = File(result.path); //選択したファイルパスの取得.'/Users/maki/Library/Developer/CoreSimulator/Devices/D3DA9B85-B1E2-44EB-BB5C-C04B9B3328A0/data/Containers/Data/Application/CBC9AFE6-6064-4375-AB03-12608EDF94D4/tmp/IMG_0111.jpeg'
+      //print("file:${file}");
       final bytes = await file.readAsBytes();
       final originalImage = img.decodeImage(bytes);
       final resizedImage = img.copyResize(originalImage!,height: 200);//高さ基準でリサイズ。画像が切れる可能性あり。
       final resizedBytes = img.encodeJpg(resizedImage);
-      final resizedFile = File('${Directory.systemTemp.path}/resized_image.jpg'); //一時ファイルに保存。アプリ終了後は消える。
-      print("resizedFileを準備しました。${file.parent.path}");
+      final timestamp = DateTime.now().millisecondsSinceEpoch; // 現在時刻（ミリ秒）
+      final resizedFile = File('${Directory.systemTemp.path}/${timestamp}_resized_image.jpg'); //一時ファイルに保存。アプリ終了後は消える。
+      //print("resizedFileを準備しました。${file.parent.path}");
       await resizedFile.writeAsBytes(resizedBytes);
-      print("データ保存しました。");
-      ref.read(selectedImageProvider.notifier).state = resizedFile;//resizedFile;//file;  // Riverpodで状態管理
+      //print("データ保存しました。");
+      //ref.read(selectedImageProvider.notifier).state = null;//resizedFile;//resizedFile;//file;  // Riverpodで状態管理
+      ref.read(selectedImageProvider.notifier).state = resizedFile;
       //file!.delete(); //一時ファイルに保存したデータを削除する。
+      //print("resizedFile:${resizedFile}");
+      
     }
   }
 

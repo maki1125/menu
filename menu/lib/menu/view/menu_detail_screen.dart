@@ -34,6 +34,9 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    setState(() {
+      
+    });
     return SingleChildScrollView(//スクロール可能とする
       child: Center(//全体を左右に中央揃えで、要素を縦に配置
         child: Column(
