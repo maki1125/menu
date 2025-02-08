@@ -5,7 +5,7 @@ import 'package:menu/material/data/repository/material_repository.dart';
 
 
 // 材料データ取得
-final materialListProvider = StreamProvider<List<MaterialModel>>((ref) {
+final materialListProvider = StreamProvider<List<Map<String, dynamic>>>((ref) {
   return MaterialRepository().getMaterialList();
 });
 
@@ -16,7 +16,7 @@ final searchTextProvider = StateProvider<String>((ref) => '');
 final isAllMaterialViewProvider = StateProvider<bool>((ref) => true);
 
 // 材料データフィルタリング
-final filteredMaterialsProvider = Provider<List<MaterialModel>>((ref) {
+final filteredMaterialsProvider = Provider<List<Map<String, dynamic>>>((ref) {
   final materials = ref.watch(materialListProvider).value ?? [];
 
   final text = ref.watch(searchTextProvider);
@@ -25,7 +25,7 @@ final filteredMaterialsProvider = Provider<List<MaterialModel>>((ref) {
   var filteredMaterials = (materials).where((material) {
     //final isMatch = material.name!.contains(text); // 材料名に指定された文字列が含まれているか
     // 材料名が完全一致するか
-    final isMatch = material.name! == text;
+    final isMatch = material["name"] == text;
 
     return isMatch;
   }).toList();
@@ -41,5 +41,5 @@ final filteredMaterialsProvider = Provider<List<MaterialModel>>((ref) {
 // 編集中の材料データ
 //final materialProvider = StateProvider<MaterialModel>((ref) => MaterialModel());
 
-// ボタンの状態管理(edit（編集） or Resist（新規作成？）)
-final selectButtonProvider = StateProvider<String>((ref) => '');
+// ボタンの状態管理(edit（編集） or new（新規作成？）)
+final materialSelectButtonProvider = StateProvider<String>((ref) => '');

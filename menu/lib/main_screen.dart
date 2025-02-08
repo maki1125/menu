@@ -9,11 +9,9 @@ import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/menu/view/menu_create_screen.dart';
 import 'package:menu/menu/view/menu_list_screen.dart';
 import 'package:menu/menu/view/menu_detail_screen.dart';
-import 'package:menu/menu/view/menu_edit_screen.dart';
 import 'package:menu/material/data/model/material.dart';
 import 'package:menu/material/view/material_create_screen.dart';
 import 'package:menu/material/view/material_list_screen.dart';
-import 'package:menu/material/view/material_edit_screen.dart';
 import 'package:menu/dinner/view/dinner_list_screen.dart';
 import 'package:menu/login/view/login_screen.dart';
 
@@ -55,12 +53,12 @@ class _MainPageState extends ConsumerState<MainPage>
       MenuList(category: '全て'),
       const MaterialListScreen(),
       DinnerList(),
-      const MenuCreateScreen(),
-      const MaterialCreateScreen(),
+      MenuCreateScreen(menu: menu),
+      MaterialCreateScreen(material: material),
       MenuDetailScreen(menu: menu),
-      MenuEditScreen(menu: menu),
+      MenuCreateScreen(menu: menu),
       UserAuthentication(),
-      MaterialUpdateScreen(material: material),
+      MaterialCreateScreen(material: material),
     ];
   }
 

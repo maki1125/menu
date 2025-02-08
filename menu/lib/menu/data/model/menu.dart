@@ -8,7 +8,7 @@ class Menu {
     this.imagePath,
     this.quantity,
     this.tag,
-    this.material,
+    this.materials,
     this.howToMake,
     this.memo,
     this.isFavorite,
@@ -26,8 +26,8 @@ class Menu {
   String? imagePath;
   int? quantity = 1;
   String? tag;
-  List<dynamic>? material;
-  //List<Map<String, dynamic>>? material;
+  //List<dynamic>? materials;
+  List<Map<String, dynamic>>? materials;
   String? howToMake;
   String? memo;
   bool? isFavorite;
@@ -35,7 +35,7 @@ class Menu {
   String? id;
   DateTime? dinnerDate;
   DateTime? dinnerDateBuf;
-  int? price;
+  num? price;
   int? unitPrice;
 
     //FirestoreからのデータからDinnerインスタンスを生成する
@@ -47,8 +47,11 @@ class Menu {
       imagePath: data['imagePath'] as String? ?? "noData",
       quantity: data['quantity'] as int? ?? 1,
       tag: data['tag'] as String? ?? "noData",
-      material: (data['material'] as List<dynamic>?) ?? [], // nullの場合は空のリストを設定
-      //material: (data['material'] as List<Map<String,dynamic>>?) ?? [], // nullの場合は空のリストを設定
+      //materials: (data['materials'] as List<dynamic>?) ?? [], // nullの場合は空のリストを設定
+      //materials: (data['materials'] as List<Map<String,dynamic>>?) ?? [], // nullの場合は空のリストを設定
+      materials: (data['materials'] as List<dynamic>?)
+        ?.map((e) => e as Map<String, dynamic>) // List<dynamic>の各要素をMap<String, dynamic>に変換
+        .toList() ?? [], // nullの場合は空のリストを設定
       howToMake: data['howToMake'] as String? ?? "noData",
       memo: data['memo'] as String? ?? "noData",
       isFavorite: data['isFavorite'] as bool? ?? false,
@@ -56,7 +59,7 @@ class Menu {
       id: data['id'] as String? ?? "noData",
       dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      price: data['price'] as int? ?? 0,
+      price: data['price'] as num? ?? 0,
       unitPrice: data['unitPrice'] as int? ?? 0,
     );
   }
