@@ -13,17 +13,29 @@ import 'package:menu/dinner/data/model/dinner.dart';
 import 'package:menu/dinner/data/repository/dinner_repository.dart';
 
 
-class MenuList extends ConsumerWidget {
+class MenuList extends ConsumerStatefulWidget {
 
   //main_screen.dartからカテゴリーを受け取る
-  String category;
-  MenuList({super.key, required this.category}); // コンストラクタ
+  final String category;
+  const MenuList({super.key, required this.category}); // コンストラクタ
+@override
+  MenuListState createState() => MenuListState();
+}
+class MenuListState extends ConsumerState<MenuList> {
+  late String category;
+  int nameMaxLength = 10; //料理名のmax表示
+
+  //初期化処理
+  @override
+  void initState() {
+    super.initState();
+    category = widget.category;
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {  
     print("menu_list");
-
-    int nameMaxLength = 10; //料理名のmax表示
+    
     final menuListAsyncValue = ref.watch(menuListProvider); //メニューリストを監視して、変更されれば再描写する。
     
     return Stack( //フローボタンのためにstack使用。

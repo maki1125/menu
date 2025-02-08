@@ -76,7 +76,7 @@ class MenuRepository {
   Future<void> addMenu(Menu menu) async{
 
     //値段(price)と１人前の値段(unitPrice)の計算
-    if(menu.price == null && menu.materials!.isNotEmpty){
+    //if(menu.price == null && menu.materials!.isNotEmpty){
 
       //材料の値段を足し合わせてメニューの値段を計算
       //menu.price = menu.materials!.fold(0, (materialSum, material) {
@@ -84,8 +84,8 @@ class MenuRepository {
       //});
 
       //メニューの値段を何人前で割って何人前を計算
-      menu.unitPrice = menu.price! ~/ menu.quantity!;
-    }
+      //menu.unitPrice = menu.price! ~/ menu.quantity!;
+    //}
 
     DocumentReference docRef = await db
     .collection('users/${user.uid}/menus')

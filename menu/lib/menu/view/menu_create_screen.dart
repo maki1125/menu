@@ -484,7 +484,13 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                       child: Consumer( //画像選択変更時に、ここだけ再描写されるようにconsumer使用。
                         builder: (context, ref, child){
                           final File? selectedImage = ref.watch(selectedImageProvider); //選択画像
-                          return Container(
+                          return 
+
+                          Stack(
+                            children: [
+
+                          
+                          Container(
                             width: 130,
                             height: 130,
                             decoration: BoxDecoration(
@@ -539,10 +545,45 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                                     style: TextStyle(color: Colors.grey),
                                   ),
                                 )
+                          ),
+
+                          // 🧹 右上の消しゴムアイコン
+              if (selectedImage != null || (editFlg && _menu.imageURL != "noData"))
+                Positioned(
+                  top: 0,
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      print("画像を削除します。");
+                      ref.read(selectedImageProvider.notifier).state = null;
+                      _menu.imagePath = "noData";
+                      _menu.imageURL = "noData";
+                      setState(() {});//再描写
+                    },
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        //color: Colors.red, // アイコンの背景色
+                        shape: BoxShape.circle, // 丸型にする
+                      ),
+                      padding: const EdgeInsets.all(5),
+                      child: const Icon(
+                        Icons.cancel, // 消しゴムの代わりに「×」アイコン
+                        color: Colors.white,
+                        size: 25,
+                      ),
+                    ),
+                  ),
+                ),
+
+                            ],
                           );
+
+
                         }
                       )
                     ), 
+
+
                   ),
                 )
               ],
@@ -602,7 +643,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
               _menu.dinnerDateBuf = DateTime.now(); //新規作成の時は登録日にする。
               _menu.price = sumPrice; //addMenu()で計算される
-              //_menu.unitPrice = 0; //addMenu()で計算される
+              _menu.unitPrice = (sumPrice/_menu.quantity!.toInt()).toInt(); //addMenu()で計算される
               
               ImageRepository(currentUser!, _menu, ref).deleteImage(); 
               if(editFlg){
@@ -635,6 +676,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               ),
             ),         
           ),
+          const SizedBox(height: 20,),
           ],
         ),
         // ローディングインジケーター.
