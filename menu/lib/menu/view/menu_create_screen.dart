@@ -40,9 +40,10 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   bool _isLoading = false; // 登録処理のローディング状態を管理
   //MaterialModel? _result; //材料一覧から選択時に結果を入れる
   Map<String, dynamic>?  selectedMaterial; // 材料一覧から選択時に再描写のために使用
-  double calculatedPrice = 0; // 計算結果を保持する変数.小数点まで計算する
+  num calculatedPrice = 0; // 計算結果を保持する変数.小数点まで計算する
   bool editFlg = false; //編集か機種更新か判断するフラグ
   num sumPrice = 0; //合計金額 intとdoubleどちらも対応できるようにnum型にした。
+  late String editImageURLBuf; //編集時の受け取った画像パス
 
   //リソース解放。ウィジェット破棄後に、コントローラを破棄。
   @override
@@ -71,6 +72,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
       editFlg = true;
       _menu = widget.menu!; //遷移元から受け取ったmenuを受け取る。
       _savedMaterials = _menu.materials!;
+      editImageURLBuf = _menu.imageURL!;
 
       //テキストフィールドの初期値の設定
       _nameController = TextEditingController(text: _menu.name);
@@ -112,7 +114,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     setState(() {
       
       if(selectedMaterial != null){//材料一覧から選択の場合のみ数量テキストを入力したときに計算する。
-        int quantity = int.tryParse(_numController.text) ?? 1;
+        num quantity = num.tryParse(_numController.text) ?? 1;
         calculatedPrice = (selectedMaterial!["price"]/selectedMaterial!["quantity"]) * quantity;
       }
     });
@@ -155,7 +157,12 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   @override
   Widget build(BuildContext context) {    
     print("menu_create");
-    return SingleChildScrollView(//スクロール可能とする
+    return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じる
+      onTap: () {
+        // FocusNodeでフォーカスを外す
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child:SingleChildScrollView(//スクロール可能とする
       child: Stack( //お気に入りボタンを右上に配置するため、stack使用。
         children: [
 
@@ -295,7 +302,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   _buildTextField(
                     hintText: '1',
                     controller: _numController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),//小数点入力できるようにする
                     setWidth: 50,
                   ),
                   _buildTextField(
@@ -336,7 +343,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                     _buildTextField(
                     hintText: '1',
                     controller: _numController,
-                    keyboardType: TextInputType.number,
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),//小数点入力できるようにする
                     setWidth: 50,
                   ),
                     SizedBox(
@@ -484,6 +491,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                       child: Consumer( //画像選択変更時に、ここだけ再描写されるようにconsumer使用。
                         builder: (context, ref, child){
                           final File? selectedImage = ref.watch(selectedImageProvider); //選択画像
+                          print("画像を表示します");
                           return 
 
                           Stack(
@@ -503,10 +511,12 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                             child: selectedImage != null
                             //①選択された画像がある場合
                             ? ClipRRect(
+                                
                                 borderRadius: BorderRadius.circular(10), // 選択画像の角丸
                                 child: 
                                 Image.file(
-                                  selectedImage,
+                                  
+                                  ref.read(selectedImageProvider.notifier).state!, //selectedImageだと前に選択した画像が表示されてしまう
                                   fit: BoxFit.cover, // 領域に合わせて表示
                                   //width: 130,
                                   //height: 130,
@@ -514,7 +524,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                               )
                             : editFlg 
                               //編集の場合-----------------------------------
-                              ? _menu.imageURL=="noData"
+                              ? editImageURLBuf=="noData"
                                 //②画像選択してください
                                 ? const Center(
                                   child: Text(
@@ -556,8 +566,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                     onTap: () {
                       print("画像を削除します。");
                       ref.read(selectedImageProvider.notifier).state = null;
-                      _menu.imagePath = "noData";
-                      _menu.imageURL = "noData";
+                      editImageURLBuf = "noData";
                       setState(() {});//再描写
                     },
                     child: Container(
@@ -632,8 +641,13 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               //メニューのデータ保存
               _menu.createAt = DateTime.now();
               _menu.name = _nameController.text;
+              if(editFlg && editImageURLBuf=="noData"){
+                _menu.imageURL = "noData";
+                _menu.imagePath = "noData";
+              }
               //_menu.imageURL  //addImage()で保存される
               //_menu.imagePath  //addImage()で保存される
+
               _menu.quantity = int.tryParse(_quantityController.text) ?? 1;
               _menu.tag = ref.read(dropDownProvider.notifier).state;
               _menu.materials = _savedMaterials; //あとで
@@ -691,7 +705,10 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
           )
         ],
       )
-  );
+  )
+    );
+
+
 }
 
  //材料追加ボタン（プラスアイコン）
@@ -704,14 +721,14 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
         ?_savedMaterials.add({//手入力の場合
           
           "name": _materialController.text,
-          "quantity": int.tryParse(_numController.text) ?? 1,
+          "quantity": num.tryParse(_numController.text) ?? 1,
           "unit": _unitController.text,
           "price":int.tryParse(_priceController.text) ?? 0,
         })
         :_savedMaterials.add({//材料一覧から選択の場合
           
           "name": selectedMaterial!["name"],
-          "quantity": int.tryParse(_numController.text) ?? 1,
+          "quantity": num.tryParse(_numController.text) ?? 1,
           "unit": selectedMaterial!["unit"],
           "price":calculatedPrice.round() ?? 0, //小数点を四捨五入して整数にする
         });

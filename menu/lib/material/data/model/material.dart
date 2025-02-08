@@ -11,7 +11,7 @@ class MaterialModel {//flutter/material.dartと名前が被るため、MaterialM
 
   DateTime? createAt;
   String? name;
-  int? quantity;
+  num? quantity;
   String? unit;
   int? price;
   String? id;
@@ -21,7 +21,7 @@ class MaterialModel {//flutter/material.dartと名前が被るため、MaterialM
     return MaterialModel(
       price: data['price'] as int? ?? 0,
       name: data['name'] as String? ?? '',
-      quantity: data['quantity'] as int? ?? 1,
+      quantity: data['quantity'] as num? ?? 1,
       unit: data['unit'] as String? ?? '',
       id: data['id'] as String? ?? 'noData',
       //createAt: (data['createAt'] as Timestamp).toDate(),
