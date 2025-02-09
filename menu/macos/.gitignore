@@ -5,3 +5,9 @@
 # Xcode-related
 **/dgph
 **/xcuserdata/
+
+# Firebase の設定ファイル（環境ごとに異なる場合）
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+lib/firebase_options.dart

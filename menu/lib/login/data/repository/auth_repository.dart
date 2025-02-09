@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:menu/common/common_widget.dart';
 import 'package:menu/login/view_model/login_view_model.dart';
@@ -229,4 +231,62 @@ class AuthService {
     await _auth.signOut();
     await signInAnony();//サインアウト後に匿名ログインする。
   }
+
+  //アカウント削除＋データ全削除
+  Future<void> deleteAcount(User user) async {
+    // ユーザーIDに基づいてユーザーのドキュメントを取得
+    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+
+      // サブコレクションがあれば、それを削除
+      // 例: サブコレクション "posts" がある場合
+      await deleteSubCollection(userDocRef, 'dinners');  // サブコレクションを削除
+      await deleteSubCollection(userDocRef, 'materials');  // サブコレクションを削除
+      await deleteSubCollection(userDocRef, 'menus');  // サブコレクションを削除
+      await userDocRef.delete();// ユーザーのドキュメントを削除
+      print('User ${user.uid}\'s data has been deleted');
+
+      //firestorageの画像削除
+      await deleteAllImagesInFolder("users/${user.uid}/images");
+
+      //アカウント削除
+      await user.delete();
+
+      //アカウント削除後に匿名ログインする。
+      await signInAnony();
+      
+  }
+
+  // サブコレクションを削除する関数
+  Future<void> deleteSubCollection(DocumentReference docRef, String subCollectionName) async {
+    // サブコレクション内のドキュメントを取得
+    CollectionReference subCollectionRef = docRef.collection(subCollectionName);
+    QuerySnapshot subCollectionSnapshot = await subCollectionRef.get();
+
+    for (DocumentSnapshot subDoc in subCollectionSnapshot.docs) {
+      await subDoc.reference.delete();  // サブコレクション内のドキュメントを削除
+    }
+
+    print('SubCollection "$subCollectionName" deleted');
+  }
+
+  //アカウント削除に伴う画像の全削除
+  Future<void> deleteAllImagesInFolder(String folderPath) async {
+  try {
+    final storageRef = FirebaseStorage.instance.ref(folderPath);
+
+    // 📌 フォルダ内のすべてのファイルを取得
+    final ListResult result = await storageRef.listAll();
+
+    // 📌 すべてのファイルを削除
+    for (Reference fileRef in result.items) {
+      print("Deleted: ${fileRef.fullPath}");
+      await fileRef.delete();
+      
+    }
+
+    print("📁 $folderPath 内のすべての画像を削除しました");
+  } catch (e) {
+    print("🔥 エラー: $e");
+  }
+}
 }
