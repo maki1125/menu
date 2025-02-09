@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import 'package:menu/main_screen.dart';
 import 'package:menu/common/common_providers.dart';
@@ -67,12 +68,27 @@ class AppBarComponentWidget extends ConsumerWidget
             FirebaseAuth.instance.currentUser?.reload();
           final user = FirebaseAuth.instance.currentUser;
             if (user?.isAnonymous == false) {
-              return IconButton(
-                icon: const Icon(Icons.account_circle, size: 32),
-                onPressed: () {
-                  pageChange(context, ref, 7);
-                },
-              );
+            return  Padding(
+              padding: const EdgeInsets.only(right: 10), 
+              child:
+            
+                user!.photoURL != null
+                ? GestureDetector(
+                  onTap: () {
+                    pageChange(context, ref, 7); // クリック時の処理
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: CachedNetworkImageProvider(user.photoURL!),
+                    radius: 15, // 小さくする（25 → 20）
+                  ),
+                )
+              : IconButton(
+                  icon: const Icon(Icons.account_circle, size: 32),
+                  onPressed: () {
+                    pageChange(context, ref, 7);
+                  },
+                )
+                );
             } else {
               return IconButton(
                 icon: const Icon(Icons.no_accounts, size: 32), // ユーザーが存在しない場合

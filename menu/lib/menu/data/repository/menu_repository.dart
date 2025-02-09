@@ -25,6 +25,8 @@ class MenuRepository {
     }
     }
     return _instance!;
+
+    
   }
 
   // インスタンスをリセットするメソッド
@@ -74,18 +76,6 @@ class MenuRepository {
 
   //データ追加
   Future<void> addMenu(Menu menu) async{
-
-    //値段(price)と１人前の値段(unitPrice)の計算
-    //if(menu.price == null && menu.materials!.isNotEmpty){
-
-      //材料の値段を足し合わせてメニューの値段を計算
-      //menu.price = menu.materials!.fold(0, (materialSum, material) {
-        //return materialSum! + (material['price'] as int); 
-      //});
-
-      //メニューの値段を何人前で割って何人前を計算
-      //menu.unitPrice = menu.price! ~/ menu.quantity!;
-    //}
 
     DocumentReference docRef = await db
     .collection('users/${user.uid}/menus')
@@ -153,6 +143,8 @@ class MenuRepository {
       print("Menu document does not exist.");
     }
   }
+
+  
 
 //menu型をfirebaseで保存するための型に変換
   Map<String, dynamic> _menuToMap(Menu menu){

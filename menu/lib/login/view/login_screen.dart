@@ -43,16 +43,15 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
   Widget build(BuildContext context) {
 
     // ビルド後にmenuRepositoryインスタンスをリセット
-        WidgetsBinding.instance.addPostFrameCallback((_) async{
-          MenuRepository.resetInstance(); // インスタンスのリセット
-          MaterialRepository.resetInstance(); // インスタンスのリセット
-          DinnerRepository.resetInstance(); // インスタンスのリセット
-          final refreshedMenu = await ref.refresh(menuListProvider.future);
-          final refreshedMaterial = await ref.refresh(materialListProvider.future); 
-          final refreshedDinner = await ref.refresh(dinnerListProvider.future);  
-          print("refresh:${refreshedMenu}");
-          
-        });
+    WidgetsBinding.instance.addPostFrameCallback((_) async{
+      MenuRepository.resetInstance(); // インスタンスのリセット
+      MaterialRepository.resetInstance(); // インスタンスのリセット
+      DinnerRepository.resetInstance(); // インスタンスのリセット
+      final refreshedMenu = await ref.refresh(menuListProvider.future);
+      final refreshedMaterial = await ref.refresh(materialListProvider.future); 
+      final refreshedDinner = await ref.refresh(dinnerListProvider.future);  
+      print("refresh:${refreshedMenu}");
+    });
 
     final emailController = TextEditingController(); // メールアドレス入力用
     final passwordController = TextEditingController(); // パスワード入力用
@@ -60,7 +59,6 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
     final authState = ref.watch(authStateChangesProvider); // 認証状態
 
     return Material(
-      
       child: authState.when(
         data: (user) {
           FirebaseAuth.instance.currentUser?.reload();//Googleログイン後もisSnnoymousがtrueのままのため、再取得によりfalseにするため。
@@ -94,6 +92,8 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+
+          //アイコン--------------------------------
           user.photoURL != null
             ? CircleAvatar(
                 backgroundImage: CachedNetworkImageProvider(user.photoURL),
@@ -101,14 +101,64 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
               )
             : const Icon(Icons.account_circle, size: 64),
           const SizedBox(height: 20),
+
+          //こんにちはのテキスト---------------------
           const Text('こんにちは'),
           Text("${FirebaseAuth.instance.currentUser!.email}"),//アドレス表示
           const SizedBox(height: 20),
-          IconButton(//ログアウトボタン
+
+          //ログアウトボタン------------------------
+          IconButton(
             onPressed: () async {
               await authService.signOut();
             },
             icon: const Icon(Icons.logout),
+          ),
+
+          //アカウント削除のボタン--------------------
+          ElevatedButton(//影ありボタン
+            onPressed: () async{ 
+              final bool? result = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    //title: const Text('確認'),
+                    content: const Text('アカウントを削除するとすべてのデータが消去されます。データは元には戻せません。削除しますか？'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false); // 「いいえ」を選択
+                        },
+                        child: const Text('いいえ'),
+                      ),
+                      TextButton(
+                        onPressed: () async{
+                          Navigator.of(context).pop(true); // 「はい」を選択
+                        },
+                        child: const Text('はい'),
+                      ),
+                    ],
+                  );
+                },
+              );
+
+              if (result == true) {
+                // 「はい」が選択された場合の処理
+                print("削除します。");
+                await authService.deleteAcount(user);
+                //authService.signOut();
+                //Navigator.pop(context);//元画面(メニュー一覧)に遷移
+              } else {
+                // 「いいえ」が選択された場合、何もしない
+                print('操作をキャンセルしました');
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,//ボタンの色
+              foregroundColor: Colors.white,//文字の色
+              elevation: 5,//影の深さ
+            ),
+            child: const Text('アカウント削除'),
           )
         ],
       ),
@@ -344,7 +394,7 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
             print(user!.uid);
             // 通常のログイン状態の処理を記述
           }
-
+          
           // MainPage に遷移
           return MainPage();
         }

@@ -103,9 +103,9 @@ class MaterialRepository {
   Future<void> updateMaterial(MaterialModel material) async {
     print("データ更新します。");
     await db
-        .collection('users/${user.uid}/materials')
-        .doc(material.id)
-        .update(_materialToMap(material));
+      .collection('users/${user.uid}/materials')
+      .doc(material.id)
+      .update(_materialToMap(material));
   }
 
   Map<String, dynamic> _materialToMap(MaterialModel material) {
