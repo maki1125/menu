@@ -114,6 +114,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
             },
             icon: const Icon(Icons.logout),
           ),
+          const SizedBox(height: 40,),
 
           //アカウント削除のボタン--------------------
           ElevatedButton(//影ありボタン
