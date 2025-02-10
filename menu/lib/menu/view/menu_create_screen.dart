@@ -277,7 +277,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                               height: 0.5, // Divider の厚みに合わせる
                               child: Container(
                                 color: Colors.grey, // Divider の色に合わせる
-                                margin: EdgeInsets.only(left: 10, right: 50), // indent と endIndent を再現
+                                margin: const EdgeInsets.only(left: 10, right: 50), // indent と endIndent を再現
                               ),
                             ),
                           ]
@@ -654,19 +654,23 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.howToMake = _howToMakeController.text;
               _menu.memo = _memoController.text;
               //_menu.id //addMenu()で保存される
-              _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
-              _menu.dinnerDateBuf = DateTime.now(); //新規作成の時は登録日にする。
+              if(!editFlg){
+                _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
+                _menu.dinnerDateBuf = DateTime.now(); //新規作成の時は登録日にする。
+              }
               _menu.price = sumPrice; //addMenu()で計算される
               _menu.unitPrice = (sumPrice/_menu.quantity!.toInt()).toInt(); //addMenu()で計算される
               
               ImageRepository(currentUser!, _menu, ref).deleteImage(); 
               if(editFlg){
                 await ImageRepository(currentUser!, _menu, ref).editImage(); //画像とデータ保存
+                showMessage("変更しました。");
                 print("変更しました。");
                 Navigator.pop(context);//元画面(メニュー詳細)に遷移
               }else{
                 
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
+              showMessage("新規登録しました。");
               print("新規登録しました。");
                 resetPageChange(context, ref, 0, 0); //メニュー一覧に遷移
               }

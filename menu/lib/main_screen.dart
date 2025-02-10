@@ -9,6 +9,7 @@ import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/menu/view/menu_create_screen.dart';
 import 'package:menu/menu/view/menu_list_screen.dart';
 import 'package:menu/menu/view/menu_detail_screen.dart';
+import 'package:menu/menu/view_model/menu_view_model.dart';
 import 'package:menu/material/data/model/material.dart';
 import 'package:menu/material/view/material_create_screen.dart';
 import 'package:menu/material/view/material_list_screen.dart';
@@ -44,13 +45,22 @@ class _MainPageState extends ConsumerState<MainPage>
     _tabController = TabController(length: tabCategories.length, vsync: this);
     _bottomBarIndex = ref.read(bottomBarProvider.notifier).state;
     _pageIndex = ref.read(pageProvider.notifier).state;
-
     menu = widget.menu; //statefulWidgetで受け取ったmenuをstateの中で使えるようにする。
     material = widget.material;
 
+    //「夕飯」タブの変更を監視。「夕飯」タブ切り替え時に日付を今日の日付に変更する。
+    _tabController.addListener(() {
+      if (_tabController.index == 1) {
+        print("今日の夕飯のタブです");
+        setState(() {
+          ref.read(selectDinnerDateProvider.notifier).state = DateTime.now();
+        });
+      }
+    });
+
     //ページリストの初期化.menuを参照するため、初期化内で参照する。
     _pages = [
-      MenuList(category: '全て'),
+      const MenuList(category: '全て'),
       const MaterialListScreen(),
       DinnerList(),
       MenuCreateScreen(menu: menu),
@@ -130,9 +140,11 @@ class _MainPageState extends ConsumerState<MainPage>
             child: _pageIndex == 0
                 ? TabBarView(
                     controller: _tabController,
-                    children: tabCategories.map((category) {
+                    children: 
+                    tabCategories.map((category) {
                       return MenuList(category: category);
                     }).toList(),
+                    
                   )
                 : _pages[_pageIndex],
           )

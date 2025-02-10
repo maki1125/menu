@@ -199,7 +199,7 @@ class DinnerListState extends State<DinnerList> {
                                               ),
                                             Text(
                                               maxText(dinner.select!.join(", "), 25),
-                                              style: TextStyle(fontSize: 15,
+                                              style: const TextStyle(fontSize: 15,
                                               //fontWeight: FontWeight.bold
                                               ),
                                               overflow:TextOverflow.ellipsis, // テキストがはみ出た場合の処理

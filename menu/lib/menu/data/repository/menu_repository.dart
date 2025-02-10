@@ -79,7 +79,7 @@ class MenuRepository {
 
     DocumentReference docRef = await db
     .collection('users/${user.uid}/menus')
-    .add(_menuToMap(menu));
+    .add(menuToMap(menu));
     await docRef.update({'id': docRef.id}); // ドキュメントIDを追加
 
   }
@@ -110,7 +110,7 @@ class MenuRepository {
     await db
     .collection('users/${user.uid}/menus')
     .doc(menu.id)
-    .update(_menuToMap(menu));
+    .update(menuToMap(menu));
   }
 
   //データ編集(ID指定)
@@ -136,35 +136,11 @@ class MenuRepository {
       db
       .collection('users/${user.uid}/menus')
       .doc(menuId)
-      .update(_menuToMap(menu));
+      .update(menuToMap(menu));
 
       print("Menu name: ${menu.name}");
     } else {
       print("Menu document does not exist.");
     }
-  }
-
-  
-
-//menu型をfirebaseで保存するための型に変換
-  Map<String, dynamic> _menuToMap(Menu menu){
-    return{
-      'createAt': menu.createAt,
-      'name': menu.name,
-      'imageURL': menu.imageURL,
-      'imagePath': menu.imagePath,
-      'quantity': menu.quantity,
-      'tag': menu.tag,
-      'materials': menu.materials,
-      'howToMake': menu.howToMake,
-      'memo': menu.memo,
-      'isFavorite': menu.isFavorite,
-      'isDinner': menu.isDinner,
-      'id': menu.id,
-      'dinnerDate': menu.dinnerDate,
-      'dinnerDateBuf': menu.dinnerDateBuf,
-      'price': menu.price,
-      'unitPrice': menu.unitPrice,
-    };
   }
 }

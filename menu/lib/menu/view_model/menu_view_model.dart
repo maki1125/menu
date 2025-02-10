@@ -32,11 +32,27 @@ void dinnerButton(menu) {
   MenuRepository().updateMenu(menu);
 }
 
+//「予定」ボタン
+void planButton(menu) {
+  
+  if (menu.isPlan) {
+    menu.isPlan = false;
+  } else {
+    menu.isPlan = true;
+  }
+  print(currentUser!.uid);
+  print(menu.isPlan);
+  MenuRepository().updateMenu(menu);
+}
+
 //？人前を管理
 final quantityProvider = StateProvider.family<int, int>((ref, index) => 1);
 
 //選択した夕食の合計金額の管理
 final totalDinnerPriceProvider = StateProvider<int>((ref) => 0);
+
+//選択した夕食日付
+final selectDinnerDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 //夕食の合計金額をfilterdMenusが変更したらリアルタイムに計算するクラス
 class TotalPriceNotifier extends StateNotifier<int> {
