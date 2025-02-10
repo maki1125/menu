@@ -13,6 +13,7 @@ class Menu {
     this.memo,
     this.isFavorite,
     this.isDinner,
+    this.isPlan,
     this.id,
     this.dinnerDate,
     this.dinnerDateBuf,//夕食の履歴の削除時に元に戻すため。
@@ -32,6 +33,7 @@ class Menu {
   String? memo;
   bool? isFavorite;
   bool? isDinner;
+  bool? isPlan;
   String? id;
   DateTime? dinnerDate;
   DateTime? dinnerDateBuf;
@@ -56,6 +58,7 @@ class Menu {
       memo: data['memo'] as String? ?? "noData",
       isFavorite: data['isFavorite'] as bool? ?? false,
       isDinner: data['isDinner'] as bool? ?? false,
+      isPlan: data['isPlan'] as bool? ?? false,
       id: data['id'] as String? ?? "noData",
       dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
       dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -63,4 +66,28 @@ class Menu {
       unitPrice: data['unitPrice'] as int? ?? 0,
     );
   }
+
+  
+}
+//menu型をfirebaseで保存するための型に変換
+Map<String, dynamic> menuToMap(Menu menu){
+  return{
+    'createAt': menu.createAt,
+    'name': menu.name,
+    'imageURL': menu.imageURL,
+    'imagePath': menu.imagePath,
+    'quantity': menu.quantity,
+    'tag': menu.tag,
+    'materials': menu.materials,
+    'howToMake': menu.howToMake,
+    'memo': menu.memo,
+    'isFavorite': menu.isFavorite,
+    'isDinner': menu.isDinner,
+    'isPlan': menu.isPlan,
+    'id': menu.id,
+    'dinnerDate': menu.dinnerDate,
+    'dinnerDateBuf': menu.dinnerDateBuf,
+    'price': menu.price,
+    'unitPrice': menu.unitPrice,
+  };
 }

@@ -36,7 +36,12 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
     final materialList = ref.watch(materialListProvider); // 材料データ取得
     final filteredMaterials =ref.watch(filteredMaterialsProvider); // フィルタリングされた材料データ
 
-    return Stack(
+    return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じる
+      onTap: () {
+        // FocusNodeでフォーカスを外す
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child:Stack(
       children: [
         SingleChildScrollView(// スクロール可能なウィジェット
           
@@ -211,6 +216,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
           ),
         ),
       ],
+    )
     );
   }
 
