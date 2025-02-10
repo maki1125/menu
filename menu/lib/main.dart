@@ -5,10 +5,12 @@ import 'package:flutter_localizations/flutter_localizations.dart'; //日本語�
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:menu/login/view/login_screen.dart';
 import 'firebase_options.dart';
+import 'package:menu/common/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  LoggerService.info('アプリケーションスタート');
   await initializeDateFormatting('ja');
   runApp(
     const ProviderScope(child: MyApp()),
