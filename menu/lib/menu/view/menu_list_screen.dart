@@ -187,7 +187,7 @@ class MenuListState extends ConsumerState<MenuList> {
                                           ),
                                         ),  
                                       ),
-                                      const SizedBox(width: 20,),
+                                      const SizedBox(width: 10,),
 
                                       //「予定」にするボタン
                                       OutlinedButton(//枠線ありボタン
@@ -229,18 +229,21 @@ class MenuListState extends ConsumerState<MenuList> {
                                             iconSize: 25,
                                           ),
                                           
-                                          
+                                          SizedBox(
+                                            width: 50,
+                                            child:
+                                            
                                           //人前、値段の表示
                                           Column(
                                             children: [
-                                              Text("${dispQuantity}人前 ",
+                                              Text("$dispQuantity人前 ",
                                             style: const TextStyle(fontSize: 13, height:0, ),
                                             ),
                                             Text("${filteredMenus[index].unitPrice! * dispQuantity}円  ",
                                             style: const TextStyle(fontSize: 13, height:0, ),
                                             )
                                             ],
-                                          ),
+                                          )),
 
                                           //プラスアイコン
                                            IconButton(

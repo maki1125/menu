@@ -12,10 +12,10 @@ class MaterialListScreen extends ConsumerStatefulWidget {
   const MaterialListScreen({super.key});
 
   @override
-  _MaterialListScreenState createState() => _MaterialListScreenState();
+  MaterialListScreenState createState() => MaterialListScreenState();
 }
 
-class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
+class MaterialListScreenState extends ConsumerState<MaterialListScreen> {
   late TextEditingController searchController; // 検索テキストフィールドのコントローラー
 
   // initstate disposeを適切に行うことでtextfieldの値がリセットされない
@@ -23,6 +23,12 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
   void initState() {
     super.initState();
     searchController = TextEditingController(); // コントローラーの初期化
+    
+    //ビルド後に実行
+    Future.microtask(() {
+    ref.read(searchTextProvider.notifier).state = "";//検索の文字列を初期化
+  });
+
   }
 
   @override
@@ -30,6 +36,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
     searchController.dispose(); // コントローラーの破棄
     super.dispose();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +79,7 @@ class _MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                         itemCount: filteredMaterials.length, // リストの数
                         itemBuilder: (context, index) {
                           final material = filteredMaterials[index]; // 材料データ
-
+                          
                           return Card(
                               color: Colors.white,
                               elevation: 1.0,
