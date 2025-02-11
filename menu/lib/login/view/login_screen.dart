@@ -7,16 +7,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:menu/main_screen.dart';
 import 'package:menu/login/view_model/login_view_model.dart';
 import 'package:menu/login/view/login_forgotpassword_screen.dart';
-import 'package:menu/menu/view_model/menu_view_model.dart';
+//import 'package:menu/menu/view_model/menu_view_model.dart';
 import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/material/data/repository/material_repository.dart';
-import 'package:menu/material/view_model/material_view_model.dart';
-import 'package:menu/dinner/data/repository/dinner_repository.dart';
-import 'package:menu/dinner/view_model/dinner_view_model.dart';
 
+import 'package:menu/dinner/data/repository/dinner_repository.dart';
 
 class UserAuthentication extends ConsumerStatefulWidget {
-  UserAuthentication({super.key});
+  const UserAuthentication({super.key});
 
   @override
   _UserAuthentication createState() => _UserAuthentication();
@@ -24,8 +22,7 @@ class UserAuthentication extends ConsumerStatefulWidget {
 
 class _UserAuthentication extends ConsumerState<UserAuthentication>
     with SingleTickerProviderStateMixin {
-
-  late TabController _tabController;//ログインと新規登録
+  late TabController _tabController; //ログインと新規登録
 
   @override
   void initState() {
@@ -41,16 +38,15 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
 
   @override
   Widget build(BuildContext context) {
-
     // ビルド後にmenuRepositoryインスタンスをリセット
-    WidgetsBinding.instance.addPostFrameCallback((_) async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       MenuRepository.resetInstance(); // インスタンスのリセット
       MaterialRepository.resetInstance(); // インスタンスのリセット
       DinnerRepository.resetInstance(); // インスタンスのリセット
-      final refreshedMenu = await ref.refresh(menuListProvider.future);
-      final refreshedMaterial = await ref.refresh(materialListProvider.future); 
-      final refreshedDinner = await ref.refresh(dinnerListProvider.future);  
-      print("refresh:${refreshedMenu}");
+      //final refreshedMenu = await ref.refresh(menuListProvider.future);
+      //final refreshedMaterial = await ref.refresh(materialListProvider.future);
+      //final refreshedDinner = await ref.refresh(dinnerListProvider.future);
+      //print("refresh:${refreshedMenu}");
     });
 
     final emailController = TextEditingController(); // メールアドレス入力用
@@ -61,23 +57,40 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
     return Material(
       child: authState.when(
         data: (user) {
-          FirebaseAuth.instance.currentUser?.reload();//Googleログイン後もisSnnoymousがtrueのままのため、再取得によりfalseにするため。
+          FirebaseAuth.instance.currentUser
+              ?.reload(); //Googleログイン後もisSnnoymousがtrueのままのため、再取得によりfalseにするため。
           final user = FirebaseAuth.instance.currentUser;
-          
-          if(user == null){//ログアウト後の匿名ログインもしていない状態
-            print("nullです。");
-            return _buildAnonymousView(//ログイン前の画面
-                context, authService, emailController, passwordController, ref);
+
+          if (user == null) {
+            //ログアウト後の匿名ログインもしていない状態
+            //print("nullです。");
+            return _buildAnonymousView(
+                //ログイン前の画面
+                context,
+                authService,
+                emailController,
+                passwordController,
+                ref);
           }
-          if (user.isAnonymous == false) {//認証ログイン
-            print("Googleログイン後です.${user.uid}");
-            return _buildLoggedInView(//ログイン後の画面
-              context, user, authService);
-          } else {//匿名ログイン
-            
-            print("Googleログイン前です.${user.uid}");
-            return _buildAnonymousView(//ログイン前の画面
-                context, authService, emailController, passwordController, ref);
+          if (user.isAnonymous == false) {
+            //認証ログイン
+            //print("Googleログイン後です.${user.uid}");
+            return _buildLoggedInView(
+                //ログイン後の画面
+                context,
+                user,
+                authService);
+          } else {
+            //匿名ログイン
+
+            //print("Googleログイン前です.${user.uid}");
+            return _buildAnonymousView(
+                //ログイン前の画面
+                context,
+                authService,
+                emailController,
+                passwordController,
+                ref);
           }
         },
         loading: () => const CircularProgressIndicator(),
@@ -86,25 +99,24 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
     );
   }
 
- //ログイン後の画面
+  //ログイン後の画面
   Widget _buildLoggedInView(context, user, authService) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
           //アイコン--------------------------------
           user.photoURL != null
-            ? CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(user.photoURL),
-                radius: 32,
-              )
-            : const Icon(Icons.account_circle, size: 64),
+              ? CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(user.photoURL),
+                  radius: 32,
+                )
+              : const Icon(Icons.account_circle, size: 64),
           const SizedBox(height: 20),
 
           //こんにちはのテキスト---------------------
           const Text('こんにちは'),
-          Text("${FirebaseAuth.instance.currentUser!.email}"),//アドレス表示
+          Text("${FirebaseAuth.instance.currentUser!.email}"), //アドレス表示
           const SizedBox(height: 20),
 
           //ログアウトボタン------------------------
@@ -114,17 +126,21 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
             },
             icon: const Icon(Icons.logout),
           ),
-          const SizedBox(height: 40,),
+          const SizedBox(
+            height: 40,
+          ),
 
           //アカウント削除のボタン--------------------
-          ElevatedButton(//影ありボタン
-            onPressed: () async{ 
+          ElevatedButton(
+            //影ありボタン
+            onPressed: () async {
               final bool? result = await showDialog<bool>(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
                     //title: const Text('確認'),
-                    content: const Text('アカウントを削除するとすべてのデータが消去されます。データは元には戻せません。削除しますか？'),
+                    content: const Text(
+                        'アカウントを削除するとすべてのデータが消去されます。データは元には戻せません。削除しますか？'),
                     actions: [
                       TextButton(
                         onPressed: () {
@@ -133,7 +149,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
                         child: const Text('いいえ'),
                       ),
                       TextButton(
-                        onPressed: () async{
+                        onPressed: () async {
                           Navigator.of(context).pop(true); // 「はい」を選択
                         },
                         child: const Text('はい'),
@@ -145,19 +161,19 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
 
               if (result == true) {
                 // 「はい」が選択された場合の処理
-                print("削除します。");
+                debugPrint("削除します。");
                 await authService.deleteAcount(user);
                 //authService.signOut();
                 //Navigator.pop(context);//元画面(メニュー一覧)に遷移
               } else {
                 // 「いいえ」が選択された場合、何もしない
-                print('操作をキャンセルしました');
+                debugPrint('操作をキャンセルしました');
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,//ボタンの色
-              foregroundColor: Colors.white,//文字の色
-              elevation: 5,//影の深さ
+              backgroundColor: Colors.red, //ボタンの色
+              foregroundColor: Colors.white, //文字の色
+              elevation: 5, //影の深さ
             ),
             child: const Text('アカウント削除'),
           )
@@ -166,7 +182,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
     );
   }
 
- //ログイン前の画面
+  //ログイン前の画面
   Widget _buildAnonymousView(
       context, authService, emailController, passwordController, ref) {
     return Center(
@@ -239,7 +255,8 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
           width: 300,
           child: TextButton(
             onPressed: () {
-              ref.read(sendPasswordResetEmailProvider.notifier).state = false; // メール送信状態をリセット
+              ref.read(sendPasswordResetEmailProvider.notifier).state =
+                  false; // メール送信状態をリセット
               //パスワードリセット画面
               Navigator.push(
                   context,
@@ -285,9 +302,8 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
         SignInButton(
           Buttons.Google,
           onPressed: () async {
-            await authService.signInWithGoogle(
-                context, ref); 
-            setState(() { });
+            await authService.signInWithGoogle(context, ref);
+            setState(() {});
           },
         ),
       ],
@@ -328,10 +344,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
           child: OutlinedButton(
             onPressed: () async {
               await authService.singUpEmailAndPassword(
-                  context, 
-                  emailController.text,
-                  passwordController.text,
-                  ref);
+                  context, emailController.text, passwordController.text, ref);
             },
             style: OutlinedButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -356,11 +369,10 @@ class SignInAnony extends ConsumerStatefulWidget {
 }
 
 class _SignInAnony extends ConsumerState<SignInAnony> {
-
   // 匿名ログイン処理
   Future<void> _signInAnonymously() async {
     try {
-      await ref.read(authServiceProvider).signInAnony();// 匿名ログイン処理を呼び出し
+      await ref.read(authServiceProvider).signInAnony(); // 匿名ログイン処理を呼び出し
     } catch (e) {
       debugPrint('Anonymous sign-in failed: $e');
     }
@@ -371,31 +383,29 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(), // ユーザー情報を取得
       builder: (context, snapshot) {
-
         // ビルド後にmenuRepositoryインスタンスをリセット
-        WidgetsBinding.instance.addPostFrameCallback((_) async{
+        WidgetsBinding.instance.addPostFrameCallback((_) async {
           MenuRepository.resetInstance(); // インスタンスのリセット
-          final refreshedMenu = await ref.refresh(menuListProvider.future); 
-          print("refresh:${refreshedMenu}");
-          
+          //final refreshedMenu = await ref.refresh(menuListProvider.future);
+          // print("refresh:${refreshedMenu}");
         });
 
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator()); // ローディング中のウィジェット
+              child: CircularProgressIndicator()); // ローディング中のウィジェット
         }
         if (snapshot.hasData) {
           final user = snapshot.data;
           if (user?.isAnonymous ?? false) {
-            print("匿名ユーザーです");
-            print(user!.uid);
+            debugPrint("匿名ユーザーです");
+            debugPrint(user!.uid);
             // 匿名ログイン中の場合の処理を記述
           } else {
-            print("通常ユーザーです");
-            print(user!.uid);
+            debugPrint("通常ユーザーです");
+            debugPrint(user!.uid);
             // 通常のログイン状態の処理を記述
           }
-          
+
           // MainPage に遷移
           return MainPage();
         }
