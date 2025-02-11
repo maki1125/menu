@@ -5,6 +5,8 @@ import 'package:menu/login/view_model/login_view_model.dart';
 
 // パスワードリセット画面
 class ForgotPasswordPage extends StatefulWidget {
+  const ForgotPasswordPage({super.key});
+
   @override
   _ForgotPasswordPageState createState() => _ForgotPasswordPageState();
 }
