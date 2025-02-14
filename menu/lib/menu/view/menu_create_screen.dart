@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
+import 'package:menu/common/logger.dart';
 
 import 'package:menu/main_screen.dart';
 import 'package:menu/common/common_widget.dart';
@@ -155,7 +156,8 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   }
   
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {  
+    LoggerService();  
     print("menu_create");
     return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じる
       onTap: () {

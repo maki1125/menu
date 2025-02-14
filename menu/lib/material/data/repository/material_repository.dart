@@ -4,8 +4,7 @@ import 'package:menu/common/logger.dart';
 import 'package:menu/material/data/model/material.dart';
 
 class MaterialRepository {
-  static MaterialRepository?
-      _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
+  static MaterialRepository? _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
   final User user; //Firebaseのauthの型
   final db = FirebaseFirestore.instance;
   //List<MaterialModel> materialList = []; //
