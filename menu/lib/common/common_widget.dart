@@ -183,3 +183,37 @@ void pageChange(context, ref, int index) {
     ),
   );
 }
+
+//検索ボックス
+//検索テキストフィールドのコントローラを受け取り、検索文字を管理するプロバイダーを書き換える。
+Widget searchBox(controller, ref,searchTextProvider, hint){//ref){//}, materials) {
+  return SizedBox(
+    //width: width,
+    child: TextField(
+      controller: controller,//searchController, // コントローラー
+      keyboardType: TextInputType.text, // キーボードタイプ
+      textInputAction: TextInputAction.search, // 検索ボタンを表示
+      onChanged: (text) {
+        ref.read(searchTextProvider.notifier).state = text;
+      },
+      onSubmitted: (value) {}, // テキストフィールドでエンターキーが押されたときの処理
+      decoration: InputDecoration(
+        // テキストフィールドの装飾
+        prefixIcon: const Icon(Icons.search),
+        suffixIcon: IconButton(
+          // フィルターや並び替えの機能が追加できる
+          icon: const Icon(
+            Icons.sort,
+            size: 20,
+          ),
+          onPressed: () {},
+        ),
+
+        hintText: hint,
+        border: InputBorder.none, // 枠線を非表示
+        hintStyle: const TextStyle(
+            color: Color.fromARGB(255, 198, 198, 198)), // hintTextの色を設定
+      ),
+    ),
+  );
+}

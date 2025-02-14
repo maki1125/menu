@@ -88,7 +88,22 @@ final StateProvider<String> dropDownProvider = StateProvider<String>((ref) {
 });
 
 
+// 検索テキストを管理するプロバイダー
+final menuSearchTextProvider = StateProvider<String>((ref) => '');
 
+// 材料データの検索フィルタリング
+final filteredMenusProvider = Provider<List<Menu>>((ref) {
+  final menus = ref.watch(menuListProvider).value ?? [];
+  final text = ref.watch(menuSearchTextProvider);
+
+  var filteredMenus = (menus).where((menu) {
+    //final isMatch = menu["name"] == text;　// 材料名が完全一致するか
+    final isMatch = menu.name!.startsWith(text);
+    return isMatch;
+  }).toList();
+
+  return filteredMenus;
+});
 
 
 

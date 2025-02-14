@@ -163,7 +163,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                 //フォーカスされたテキストフィールドの背景色を水色にするためにcontainerで囲む。
                 Container(
                   color: (_focusedIndex == index)
-                      ? Colors.blue.withValues(alpha: 51)
+                      ? Colors.blue.withOpacity(0.2) // 50% の透明度にする
                       : Colors.transparent,
                   child: _textField(index, screenWidth),
                 ),
@@ -601,7 +601,7 @@ class MaterialCreateScreenstate extends ConsumerState<MaterialCreateScreen> {
                   //変更後の表示１行分
                   Container(
                     //フォーカスされたテキストフィールドの背景色を水色にするためにcontainerで囲む。
-                    color: Colors.blue.withValues(alpha: 51),
+                    color: Colors.blue.withOpacity(0.2), // 50% の透明度にする
                     child: Row(
                         //変更後の材料名の表示
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
