@@ -23,5 +23,10 @@ final filteredMaterialsProvider = Provider<List<Map<String, dynamic>>>((ref) {
     return isMatch;
   }).toList();
 
+  // もしフィルタ結果が空なら、全てのメニューを返す
+  if (filteredMaterials.isEmpty) {
+    return materials;
+  }
+
   return filteredMaterials;
 });
