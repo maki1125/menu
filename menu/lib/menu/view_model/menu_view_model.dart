@@ -102,6 +102,11 @@ final filteredMenusProvider = Provider<List<Menu>>((ref) {
     return isMatch;
   }).toList();
 
+// もしフィルタ結果が空なら、全てのメニューを返す
+  if (filteredMenus.isEmpty) {
+    return menus;
+  }
+
   return filteredMenus;
 });
 
