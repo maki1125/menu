@@ -261,7 +261,7 @@ class _UserAuthentication extends ConsumerState<UserAuthentication>
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ForgotPasswordPage()));
+                      builder: (context) => const ForgotPasswordPage()));
             },
             child: const Text('パスワードを忘れた場合はこちら'),
           ),
