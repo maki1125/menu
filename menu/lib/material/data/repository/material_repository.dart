@@ -4,7 +4,8 @@ import 'package:menu/common/logger.dart';
 import 'package:menu/material/data/model/material.dart';
 
 class MaterialRepository {
-  static MaterialRepository? _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
+  static MaterialRepository?
+      _instance; //MenuReposistoryをシングルトンパターン（アプリ内で同一インスタンス）にする。
   final User user; //Firebaseのauthの型
   final db = FirebaseFirestore.instance;
   //List<MaterialModel> materialList = []; //
@@ -66,7 +67,7 @@ class MaterialRepository {
 
           //修正（既存アイテムを更新）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.modified:
-            print("modify_material:${material.id}");
+            LoggerService.debug("modify_material:${material.id}");
             final index = materialList.indexWhere(
                 (m) => (m["id"] == material.id || m["id"] == "noData"));
             if (index != -1) {
@@ -76,7 +77,7 @@ class MaterialRepository {
 
           //削除ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.removed:
-            print("remove_material:${material.id}");
+            LoggerService.debug("remove_material:${material.id}");
             materialList.removeWhere((m) => m["id"] == material.id);
             break;
         }
@@ -101,7 +102,7 @@ class MaterialRepository {
 
   // データ更新
   Future<void> updateMaterial(MaterialModel material) async {
-    print("データ更新します。");
+    LoggerService.debug("データ更新します。");
     await db
         .collection('users/${user.uid}/materials')
         .doc(material.id)
