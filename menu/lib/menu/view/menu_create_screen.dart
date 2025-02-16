@@ -39,7 +39,6 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   late Menu _menu; //登録するデータをここに入れる
   final List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
   bool _isLoading = false; // 登録処理のローディング状態を管理
-  //MaterialModel? _result; //材料一覧から選択時に結果を入れる
   Map<String, dynamic>?  selectedMaterial; // 材料一覧から選択時に再描写のために使用
   num calculatedPrice = 0; // 計算結果を保持する変数.小数点まで計算する
   bool editFlg = false; //編集か機種更新か判断するフラグ
@@ -59,8 +58,6 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     _memoController.dispose();
     super.dispose();
   }
-
-  
 
   //初期化処理
   @override
@@ -121,7 +118,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     });
   }
 
-/*
+/*使用する場所なかったのでコメントアウト
   // フォームのクリア
   void _clearform() {
 
@@ -158,8 +155,6 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   
   @override
   Widget build(BuildContext context) {  
-    LoggerService();  
-    //print("menu_create");
     return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じる
       onTap: () {
         // FocusNodeでフォーカスを外す
@@ -670,14 +665,17 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                 
                 showMessage("変更しました。");
                 //print("変更しました。");
-                Navigator.pop(context);//元画面(メニュー詳細)に遷移
-                
+                if(context.mounted){
+                  Navigator.pop(context);//元画面(メニュー詳細)に遷移
+                }
               }else{
                 
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
               showMessage("新規登録しました。");
               //print("新規登録しました。");
+              if(context.mounted){
                 resetPageChange(context, ref, 0, 0); //メニュー一覧に遷移
+              }
               }
 
               setState(() {

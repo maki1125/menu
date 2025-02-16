@@ -95,7 +95,9 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                                           TextButton(
                                             onPressed: () async{
                                               await ImageRepository(currentUser!, menu, ref).deleteImage(); 
-                                              Navigator.of(context).pop(true); // 「はい」を選択
+                                              if(context.mounted){
+                                                Navigator.of(context).pop(true); // 「はい」を選択
+                                              }
                                             },
                                             child: const Text('はい'),
                                           ),
@@ -109,7 +111,9 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                                     //print("delete");
                                     //print(currentUser!.uid);
                                     MenuRepository().deleteMenu(menu); //メニュー削除
-                                    Navigator.pop(context);//元画面(メニュー一覧)に遷移
+                                    if(context.mounted){
+                                      Navigator.pop(context);//元画面(メニュー一覧)に遷移
+                                    }
                                   } else {
                                     // 「いいえ」が選択された場合、何もしない
                                     //print('操作をキャンセルしました');
@@ -135,12 +139,14 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                                   //メニュー編集画面へ遷移
                                   ref.read(selectedImageProvider.notifier).state = null;
                                   ref.read(pageProvider.notifier).state = 6;
+                                  if(context.mounted){
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => MainPage(menu: menu)),
                                   ).then((_){
                                     setState((){});//編集ページから戻った時に、編集したデータを表示させるために再描写
                                   });
+                                  }
                                 },
                                 iconSize: 25,
                               ),
