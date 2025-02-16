@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
-import 'package:menu/common/logger.dart';
 
 import 'package:menu/main_screen.dart';
 import 'package:menu/common/common_widget.dart';
