@@ -16,10 +16,10 @@ class CustomBottomBar extends StatelessWidget {
   final ValueChanged<int> onTap; //int引数を受け取りコールバック関数を指定するプロパティ
 
   const CustomBottomBar({
-    Key? key,
+    super.key,
     required this.currentIndex,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +168,7 @@ void resetPageChange(BuildContext context, WidgetRef ref, int dispPage, int bott
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(
-      builder: (context) => MainPage(),),
+      builder: (context) => const MainPage(),),
     (Route<dynamic> route) => false, // すべての履歴を削除
   );
 }
@@ -179,7 +179,7 @@ void pageChange(context, ref, int index) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => MainPage(),
+      builder: (context) => const MainPage(),
     ),
   );
 }
@@ -200,14 +200,30 @@ Widget searchBox(controller, ref,searchTextProvider, hint){//ref){//}, materials
       decoration: InputDecoration(
         // テキストフィールドの装飾
         prefixIcon: const Icon(Icons.search),
-        suffixIcon: IconButton(
+       // suffixIcon: 
+        /*
+        Row(
+      mainAxisSize: MainAxisSize.min,  // アイコンを必要な分だけ並べる
+      children: [
+        
+        IconButton(
           // フィルターや並び替えの機能が追加できる
           icon: const Icon(
-            Icons.sort,
-            size: 20,
+            Icons.abc,
+            size: 25,
           ),
           onPressed: () {},
         ),
+        IconButton(
+          // フィルターや並び替えの機能が追加できる
+          icon: const Icon(
+            Icons.sort,
+            size: 25,
+          ),
+          onPressed: () {},
+        ),
+      ]),
+      */
 
         hintText: hint,
         border: InputBorder.none, // 枠線を非表示

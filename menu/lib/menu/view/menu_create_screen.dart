@@ -121,6 +121,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     });
   }
 
+/*
   // フォームのクリア
   void _clearform() {
 
@@ -152,13 +153,13 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
     setState((){ //これによりtrueの場合でも再描写されるので、材料もクリアされる。
     _menu.isFavorite = false;
     });
-
   }
+*/
   
   @override
   Widget build(BuildContext context) {  
     LoggerService();  
-    print("menu_create");
+    //print("menu_create");
     return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じる
       onTap: () {
         // FocusNodeでフォーカスを外す
@@ -266,7 +267,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                                   icon: const Icon(Icons.delete), 
                                   onPressed: () {
                                     setState(() {
-                                      print("削除：${_savedMaterials[index]["price"]}");
+                                      //print("削除：${_savedMaterials[index]["price"]}");
                                       sumPrice -= _savedMaterials[index]["price"];
                                       _savedMaterials.removeAt(index); // 指定されたインデックスを削除
                                       //
@@ -385,14 +386,14 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                     ref.read(bottomBarProvider.notifier).state = 1;
                     ref.read(pageProvider.notifier).state = 1;
                     ref.read(selectMaterialProvider.notifier).state = 1;
-                    Map<String, dynamic> _result = await Navigator.push(
+                    Map<String, dynamic> result = await Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MainPage()),
+                      MaterialPageRoute(builder: (context) => const MainPage()),
                     );
                   
                     //初期値の表示
                     setState(() {
-                      selectedMaterial = _result; // 結果を保存
+                      selectedMaterial = result; // 結果を保存
                       calculatedPrice = (selectedMaterial!["price"]/selectedMaterial!["quantity"]);
                       _numController.text = "1";
                     });
@@ -486,14 +487,14 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                     padding: const EdgeInsets.only(right: 8.0),// 8ピクセルの余白
                     child: GestureDetector(
                       onTap: () async{
-                        print("画像選択します。");
+                        //print("画像選択します。");
                         await ImageRepository(currentUser!, _menu, ref).selectImage();//ここでselectecImageProviderを更新。
                         //.then((value) => print(menu.imageURL));
                       }, // 領域をタップしたら画像選択ダイアログを表示
                       child: Consumer( //画像選択変更時に、ここだけ再描写されるようにconsumer使用。
                         builder: (context, ref, child){
                           final File? selectedImage = ref.watch(selectedImageProvider); //選択画像
-                          print("画像を表示します");
+                          //print("画像を表示します");
                           return 
 
                           Stack(
@@ -545,7 +546,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                                     child: const CircularProgressIndicator(strokeWidth: 20.0),
                                   ),
                                   
-                                  errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                                  errorWidget: (context, url, error) => const Icon(Icons.error), // エラーの場合に表示するウィジェット
                                   fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
                                 )
                                 )
@@ -566,7 +567,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
                   right: 0,
                   child: GestureDetector(
                     onTap: () {
-                      print("画像を削除します。");
+                      //print("画像を削除します。");
                       ref.read(selectedImageProvider.notifier).state = null;
                       editImageURLBuf = "noData";
                       setState(() {});//再描写
@@ -657,8 +658,8 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               _menu.memo = _memoController.text;
               //_menu.id //addMenu()で保存される
               if(!editFlg){
-                _menu.dinnerDate = DateTime.now(); //新規作成の時は登録日にする。
-                _menu.dinnerDateBuf = DateTime.now(); //新規作成の時は登録日にする。
+                _menu.dinnerDate = DateTime(1970, 1, 1); //新規作成の時は特定の日にする。
+                _menu.dinnerDateBuf = DateTime(1970, 1, 1); //新規作成の時は特定の日にする。
               }
               _menu.price = sumPrice; //addMenu()で計算される
               _menu.unitPrice = (sumPrice/_menu.quantity!.toInt()).toInt(); //addMenu()で計算される
@@ -666,14 +667,16 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
               ImageRepository(currentUser!, _menu, ref).deleteImage(); 
               if(editFlg){
                 await ImageRepository(currentUser!, _menu, ref).editImage(); //画像とデータ保存
+                
                 showMessage("変更しました。");
-                print("変更しました。");
+                //print("変更しました。");
                 Navigator.pop(context);//元画面(メニュー詳細)に遷移
+                
               }else{
                 
               await ImageRepository(currentUser!, _menu, ref).addImage(); //画像とデータ保存
               showMessage("新規登録しました。");
-              print("新規登録しました。");
+              //print("新規登録しました。");
                 resetPageChange(context, ref, 0, 0); //メニュー一覧に遷移
               }
 
@@ -736,10 +739,10 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
           "name": selectedMaterial!["name"],
           "quantity": num.tryParse(_numController.text) ?? 1,
           "unit": selectedMaterial!["unit"],
-          "price":calculatedPrice.round() ?? 0, //小数点を四捨五入して整数にする
+          "price":calculatedPrice.round(), //小数点を四捨五入して整数にする
         });
         sumPrice += _savedMaterials.last["price"];
-        print("追加：${_savedMaterials.last["price"]}");
+        //print("追加：${_savedMaterials.last["price"]}");
       });
       _materialController.text = "";
       _numController.text = "";

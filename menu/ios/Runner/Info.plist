@@ -29,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.652180432500-2nukgg5alpu503eoi1r4fi10kjob6jf0</string>
+				<string>com.googleusercontent.apps.652180432500-f56bd47gpfkkaofk298oentn3lu40n5d</string>
 			</array>
 		</dict>
 	</array>
@@ -39,6 +39,8 @@
 	<true/>
 	<key>NSDocumentsFolderUsageDescription</key>
 	<string>アプリがドキュメントフォルダにアクセスするために必要です。</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>写真を選択するためにフォトライブラリを使用します。</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

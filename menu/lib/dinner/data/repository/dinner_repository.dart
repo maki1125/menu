@@ -38,11 +38,9 @@ class DinnerRepository {
   Stream<List<Dinner>> getDinnerList(){
     return db
     .collection('users/${user.uid}/dinners')
-    .orderBy('createAt', descending: true)
+    .orderBy('createAt', descending: false)
     .snapshots()
     .map((snapshot){
-
-      print("count:${count}");
       count += 1;
 
       // 変更された部分だけを取得
@@ -52,7 +50,7 @@ class DinnerRepository {
         switch (change.type) {
           //追加ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.added:
-            print("add:${dinner.id}");
+            //print("add:${dinner.id}");
             if ((dinner.id == "noData" && !dinnerList.any((m) => ( "noData"== dinner.id)))//データ追加された時にまだidがついていない場合がある。
               || !dinnerList.any((m) => (m.id == dinner.id))){//すでにリストにある場合は追加しない。初回に2回addしてしまうため。
               dinnerList.insert(0, dinner);
@@ -61,7 +59,7 @@ class DinnerRepository {
 
           //修正（既存アイテムを更新）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.modified:
-          print("modify:${dinner.id}");
+          //print("modify:${dinner.id}");
             final index = dinnerList.indexWhere((m) => (m.id == dinner.id || m.id == "noData"));
             if (index != -1) {
               dinnerList[index] = dinner;
@@ -70,7 +68,7 @@ class DinnerRepository {
 
           //削除ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
           case DocumentChangeType.removed:
-          print("remove:${dinner.id}");
+          //print("remove:${dinner.id}");
             dinnerList.removeWhere((m) => m.id == dinner.id);
             break;
         }

@@ -19,6 +19,8 @@ import 'package:menu/dinner/data/repository/dinner_repository.dart';
 
 // 夕食の履歴画面
 class DinnerList extends StatefulWidget {
+  const DinnerList({super.key});
+
   @override
   DinnerListState createState() => DinnerListState();
 }
@@ -30,7 +32,7 @@ class DinnerListState extends State<DinnerList> {
   
   @override
   Widget build(BuildContext context) {
-    print("dinner_list");
+    //print("dinner_list");
     
     return Consumer(
       builder: (context, ref, child) {
@@ -147,7 +149,7 @@ class DinnerListState extends State<DinnerList> {
                             : (selectFilter == "月") //月フィルター
                               ? dinners.where((dinner) => dinner.createAt!.year == selectDate.year && dinner.createAt!.month == selectDate.month).toList()                  
                               : dinners.where((dinner){//週フィルター
-                              return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(Duration(days: 1)));
+                              return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(const Duration(days: 1)));
                               }).toList();
 
                         //build完了後に合計金額のプロバイダーを更新する
@@ -195,7 +197,7 @@ class DinnerListState extends State<DinnerList> {
                                           children: [
                                             Text(
                                               DateFormat('yyyy/MM/dd(E)','ja').format(dinner.createAt!),
-                                              style: TextStyle(fontSize: 13),
+                                              style: const TextStyle(fontSize: 13),
                                               ),
                                             Text(
                                               maxText(dinner.select!.join(", "), 25),
@@ -217,10 +219,9 @@ class DinnerListState extends State<DinnerList> {
                                                 try {
 
                                                   //最近食べた日の更新（バッファに戻す）
-                                                  dinner.selectID!.forEach((id){
-                                                    print(id);
+                                                  for (var id in dinner.selectID!) {
                                                     MenuRepository().updateMenuIdDinnerDate(id);
-                                                  });
+                                                  }
                                                   
                                                   // 夕食データ削除
                                                   await DinnerRepository().deleteDinner(dinner); 

@@ -2,7 +2,6 @@ import 'dart:io'; //Fileを扱うため
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/menu/data/repository/menu_repository.dart';
-import 'package:menu/common/common_providers.dart';
 
 
 //メニューリスト
@@ -28,7 +27,7 @@ void dinnerButton(menu) {
   } else {
     menu.isDinner = true;
   }
-  print(currentUser!.uid);
+  //print(currentUser!.uid);
   MenuRepository().updateMenu(menu);
 }
 
@@ -40,8 +39,8 @@ void planButton(menu) {
   } else {
     menu.isPlan = true;
   }
-  print(currentUser!.uid);
-  print(menu.isPlan);
+  //print(currentUser!.uid);
+  //print(menu.isPlan);
   MenuRepository().updateMenu(menu);
 }
 
@@ -81,12 +80,10 @@ final totalPriceNotifierProvider =
 //メニュー新規作成から選択したファイル
 final selectedImageProvider = StateProvider<File?>((ref) => null);
 
-
 //タグのプルダウンの選択項目
 final StateProvider<String> dropDownProvider = StateProvider<String>((ref) {
   return '全て';
 });
-
 
 // 検索テキストを管理するプロバイダー
 final menuSearchTextProvider = StateProvider<String>((ref) => '');
@@ -102,13 +99,15 @@ final filteredMenusProvider = Provider<List<Menu>>((ref) {
     return isMatch;
   }).toList();
 
-// もしフィルタ結果が空なら、全てのメニューを返す
+// もしフィルタ結果が空なら、全てのメニューを返す.入力途中でカードが消えないように。
   if (filteredMenus.isEmpty) {
     return menus;
   }
-
   return filteredMenus;
 });
+
+
+
 
 
 

@@ -19,15 +19,20 @@ import 'package:menu/login/view/login_screen.dart';
 
 class MainPage extends ConsumerStatefulWidget {
 
-  Menu? menu; //menuを受け取れるようにする。
-  MaterialModel? material; //materialを受け取れるようにする。
-  MainPage({Key? key, this.menu, this.material}) : super(key: key); //menuデータを受け取ることができるようにする。
+  final Menu? menu; //menuを受け取れるようにする。
+  final MaterialModel? material; //materialを受け取れるようにする。
+
+  const MainPage({
+    super.key,
+    this.menu, 
+    this.material,
+    }); //menuデータを受け取ることができるようにする。
 
   @override
-  _MainPageState createState() => _MainPageState();
+  MainPageState createState() => MainPageState();
 }
 
-class _MainPageState extends ConsumerState<MainPage>
+class MainPageState extends ConsumerState<MainPage>
     with SingleTickerProviderStateMixin {
   //アニメーション制御Tickerに必要。vsynsが使用できる。タブコントローラで使用。
 
@@ -51,7 +56,7 @@ class _MainPageState extends ConsumerState<MainPage>
     //「夕飯」タブの変更を監視。「夕飯」タブ切り替え時に日付を今日の日付に変更する。
     _tabController.addListener(() {
       if (_tabController.index == 1) {
-        print("今日の夕飯のタブです");
+        //print("今日の夕飯のタブです");
         setState(() {
           ref.read(selectDinnerDateProvider.notifier).state = DateTime.now();
         });
@@ -62,12 +67,12 @@ class _MainPageState extends ConsumerState<MainPage>
     _pages = [
       const MenuList(category: '全て'),
       const MaterialListScreen(),
-      DinnerList(),
+      const DinnerList(),
       MenuCreateScreen(menu: menu),
       MaterialCreateScreen(material: material),
       MenuDetailScreen(menu: menu),
       MenuCreateScreen(menu: menu),
-      UserAuthentication(),
+      const UserAuthentication(),
       MaterialCreateScreen(material: material),
     ];
   }
@@ -97,7 +102,7 @@ class _MainPageState extends ConsumerState<MainPage>
   //ウィジェット
   @override
   Widget build(BuildContext context) {
-    print("main");
+    //print("main");
 
     //final otherPage = ref.read(pageProvider.notifier);
 
