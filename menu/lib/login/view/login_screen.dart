@@ -17,10 +17,10 @@ class UserAuthentication extends ConsumerStatefulWidget {
   const UserAuthentication({super.key});
 
   @override
-  _UserAuthentication createState() => _UserAuthentication();
+  UserAuthenticationState createState() => UserAuthenticationState();
 }
 
-class _UserAuthentication extends ConsumerState<UserAuthentication>
+class UserAuthenticationState extends ConsumerState<UserAuthentication>
     with SingleTickerProviderStateMixin {
   late TabController _tabController; //ログインと新規登録
 
@@ -407,10 +407,10 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
           }
 
           // MainPage に遷移
-          return MainPage();
+          return const MainPage();
         }
         _signInAnonymously(); // 匿名ログイン処理を呼び出し
-        return MainPage();
+        return const MainPage();
       },
     );
   }

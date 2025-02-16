@@ -50,7 +50,14 @@ class MenuListState extends ConsumerState<MenuList> {
     final searchFilteredMenus = ref.watch(filteredMenusProvider); // フィルタリングされた材料データ
  
 
-    return Stack( //フローボタンのためにstack使用。
+    return GestureDetector(// テキストフィールド以外をタッチしたときにキーボードを閉じるためにGestureDetector使用。
+        onTap: () {
+          // テキストフィールド以外をタッチしたときにキーボードを閉じる。FocusNodeでフォーカスを外す
+          FocusScope.of(context).requestFocus(FocusNode());
+        },
+        child:
+    
+    Stack( //フローボタンのためにstack使用。
       children: [
 
         //データの取得状況により表示を分ける
@@ -60,7 +67,7 @@ class MenuListState extends ConsumerState<MenuList> {
             //タグのフィルター。メニューリストをフィルター分だけにする。
             final filteredMenus = (category == '全て')
               ? menus
-              : category == '今日の夕食'
+              : category == '夕食'
                 ? menus.where((menu) => menu.isDinner == true).toList()
                 : category == '予定'
                   ? menus.where((menu) => menu.isPlan == true).toList()
@@ -74,18 +81,18 @@ class MenuListState extends ConsumerState<MenuList> {
                   return searchFilteredMenus.contains(menu);
                 }).toList();
 
-            // 「今日の夕食」タブの合計金額の初期計算
-            if (category == '今日の夕食') {
+            // 「夕食」タブの合計金額の初期計算
+            if (category == '夕食') {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ref.read(totalPriceNotifierProvider.notifier).updateTotalPrice(filteredMenus, ref);
               });
             }
 
-            //menuListProviderが変更された時に、「今日の夕食」タブの合計金額を再計算
+            //menuListProviderが変更された時に、「夕食」タブの合計金額を再計算
             ref.listen<AsyncValue<List<Menu>>>(
               menuListProvider,
               (previous, next) {
-                if (category == '今日の夕食') {
+                if (category == '夕食') {
                   WidgetsBinding.instance.addPostFrameCallback((_) {
                     ref.read(totalPriceNotifierProvider.notifier).updateTotalPrice(filteredMenus, ref);
                   });
@@ -93,7 +100,7 @@ class MenuListState extends ConsumerState<MenuList> {
               },
             );
 
-            // 各 quantityProviderが変更された時に、「今日の夕食」タブの合計金額を再計算
+            // 各 quantityProviderが変更された時に、「夕食」タブの合計金額を再計算
             for (int i = 0; i < filteredMenus.length; i++) {
               ref.listen<int>(
                 quantityProvider(i),
@@ -106,17 +113,65 @@ class MenuListState extends ConsumerState<MenuList> {
             }
             
             //ここからwidget要素
-            return Column(
-                  children: [
+            return 
+            //Stack(
+                  //children: [
+                    
+                    
+                    Column(
+                      children: [
+                        Stack(//検索窓の右側にアイコンを配置するため。
+                          children: [
+                            
+                          
                     // 検索テキストフィールド（上部に固定）---------------------------------------
                     searchBox(menuSearchController, ref, menuSearchTextProvider, '材料名'),//ref),//, materials),
-
-                    
+            Positioned(
+                      top: 0,
+                      right: 0,
+                      child: 
+                    Row(
+      mainAxisSize: MainAxisSize.min,  // アイコンを必要な分だけ並べる
+      children: [
+        
+        IconButton(
+          // フィルターや並び替えの機能が追加できる
+          icon: const Icon(
+            Icons.abc,
+            size: 25,
+          ),
+          onPressed: () {
+            setState(() {
+              //print("ボタンおしまいした");
+              //matchedMenus.sort((a, b) => a.name!.compareTo(b.name!));
+            });
+            
+            
+          },
+        ),
+        IconButton(
+          // フィルターや並び替えの機能が追加できる
+          icon: const Icon(
+            Icons.sort,
+            size: 25,
+          ),
+          onPressed: () {
+            setState(() {
+              //print("ボタンおしまいした");
+              //matchedMenus.sort((a, b) => a.createAt!.compareTo(b.createAt!));
+            });
+          },
+        ),
+      ]),
+                    )
+],
+                        ),
+                    //スクロール可能領域------------------------------------------
                     Expanded(
                       child:SingleChildScrollView(
                         child:
             
-             (matchedMenus.isEmpty && category!='今日の夕食') // データがない場合
+             (matchedMenus.isEmpty && category!='夕食') // データがない場合
               ? const Padding(
                 padding: EdgeInsets.only(top: 8.0),
               child: Row(
@@ -143,7 +198,7 @@ class MenuListState extends ConsumerState<MenuList> {
                 //カード一枚分の設定
                 if(index < matchedMenus.length){
                   return Card(
-                    color: matchedMenus[index].isDinner! ? const Color.fromARGB(255, 251, 237, 237) : Colors.white,
+                    color: Colors.white,
                     elevation: 1, //影の深さ
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -195,19 +250,22 @@ class MenuListState extends ConsumerState<MenuList> {
                                   // ファイルを削除
                                   if (await file.exists()) {
                                     await file.delete();
-                                    print('ファイルが削除されました。');
+                                    //print('ファイルが削除されました。');
                                   } else {
-                                    print('ファイルは存在しません。');
+                                    //print('ファイルは存在しません。');
                                   }
                                   //メニュー編集画面へ遷移
                                   ref.read(selectedImageProvider.notifier).state = null;
                                   ref.read(pageProvider.notifier).state = 6;
+                                  
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(builder: (context) => MainPage(menu: matchedMenus[index])),
                                   ).then((_){
+                                    
                                     setState((){});//編集ページから戻った時に、編集したデータを表示させるために再描写
                                   });
+
                                 },
                                 //iconSize: 10,
                               ),
@@ -253,13 +311,13 @@ class MenuListState extends ConsumerState<MenuList> {
 
                                   if (result == true) {
                                     // 「はい」が選択された場合の処理
-                                    print("delete");
-                                    print(currentUser!.uid);
+                                    //print("delete");
+                                    //print(currentUser!.uid);
                                     MenuRepository().deleteMenu(matchedMenus[index]); //メニュー削除
                                     //Navigator.pop(context);//元画面(メニュー一覧)に遷移
                                   } else {
                                     // 「いいえ」が選択された場合、何もしない
-                                    print('操作をキャンセルしました');
+                                    //print('操作をキャンセルしました');
                                   }
 
                                 },
@@ -275,17 +333,17 @@ class MenuListState extends ConsumerState<MenuList> {
                                   //値段
                                   Text("${matchedMenus[index].unitPrice}円(１人前)",
                                   style: const TextStyle(
-                                    //fontSize: 10,
+                                    fontSize: 12,
                                     //decoration: TextDecoration.underline,
                                     ),
                                     ),
 
                                   //2列目(最近食べた日）
-                                  Text("最近食べた日:${matchedMenus[index].dinnerDate != null 
+                                  Text("最近食べた日:${matchedMenus[index].dinnerDate!.year != 1970
                                   ? DateFormat('yyyy/MM/dd(E)','ja').format(matchedMenus[index].dinnerDate!) 
                                   : "ー"}",
                                   style: const TextStyle(
-                                    //fontSize: 10,
+                                    fontSize: 12,
                                     //decoration: TextDecoration.underline,
                                     ),
                                     ),
@@ -302,20 +360,26 @@ class MenuListState extends ConsumerState<MenuList> {
                                         children: [
 
                                         
-                                        
-                                      //「今日の夕食」にするボタン
-                                      OutlinedButton(//枠線ありボタン
+
+                                      //「夕食」にするボタン
+                                      ElevatedButton(//枠線ありボタン
                                         onPressed: () { 
                                           dinnerButton(matchedMenus[index]); 
                                           },
-                                        style: OutlinedButton.styleFrom(
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: matchedMenus[index].isDinner! ? 0 : 3,//影の深さ
                                           //padding: EdgeInsets.zero, // 完全にパディングを削除
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
-                                          minimumSize: const Size(60, 30), // 最小サイズを指定
-                                          backgroundColor: matchedMenus[index].isDinner! ? const Color.fromARGB(255, 157, 210, 244) : const Color.fromARGB(255, 255, 168, 37)
+                                          minimumSize: const Size(60, 25), // 最小サイズを指定
+                                          backgroundColor: matchedMenus[index].isDinner! 
+                                            ? const Color.fromARGB(255, 157, 210, 244) 
+                                            : const Color.fromARGB(255, 228, 228, 228),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5), // 角の丸みを20に設定
+                                          ),
                                         ),
                                         child: Text(
-                                          matchedMenus[index].isDinner! ? '夕食✖️':'夕食',
+                                          matchedMenus[index].isDinner! ? '夕食':'夕食',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.black
@@ -325,18 +389,24 @@ class MenuListState extends ConsumerState<MenuList> {
                                       const SizedBox(width: 10,),
 
                                       //「予定」にするボタン
-                                      OutlinedButton(//枠線ありボタン
+                                      ElevatedButton(//枠線ありボタン
                                         onPressed: () { 
                                           planButton(matchedMenus[index]); 
                                           },
-                                        style: OutlinedButton.styleFrom(
+                                        style: ElevatedButton.styleFrom(
+                                          elevation: matchedMenus[index].isPlan! ? 0 : 3,//影の深さ
                                           //padding: EdgeInsets.zero, // 完全にパディングを削除
                                           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2), // パディングを調整
-                                          minimumSize: const Size(60, 30), // 最小サイズを指定
-                                          backgroundColor: matchedMenus[index].isPlan! ? const Color.fromARGB(255, 157, 210, 244): const Color.fromARGB(255, 254, 130, 239)
+                                          minimumSize: const Size(60, 25), // 最小サイズを指定
+                                          backgroundColor: matchedMenus[index].isPlan! 
+                                            ? const Color.fromARGB(255, 244, 157, 240)
+                                            : const Color.fromARGB(255, 228, 228, 228),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5), // 角の丸みを20に設定
+                                          ),
                                         ),
                                         child: Text(
-                                          matchedMenus[index].isPlan! ? '予定✖️':'予定',
+                                          matchedMenus[index].isPlan! ? '予定':'予定',
                                           style: const TextStyle(
                                             fontSize: 12,
                                             color: Colors.black
@@ -346,7 +416,7 @@ class MenuListState extends ConsumerState<MenuList> {
                                       ],
                                       ),
                                       //「人前」の表示
-                                      category == '今日の夕食'
+                                      category == '夕食'
                                       ? Consumer(builder: (BuildContext context, WidgetRef ref, child){
                                         final dispQuantity = ref.watch(quantityProvider(index));//何人前
                                         return Row(
@@ -425,9 +495,9 @@ class MenuListState extends ConsumerState<MenuList> {
                                 //画像            
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(10),
-                                  child:Container(
-                                    width: 120,  // 必要に応じてサイズを設定
-                                    height: 120, 
+                                  child:SizedBox(
+                                    width: 115,  // 必要に応じてサイズを設定
+                                    height: 115, 
                                     child:matchedMenus[index].imageURL.toString() != 'noData'
                           
                                     ? 
@@ -439,7 +509,7 @@ class MenuListState extends ConsumerState<MenuList> {
                                       child: const CircularProgressIndicator(strokeWidth: 15.0),
                                     ),
                                     
-                                    errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                                    errorWidget: (context, url, error) => const Icon(Icons.error), // エラーの場合に表示するウィジェット
                                     fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
                                   )
                                     /*
@@ -469,7 +539,7 @@ class MenuListState extends ConsumerState<MenuList> {
                                       favoriteButton(ref, matchedMenus[index]);
                                     },
                                     // 表示アイコン
-                                    icon: Icon(Icons.favorite),
+                                    icon: const Icon(Icons.favorite),
                                     // アイコン色
                                     color: matchedMenus[index].isFavorite!
                                     ? Colors.pink
@@ -487,9 +557,9 @@ class MenuListState extends ConsumerState<MenuList> {
                     ),
                   );
                 
-                //「今日の夕食」カード下の表示
+                //「夕食」カード下の表示
                 }else{
-                  return category == '今日の夕食'
+                  return category == '夕食'
                     ? Column(
                     children: [
                       const SizedBox(height: 10),
@@ -503,7 +573,7 @@ class MenuListState extends ConsumerState<MenuList> {
                             mainAxisAlignment: MainAxisAlignment.center,//中央よせ
                             children: [
                               //日付選択*************************************
-                              TextButton(
+                              IconButton(
                                 onPressed: () async{
                                   DateTime? pickDate;
                                   pickDate = await showDatePicker(
@@ -519,15 +589,11 @@ class MenuListState extends ConsumerState<MenuList> {
                                     ref.read(selectDinnerDateProvider.notifier).state = pickDate;//選択日をプロバイダに設定
                                   }
                                 },
-                                child: const Text(
-                                  "日付変更",
-                                  style: TextStyle(
-                                    fontSize: 15,
-                                  ),
-                                ),
+                                icon: const Icon(Icons.calendar_month),
+                                iconSize: 30,
                               ),
                               //選択日付の表示-----------------------------------------
-                              Text("${DateFormat('yyyy/MM/dd(E)','ja').format(selectDinnerDatePro) }:合計${totalPrice}円")
+                              Text("${DateFormat('yyyy/MM/dd(E)','ja').format(selectDinnerDatePro) }:合計$totalPrice円")
                               
                             ],
                           );
@@ -546,17 +612,17 @@ class MenuListState extends ConsumerState<MenuList> {
                           DinnerRepository().addDinner(dinner);//データベースにデータ追加
                           
                           //最近食べた日の項目更新
-                          matchedMenus.forEach((menu){
-                            menu.dinnerDateBuf = menu.dinnerDate;//バッファに保存してから
+                          for (var menu in matchedMenus){
+                             menu.dinnerDateBuf = menu.dinnerDate;//バッファに保存してから
                             menu.dinnerDate = DateTime.now();//更新
                             MenuRepository().updateMenu(menu);
-                          });
-
+                          }
+                          
                           //ページ遷移
                           ref.read(pageProvider.notifier).state = 2;
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MainPage()),
+                              MaterialPageRoute(builder: (context) => const MainPage()),
                           );
                          },
                         child: const Text('夕食決定！'),
@@ -568,7 +634,7 @@ class MenuListState extends ConsumerState<MenuList> {
                           ref.read(pageProvider.notifier).state = 0;
                           Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MainPage()),
+                              MaterialPageRoute(builder: (context) => const MainPage()),
                           );
 
                          },
@@ -579,15 +645,18 @@ class MenuListState extends ConsumerState<MenuList> {
                   :const SizedBox.shrink();
                 }
               }
-         ) ))] );
+         ) 
+         )
+         )
 
-            //}
+                  ]);
+         //]);
+
           }, 
           
           error: (e, stackTrace) => Center(child: Text('Error: $e')), 
           loading: () => const Center(child: CircularProgressIndicator()),
           ),
-  
 
         // フローティングボタンを配置
         Positioned(
@@ -601,9 +670,9 @@ class MenuListState extends ConsumerState<MenuList> {
                   // ファイルを削除
                   if (await file.exists()) {
                     await file.delete();
-                    print('ファイルが削除されました。');
+                    //print('ファイルが削除されました。');
                   } else {
-                    print('ファイルは存在しません。');
+                    //print('ファイルは存在しません。');
                   }
                   ref.read(selectedImageProvider.notifier).state = null;
 
@@ -613,14 +682,16 @@ class MenuListState extends ConsumerState<MenuList> {
                   
                   context,
                   
-                  MaterialPageRoute(builder: (context) => MainPage()),
+                  MaterialPageRoute(builder: (context) => const MainPage()),
               );
             },
             child: const Icon(Icons.add),
           ),
         ),
       ],
-    );
+   ) );
+
+
   }
 
 }

@@ -106,13 +106,13 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
 
                                   if (result == true) {
                                     // 「はい」が選択された場合の処理
-                                    print("delete");
-                                    print(currentUser!.uid);
+                                    //print("delete");
+                                    //print(currentUser!.uid);
                                     MenuRepository().deleteMenu(menu); //メニュー削除
                                     Navigator.pop(context);//元画面(メニュー一覧)に遷移
                                   } else {
                                     // 「いいえ」が選択された場合、何もしない
-                                    print('操作をキャンセルしました');
+                                    //print('操作をキャンセルしました');
                                   }
 
                                 },
@@ -128,9 +128,9 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                                   // ファイルを削除
                                   if (await file.exists()) {
                                     await file.delete();
-                                    print('ファイルが削除されました。');
+                                    //('ファイルが削除されました。');
                                   } else {
-                                    print('ファイルは存在しません。');
+                                    //print('ファイルは存在しません。');
                                   }
                                   //メニュー編集画面へ遷移
                                   ref.read(selectedImageProvider.notifier).state = null;
@@ -204,7 +204,7 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                             scale: 0.3, // 縮小率を指定
                             child: const CircularProgressIndicator(strokeWidth: 20.0),
                           ),
-                          errorWidget: (context, url, error) => Icon(Icons.error), // エラーの場合に表示するウィジェット
+                          errorWidget: (context, url, error) => const Icon(Icons.error), // エラーの場合に表示するウィジェット
                           fit: BoxFit.cover, // 画像の表示方法を指定（例：全体をカバー）
                           )
                         )
@@ -257,7 +257,7 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                               ),
                               SizedBox(
                                 width: 80,
-                                child: Text(map['price'].toString()+" 円",
+                                child: Text("${map['price'].toString()} 円",
                                 textAlign: TextAlign.right
                                 ),
                               ),

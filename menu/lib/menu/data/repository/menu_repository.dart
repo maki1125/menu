@@ -18,9 +18,9 @@ class MenuRepository {
   factory MenuRepository() {
     final firebaseUser = FirebaseAuth.instance.currentUser;
     if(firebaseUser != null){
-      _instance ??= MenuRepository._(firebaseUser!); //??=はnullの場合、代入のいみ。
+      _instance ??= MenuRepository._(firebaseUser); //??=はnullの場合、代入のいみ。
       // 既存インスタンスの `userId` が異なる場合
-    if (_instance!.user.uid != firebaseUser!.uid) {
+    if (_instance!.user.uid != firebaseUser.uid) {
       throw Exception("MenuRepository is already initialized with a different user.");
     }
     }
@@ -125,11 +125,11 @@ class MenuRepository {
     if (docSnapshot.exists) {
       //Menuに変換
       final menuData = docSnapshot.data() as Map<String, dynamic>;
-      print(menuData["dinnerDateBuf"].toDate());
+      //print(menuData["dinnerDateBuf"].toDate());
       final menu = Menu.fromFirestore(menuData);
 
       //バッファに戻す
-      print(menu.dinnerDateBuf);
+      //print(menu.dinnerDateBuf);
       menu.dinnerDate = menu.dinnerDateBuf; 
 
       //データ更新
@@ -138,9 +138,9 @@ class MenuRepository {
       .doc(menuId)
       .update(menuToMap(menu));
 
-      print("Menu name: ${menu.name}");
+      //print("Menu name: ${menu.name}");
     } else {
-      print("Menu document does not exist.");
+      //print("Menu document does not exist.");
     }
   }
 }

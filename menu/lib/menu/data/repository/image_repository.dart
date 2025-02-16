@@ -53,7 +53,7 @@ class ImageRepository {
     final File? file = ref.read(selectedImageProvider);  // Riverpodで値取得
     if(file != null){
     final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
-    final String name = file!.path.split('/').last;
+    final String name = file.path.split('/').last;
     final String filename = '${timestamp}_$name';
     final TaskSnapshot task = await FirebaseStorage.instance
       .ref()
@@ -64,10 +64,10 @@ class ImageRepository {
     final String imagePath = task.ref.fullPath;// 画像削除時に使用。users/AC3iWb7RnqM4gCmeLOD9/images/1735480514815890_IMG_0111.jpeg
     menu.imageURL = imageURL;
     menu.imagePath = imagePath;
-    file!.delete(); //一時ファイルに保存したデータを削除する。
+    file.delete(); //一時ファイルに保存したデータを削除する。
     }
     MenuRepository().addMenu(menu);
-    print(menu.imageURL);
+    //print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
     
   }
@@ -77,7 +77,7 @@ class ImageRepository {
     final File? file = ref.read(selectedImageProvider);  // Riverpodで値取得
     if(file != null){
     final int timestamp = DateTime.now().microsecondsSinceEpoch; //735496096789000
-    final String name = file!.path.split('/').last;
+    final String name = file.path.split('/').last;
     final String filename = '${timestamp}_$name';
     final TaskSnapshot task = await FirebaseStorage.instance
       .ref()
@@ -90,7 +90,7 @@ class ImageRepository {
     menu.imagePath = imagePath;
     }
     MenuRepository().updateMenu(menu);
-    print(menu.imageURL);
+    //print(menu.imageURL);
     ref.read(selectedImageProvider.notifier).state = null;
   }
 

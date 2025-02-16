@@ -198,7 +198,7 @@ class MaterialListScreenState extends ConsumerState<MaterialListScreen> {
                   ref.read(pageProvider.notifier).state = 4; //表示ページ
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MainPage()),
+                    MaterialPageRoute(builder: (context) => const MainPage()),
                   );
                 },
                 child: const Icon(Icons.add), // 追加アイコン

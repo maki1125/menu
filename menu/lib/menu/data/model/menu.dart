@@ -60,8 +60,8 @@ class Menu {
       isDinner: data['isDinner'] as bool? ?? false,
       isPlan: data['isPlan'] as bool? ?? false,
       id: data['id'] as String? ?? "noData",
-      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate() ?? DateTime.now(),
-      dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      dinnerDate: (data['dinnerDate'] as Timestamp?)?.toDate() ?? DateTime(1970, 1, 1),
+      dinnerDateBuf: (data['dinnerDateBuf'] as Timestamp?)?.toDate() ?? DateTime(1970, 1, 1),
       price: data['price'] as num? ?? 0,
       unitPrice: data['unitPrice'] as int? ?? 0,
     );
