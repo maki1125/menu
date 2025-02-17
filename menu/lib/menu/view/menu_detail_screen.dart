@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cached_network_image/cached_network_image.dart'; //画像キャッシュ
 
 import 'package:menu/main_screen.dart';
-import 'package:menu/common/common_widget.dart';
 import 'package:menu/common/common_providers.dart';
 import 'package:menu/menu/data/model/menu.dart';
 import 'package:menu/menu/data/repository/menu_repository.dart';
@@ -163,7 +162,10 @@ class MenuDetailScreenState extends ConsumerState<MenuDetailScreen> {
                           Padding(
                             padding: const EdgeInsets.only(left: 10),
                             child: Text(
-                              maxText(menu.name!, 9),
+                              //maxText(menu.name!, 9),
+                              menu.name!,
+                              overflow: TextOverflow.ellipsis, // 溢れた場合は "..." で省略
+                              maxLines: 2, // 最大2行まで表示
                               style: const TextStyle(
                                 //color: Colors.red,
                                 fontSize: 25,

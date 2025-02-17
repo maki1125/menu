@@ -3,15 +3,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:menu/dinner/view_model/dinner_view_model.dart';
 
 import 'package:menu/main_screen.dart';
 import 'package:menu/login/view_model/login_view_model.dart';
 import 'package:menu/login/view/login_forgotpassword_screen.dart';
-//import 'package:menu/menu/view_model/menu_view_model.dart';
+import 'package:menu/material/view_model/material_view_model.dart';
+import 'package:menu/menu/view_model/menu_view_model.dart';
 import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/material/data/repository/material_repository.dart';
-
 import 'package:menu/dinner/data/repository/dinner_repository.dart';
+import 'package:menu/common/common_widget.dart';
 
 class UserAuthentication extends ConsumerStatefulWidget {
   const UserAuthentication({super.key});
@@ -39,14 +41,18 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
   @override
   Widget build(BuildContext context) {
     // ビルド後にmenuRepositoryインスタンスをリセット
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_){
       MenuRepository.resetInstance(); // インスタンスのリセット
       MaterialRepository.resetInstance(); // インスタンスのリセット
       DinnerRepository.resetInstance(); // インスタンスのリセット
+      ref.invalidate(menuListProvider); // キャッシュをクリア
+      ref.invalidate(materialListProvider); // キャッシュをクリア
+      ref.invalidate(dinnerListProvider); // キャッシュをクリア
       //final refreshedMenu = await ref.refresh(menuListProvider.future);
       //final refreshedMaterial = await ref.refresh(materialListProvider.future);
       //final refreshedDinner = await ref.refresh(dinnerListProvider.future);
       //print("refresh:${refreshedMenu}");
+      //print("リポジトリリセットしました。");
     });
 
     final emailController = TextEditingController(); // メールアドレス入力用
@@ -99,7 +105,7 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
     );
   }
 
-  //ログイン後の画面
+  //ログイン後の画面***************************************************************
   Widget _buildLoggedInView(context, user, authService) {
     return Center(
       child: Column(
@@ -107,11 +113,11 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
         children: [
           //アイコン--------------------------------
           user.photoURL != null
-              ? CircleAvatar(
-                  backgroundImage: CachedNetworkImageProvider(user.photoURL),
-                  radius: 32,
-                )
-              : const Icon(Icons.account_circle, size: 64),
+          ? CircleAvatar(
+              backgroundImage: CachedNetworkImageProvider(user.photoURL),
+              radius: 32,
+            )
+          : const Icon(Icons.account_circle, size: 64),
           const SizedBox(height: 20),
 
           //こんにちはのテキスト---------------------
@@ -121,8 +127,9 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
 
           //ログアウトボタン------------------------
           IconButton(
-            onPressed: () async {
+            onPressed: () async{
               await authService.signOut();
+              showMessage("ログアウトしました");
             },
             icon: const Icon(Icons.logout),
           ),
@@ -229,7 +236,7 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
     );
   }
 
-  // ログインタブの画面
+  // ログインタブの画面*****************************************************
   Widget _buildLoginTab(
     BuildContext context,
     TextEditingController emailController,
@@ -310,7 +317,7 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
     );
   }
 
-  // 新規登録タブの画面
+  // 新規登録タブの画面***********************************************************
   Widget _buildSignUpTab(
     BuildContext context,
     TextEditingController emailController,
@@ -383,11 +390,20 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(), // ユーザー情報を取得
       builder: (context, snapshot) {
-        // ビルド後にmenuRepositoryインスタンスをリセット
-        WidgetsBinding.instance.addPostFrameCallback((_) async {
+        //匿名ログインビルド後にmenuRepositoryインスタンスをリセット
+        WidgetsBinding.instance.addPostFrameCallback((_) {
           MenuRepository.resetInstance(); // インスタンスのリセット
+          MaterialRepository.resetInstance(); // インスタンスのリセット
+          DinnerRepository.resetInstance(); // インスタンスのリセット
+
+          ref.invalidate(menuListProvider); // キャッシュをクリア
+          ref.invalidate(materialListProvider); // キャッシュをクリア
+          ref.invalidate(dinnerListProvider); // キャッシュをクリア
+          
+          //MenuRepository.resetInstance(); // インスタンスのリセット
           //final refreshedMenu = await ref.refresh(menuListProvider.future);
           // print("refresh:${refreshedMenu}");
+          print("リポジトリをリセットしました。");
         });
 
         if (snapshot.connectionState == ConnectionState.waiting) {

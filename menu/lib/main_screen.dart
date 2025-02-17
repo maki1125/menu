@@ -54,12 +54,20 @@ class MainPageState extends ConsumerState<MainPage>
 
     //「夕飯」タブの変更を監視。「夕飯」タブ切り替え時に日付を今日の日付に変更する。
     _tabController.addListener(() {
+
+      //夕飯タブに切り替えた時に、設定日時を今日に戻す
       if (_tabController.index == 1) {
         //print("今日の夕飯のタブです");
         setState(() {
           ref.read(selectDinnerDateProvider.notifier).state = DateTime.now();
         });
       }
+
+      //タブを切り替えた時に、検索窓のテキストを初期化
+      //if (_tabController.indexIsChanging) {
+        ref.read(menuSearchTextProvider.notifier).state = '';
+      //}
+
     });
 
     //ページリストの初期化.menuを参照するため、初期化内で参照する。

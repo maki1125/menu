@@ -36,7 +36,7 @@ class MenuCreateScreenState extends ConsumerState<MenuCreateScreen> {
   List<Map<String, dynamic>> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
   //final List<dynamic> _savedMaterials= [];  //保存する材料リスト。メソッドで使用するため、widgetの外で定義する。
   late Menu _menu; //登録するデータをここに入れる
-  final List<String> dropdownItems = tabCategories.sublist(3); //タグのプルダウンの項目
+  final List<String> dropdownItems = tabCategories.sublist(4); //タグのプルダウンの項目
   bool _isLoading = false; // 登録処理のローディング状態を管理
   Map<String, dynamic>?  selectedMaterial; // 材料一覧から選択時に再描写のために使用
   num calculatedPrice = 0; // 計算結果を保持する変数.小数点まで計算する
