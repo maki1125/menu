@@ -238,7 +238,9 @@ class AuthService {
   // サインアウト
   Future<void> signOut() async {
     await _auth.signOut();
+    print("ログアウトしました");
     await signInAnony(); //サインアウト後に匿名ログインする。
+    print("匿名ログインしました");
   }
 
   //アカウント削除＋データ全削除
@@ -284,10 +286,10 @@ class AuthService {
     try {
       final storageRef = FirebaseStorage.instance.ref(folderPath);
 
-      // 📌 フォルダ内のすべてのファイルを取得
+      //フォルダ内のすべてのファイルを取得
       final ListResult result = await storageRef.listAll();
 
-      // 📌 すべてのファイルを削除
+      //すべてのファイルを削除
       for (Reference fileRef in result.items) {
         //print("Deleted: ${fileRef.fullPath}");
         await fileRef.delete();

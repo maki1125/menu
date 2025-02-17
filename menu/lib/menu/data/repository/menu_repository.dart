@@ -25,8 +25,6 @@ class MenuRepository {
     }
     }
     return _instance!;
-
-    
   }
 
   // インスタンスをリセットするメソッド

@@ -218,9 +218,11 @@ class MenuListState extends ConsumerState<MenuList> {
                                               children: [
 
                                                 //料理名-----------------------------------------------
-                                                Text(matchedMenus[index].name!.length > nameMaxLength 
+                                                Text(
+                                                  matchedMenus[index].name!.length > nameMaxLength 
                                                   ? '${matchedMenus[index].name!.substring(0, nameMaxLength)}...' 
                                                   : matchedMenus[index].name!,
+                                                  //overflow: TextOverflow.ellipsis, 
                                                   style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
                                                 ),
 
@@ -316,12 +318,28 @@ class MenuListState extends ConsumerState<MenuList> {
                                               ],
                                             ),
 
-                                            //２列目（値段）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
-                                            Text("${matchedMenus[index].unitPrice}円(１人前)",
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                //decoration: TextDecoration.underline,
-                                              ),
+                                            //２列目（値段とタグ）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,//等間隔 （両端空間なし）
+                                              children: [
+                                                Text("${matchedMenus[index].unitPrice}円(１人前)",
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    //decoration: TextDecoration.underline,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(right: 5),
+                                                  child: Text(matchedMenus[index].tag=="全て"
+                                                  ? "カテゴリー無"
+                                                  : matchedMenus[index].tag!,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    //decoration: TextDecoration.underline,
+                                                  ),
+                                                  )
+                                                ),
+                                              ],
                                             ),
 
                                             //３列目(最近食べた日）ーーーーーーーーーーーーーーーーーーーーーーーーーーーーー

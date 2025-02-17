@@ -110,8 +110,6 @@ class AppBarComponentWidget extends ConsumerWidget
 
   @override
   Size get preferredSize => const Size.fromHeight(50); //AppBarの高さを指定
-
-  
 }
 
 //ポップアップメッセージ(メッセージのみ)

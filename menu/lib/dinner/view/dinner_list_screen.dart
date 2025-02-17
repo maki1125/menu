@@ -90,7 +90,7 @@ class DinnerListState extends State<DinnerList> {
                       children: [
 
                         //日付選択*************************************
-                        TextButton(
+                        IconButton(
                           onPressed: () async{
                             DateTime? pickDate;
                             pickDate = await showDatePicker(
@@ -106,13 +106,11 @@ class DinnerListState extends State<DinnerList> {
                               ref.read(selectedDateProvider.notifier).state = pickDate;//選択日をプロバイダに設定
                             }
                           },
-                          child: const Text(
-                            "日付選択",
-                            style: TextStyle(
-                              fontSize: 15,
-                            ),
-                          ),
+                          icon: const Icon(Icons.calendar_month),
+                          iconSize: 30,
                         ),
+                        
+                        
 
                         //選択されたフィルタの表示**********************************
                         Expanded(
@@ -124,7 +122,10 @@ class DinnerListState extends State<DinnerList> {
                                 ? "日付選択して下さい"
                                 : selectFilter == "月" //フィルタ選択が月の場合
                                   ? '${selectDate.year}年${selectDate.month}月'
-                                  : '${dateFormat(selectWeek[0])} ～ ${dateFormat(selectWeek[6])}', //フィルタ選択が週の場合
+                                  : selectFilter == "週" //フィルタ選択が月の場合
+                                    ? "${DateFormat('yyyy/MM/dd(E)','ja').format(selectWeek[0])}～${DateFormat('yyyy/MM/dd(E)','ja').format(selectWeek[6])}"
+                                    //'${dateFormat(selectWeek[0])} ～ ${dateFormat(selectWeek[6])}' //フィルタ選択が週の場合
+                                    : DateFormat('yyyy/MM/dd(E)','ja').format(selectDate),
                                 style: const TextStyle(
                                   fontSize: 16,
                                   //fontWeight: FontWeight.bold
@@ -147,10 +148,16 @@ class DinnerListState extends State<DinnerList> {
                         : selectDate == null //フィルターは選択されているが、日付選択していない。
                           ? dinners
                             : (selectFilter == "月") //月フィルター
-                              ? dinners.where((dinner) => dinner.createAt!.year == selectDate.year && dinner.createAt!.month == selectDate.month).toList()                  
-                              : dinners.where((dinner){//週フィルター
-                              return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(const Duration(days: 1)));
-                              }).toList();
+                              ? dinners.where((dinner){
+                                return dinner.createAt!.year == selectDate.year && dinner.createAt!.month == selectDate.month;
+                                }).toList()                  
+                              : (selectFilter == "週") //週フィルター
+                                ? dinners.where((dinner){
+                                  return dinner.createAt!.isAfter(selectWeek[0]) && dinner.createAt!.isBefore(selectWeek[6].add(const Duration(days: 1)));
+                                  }).toList()
+                                : dinners.where((dinner){
+                                  return dinner.createAt!.year == selectDate.year && dinner.createAt!.month == selectDate.month && dinner.createAt!.day == selectDate.day;
+                                  }).toList();
 
                         //build完了後に合計金額のプロバイダーを更新する
                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -171,72 +178,87 @@ class DinnerListState extends State<DinnerList> {
 
                           //カードの表示＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
                           return Card(
-                              color: dinner.createAt!.weekday == 6 //土曜日
-                              ? const Color.fromARGB(255, 225, 246, 255)
-                              : dinner.createAt!.weekday == 7 //日曜日
-                                ? const Color.fromARGB(255, 255, 229, 242)
-                                : Colors.white,
-                              elevation: 1.0, // 影の設定
-                              //margin: const EdgeInsets.all(0), // 余白
-                              shape: RoundedRectangleBorder(// カードの形状
-                                //side: const BorderSide(
-                                    //color: Colors.blue, width: 1.0), // 枠線
-                                borderRadius:BorderRadius.circular(10.0), // 角丸
-                              ),
-                              child: SizedBox(
-                                height: 70,
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(4),
-                                    child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,//等間隔 （両端空間なし）
-                                      children: [
-                                        Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,// 中央寄せ
-                                          crossAxisAlignment: CrossAxisAlignment.start,//左寄せ
-                                          children: [
-                                            Text(
-                                              DateFormat('yyyy/MM/dd(E)','ja').format(dinner.createAt!),
-                                              style: const TextStyle(fontSize: 13),
-                                              ),
-                                            Text(
-                                              maxText(dinner.select!.join(", "), 25),
-                                              style: const TextStyle(fontSize: 15,
-                                              //fontWeight: FontWeight.bold
-                                              ),
-                                              overflow:TextOverflow.ellipsis, // テキストがはみ出た場合の処理
-                                              maxLines: 1,
-                                            ),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            Text('${dinner.price.toString()}円',
-                                              style: const TextStyle(fontSize: 14)),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete),
-                                              onPressed: () async {
-                                                try {
+                            color: dinner.createAt!.weekday == 6 //土曜日
+                            ? const Color.fromARGB(255, 225, 246, 255)
+                            : dinner.createAt!.weekday == 7 //日曜日
+                              ? const Color.fromARGB(255, 255, 229, 242)
+                              : Colors.white,
+                            elevation: 1.0, // 影の設定
+                            //margin: const EdgeInsets.all(0), // 余白
+                            shape: RoundedRectangleBorder(// カードの形状
+                              //side: const BorderSide(
+                                  //color: Colors.blue, width: 1.0), // 枠線
+                              borderRadius:BorderRadius.circular(10.0), // 角丸
+                            ),
+                            child: 
+                              Padding(
+                                padding: const EdgeInsets.all(2),
+                                child: 
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,// 上下方向の中央寄せ
+                                    crossAxisAlignment: CrossAxisAlignment.start,//左寄せ
+                                    children: [
 
-                                                  //最近食べた日の更新（バッファに戻す）
-                                                  for (var id in dinner.selectID!) {
-                                                    MenuRepository().updateMenuIdDinnerDate(id);
+                                      //日付と値段と削除アイコン
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,//等間隔 （両端空間なし）
+                                        children: [
+
+                                          //日付ーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                          Text(
+                                            DateFormat('yyyy/MM/dd(E)','ja').format(dinner.createAt!),
+                                            style: const TextStyle(fontSize: 13),
+                                          ),
+
+                                          //値段と削除アイコン
+                                          Row(
+                                            children: [
+                                              //値段ーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                              Text('${dinner.price.toString()}円',
+                                                style: const TextStyle(fontSize: 14)
+                                              ),
+
+                                              //ゴミ箱アイコンーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                              InkWell(
+                                                borderRadius: BorderRadius.circular(50), // 丸い波紋効果
+                                                child: const Padding(
+                                                  padding: EdgeInsets.all(4.0), // タッチ領域を調整
+                                                  child: Icon(
+                                                    Icons.delete,
+                                                    size: 23,
+                                                  ),
+                                                ),
+                                                onTap: ()async{
+                                                  try {
+                                                    //最近食べた日の更新（バッファに戻す）
+                                                    for (var id in dinner.selectID!) {
+                                                      MenuRepository().updateMenuIdDinnerDate(id);
+                                                    }
+                                                    // 夕食データ削除
+                                                    await DinnerRepository().deleteDinner(dinner); 
+                                                  } catch (e) {
+                                                    showMessage(
+                                                        '削除に失敗しました。再度お試しください。$e');
                                                   }
-                                                  
-                                                  // 夕食データ削除
-                                                  await DinnerRepository().deleteDinner(dinner); 
-                                                } catch (e) {
-                                                  showMessage(
-                                                      '削除に失敗しました。再度お試しください。$e');
                                                 }
-                                              },
-                                            ),
-                                          ],
-                                        )
-                                      ],
-                                    )
-                                  )
-                                )
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+
+                                      //メニューの表示ーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+                                      Text(
+                                        //maxText(dinner.select!.join(", "), 25),
+                                        dinner.select!.join(", "),
+                                        style: const TextStyle(fontSize: 15,
+                                        //fontWeight: FontWeight.bold
+                                        ),
+                                        overflow:TextOverflow.ellipsis, // テキストがはみ出た場合の処理
+                                        maxLines: 2,
+                                      ),
+                                    ],
+                                  ),
                               )
                             );
                           },
@@ -260,7 +282,7 @@ class DinnerListState extends State<DinnerList> {
   // フィルターのドロップダウン
   Widget _dropDownFileter(ref) {
     final selectedValue = ref.watch(dropDownProvider); // プルダウンの選択項目    
-    final List<String> dropdownItems = ["月", "週"]; //タグのプルダウンの項目
+    final List<String> dropdownItems = ["月", "週", "日"]; //タグのプルダウンの項目
     return DropdownButton(
       hint: const Text('フィルタ'),
       value: dropdownItems.contains(selectedValue)
