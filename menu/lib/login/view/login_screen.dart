@@ -14,6 +14,7 @@ import 'package:menu/menu/data/repository/menu_repository.dart';
 import 'package:menu/material/data/repository/material_repository.dart';
 import 'package:menu/dinner/data/repository/dinner_repository.dart';
 import 'package:menu/common/common_widget.dart';
+import 'package:menu/login/view/addlinefriend_screen.dart';
 
 class UserAuthentication extends ConsumerStatefulWidget {
   const UserAuthentication({super.key});
@@ -41,7 +42,7 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
   @override
   Widget build(BuildContext context) {
     // ビルド後にmenuRepositoryインスタンスをリセット
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       MenuRepository.resetInstance(); // インスタンスのリセット
       MaterialRepository.resetInstance(); // インスタンスのリセット
       DinnerRepository.resetInstance(); // インスタンスのリセット
@@ -113,11 +114,11 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
         children: [
           //アイコン--------------------------------
           user.photoURL != null
-          ? CircleAvatar(
-              backgroundImage: CachedNetworkImageProvider(user.photoURL),
-              radius: 32,
-            )
-          : const Icon(Icons.account_circle, size: 64),
+              ? CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(user.photoURL),
+                  radius: 32,
+                )
+              : const Icon(Icons.account_circle, size: 64),
           const SizedBox(height: 20),
 
           //こんにちはのテキスト---------------------
@@ -127,7 +128,7 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
 
           //ログアウトボタン------------------------
           IconButton(
-            onPressed: () async{
+            onPressed: () async {
               await authService.signOut();
               showMessage("ログアウトしました");
             },
@@ -313,6 +314,19 @@ class UserAuthenticationState extends ConsumerState<UserAuthentication>
             setState(() {});
           },
         ),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: 300,
+          child: TextButton(
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const AddLineFriend()));
+            },
+            child: const Text('Line友達追加'),
+          ),
+        ),
       ],
     );
   }
@@ -399,7 +413,7 @@ class _SignInAnony extends ConsumerState<SignInAnony> {
           ref.invalidate(menuListProvider); // キャッシュをクリア
           ref.invalidate(materialListProvider); // キャッシュをクリア
           ref.invalidate(dinnerListProvider); // キャッシュをクリア
-          
+
           //MenuRepository.resetInstance(); // インスタンスのリセット
           //final refreshedMenu = await ref.refresh(menuListProvider.future);
           // print("refresh:${refreshedMenu}");

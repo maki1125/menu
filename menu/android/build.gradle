@@ -1,5 +1,6 @@
 buildscript {
     ext.kotlin_version = '2.1.10' // Kotlinのバージョンを2.1.0に設定
+    //ext.kotlin_version = '1.9' // flutter_line_sdkのバージョンに合わせて1.6.10に設定
     repositories {
         google()
         mavenCentral()

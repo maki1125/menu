@@ -22,6 +22,7 @@ const functions = require("firebase-functions/v1"); // v1と明示的にバー�
 const admin = require("firebase-admin"); // Firebase Admin SDK
 
 admin.initializeApp(); // Firebase Admin SDK の初期化
+const db = admin.firestore(); // Firestore のインスタンス
 
 // 匿名ユーザーの削除 (30日以上ログインしていないユーザー)
 exports.deleteInactiveAnonymousUsers = functions.pubsub
@@ -52,3 +53,30 @@ exports.deleteInactiveAnonymousUsers = functions.pubsub
         console.error("Error deleting users:", error);
       }
     });
+
+// LINE ユーザーの登録
+exports.lineWebhook = functions.https.onRequest(async (req, res) => {
+  if (req.method !== "POST") { // POST メソッド以外はエラー
+    return res.status(405).send("Method Not Allowed");
+  }
+
+  const events = req.body.events;
+  if (!events) { // events プロパティが存在しない場合はエラー
+    return res.status(400).send("Bad Request");
+  }
+
+  const promises = events.map(async (event) => {
+    if (event.source && event.source.userId) {
+      await db.collection("lineUsers").doc(event.source.userId).set({
+        userId: event.source.userId,
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
+      },
+      {merge: true}); // 既存のデータがある場合は更新
+      console.log(`LINE User ID: ${event.source.userId}`);
+    }
+  });
+
+  await Promise.all(promises); // 全ての処理が完了するまで待機
+
+  res.status(200).send("OK"); // 正常終了
+});
